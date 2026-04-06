@@ -482,6 +482,71 @@ const LOOKUP = {"d2a7e489e092eac6": {"enc": "U2FsdGVkX18s2BAPL293DXvCM5avvL22h1c
 
 const UNIT_COLORS = {"ECIEM":{"bg":"#082959","accent":"#1a5099","light":"#e8f0fb"},"Teología":{"bg":"#6b21a8","accent":"#8b45c8","light":"#f3eafc"},"Ciencias Básicas":{"bg":"#0a6640","accent":"#15a060","light":"#e3f5ec"},"Inglés":{"bg":"#9b4200","accent":"#c85800","light":"#fdf0e4"},"VRS":{"bg":"#05A5BD","accent":"#0390a5","light":"#e0f7fb"},"Todas":{"bg":"#082959","accent":"#1a5099","light":"#e8f0fb"}};
 
+const PATCH_STUDENTS = [{"rut":"22.592.472-4","nombre_display":"Patricio Toro Galvez","carrera":"IICG","diagnostico":"TEA","anio_ingreso":2026,"periodo_incluye":"I 2026","estado":"Matriculado","n_ajustes":11,"ajustes":["Comunicar la caracterización del estudiante a los docentes de asignaturas, para la aplicación de los ajustes razonables.","Aplicar extensión horaria hasta un 50%, en TODOS los procesos de evaluación, en todas las asignaturas.","Dar a conocer previamente los criterios y rúbricas de evaluación","Permitir el uso de canceladores de ruido en clases y evaluaciones","Permitir el uso de fidgets en clases y evaluaciones.","Permitir salir de la sala en caso de sobrecarga sensorial.","Explicar los contenidos paso a paso con apoyo de organizadores gráficos (imágenes, mapas conceptuales etc.) y ejemplos.","Entregar el material de estudio con anticipación a través del aula virtual.","Permitir la grabación de clases para favorecer el estudio autónomo.","Aplicar síntesis de contenidos al finalizar una clase","Permitir el trabajo individual o en grupos por afinidad"],"asignaturas":[{"nombre":"Identidad y Universidad P13","nrc":"10470","profesor":"Javier Cortés"},{"nombre":"Matemáticas I P1","nrc":"11853","profesor":"Claudia Villalobos"},{"nombre":"Economía P1","nrc":"11968","profesor":"Alberto Rojas"},{"nombre":"Introducción a la Administración P1","nrc":"11981","profesor":"Joaquín Loayza"},{"nombre":"Programación P1","nrc":"11983","profesor":"Guillermo Ismodes"},{"nombre":"Taller de Habilidades P1","nrc":"11985","profesor":"Paulina Leiva"}]},{"rut":"22.495.967-2","nombre_display":"Francisco Cerda de la Fuente","carrera":"INGECO","diagnostico":"TDA","anio_ingreso":2026,"periodo_incluye":"I 2026","estado":"Matriculado","n_ajustes":8,"ajustes":["Aplicar extensión horaria hasta un 50%, en TODOS los procesos de evaluación, en todas las asignaturas.","Aplicar metodologías activas que favorezcan la interacción y participación del estudiante.","Permitir salir de la sala en caso de sobrecarga sensorial.","Apoyar la entrega de información utilizando ejemplos y material visual. (imágenes, organizadores gráficos, mapas conceptuales, etc. Los cuales se requiere que tengan una buena definición y contraste).","Incorporar pausas activas en clases extensas que permitan el re enfoque atencional y motivacional (cada 30 o 40 minutos).","Aplicar síntesis de contenidos al finalizar una clase","Permitir el uso de fidgets","Permitir el uso de audífonos para escuchar música en segunda intención, para favorecer los procesos de atención y auto regulación sensorial y emocional en clases y evaluaciones."],"asignaturas":[{"nombre":"Desarrollo de Actitud Emprendedora P2","nrc":"10090","profesor":"María Fernanda Roco"},{"nombre":"Introducción a la Administración P2","nrc":"10093","profesor":"Marco Ruz"},{"nombre":"Introducción a la Economía P2","nrc":"10095","profesor":"Sofía Orazi"},{"nombre":"Taller de Habilidades I P2","nrc":"10097","profesor":"Paulina Leiva"},{"nombre":"Matemáticas I P3","nrc":"12857","profesor":"Rodrigo Riffo"},{"nombre":"Identidad y Universidad P8","nrc":"13354","profesor":"Matías Cortés"}]}];
+
+function patchClone(obj) {
+  return JSON.parse(JSON.stringify(obj));
+}
+
+function patchEnsureStudentInST(student) {
+  if (!ST.find(function(x){ return x.rut === student.rut; })) ST.push(student);
+}
+
+function patchEnsureProf(profName, unidadFallback) {
+  if (!PR[profName]) PR[profName] = { name: profName, unidad: unidadFallback || "—", asigs: {}, studs: [] };
+  if (!PR[profName].unidad) PR[profName].unidad = unidadFallback || "—";
+}
+
+function patchAddStudentToProf(student, profName, unidadFallback) {
+  patchEnsureProf(profName, unidadFallback);
+  if (!PR[profName].studs.find(function(x){ return x.rut === student.rut; })) {
+    PR[profName].studs.push(student);
+  }
+  student.asignaturas
+    .filter(function(a){ return a.profesor === profName; })
+    .forEach(function(a) {
+      if (!PR[profName].asigs[a.nrc]) PR[profName].asigs[a.nrc] = { nombre: a.nombre, nrc: a.nrc, studs: [] };
+      if (!PR[profName].asigs[a.nrc].studs.find(function(x){ return x.rut === student.rut; })) {
+        PR[profName].asigs[a.nrc].studs.push(student);
+      }
+    });
+}
+
+function applyPatchStudents(payload) {
+  PATCH_STUDENTS.forEach(function(raw) {
+    var student = patchClone(raw);
+
+    if (payload.type === "admin") {
+      patchEnsureStudentInST(student);
+      student.asignaturas.forEach(function(a) {
+        patchAddStudentToProf(student, a.profesor, "—");
+      });
+      return;
+    }
+
+    if (payload.type === "docente") {
+      var hitsDoc = student.asignaturas.some(function(a){ return a.profesor === payload.name; });
+      if (!hitsDoc) return;
+      patchEnsureStudentInST(student);
+      patchAddStudentToProf(student, payload.name, payload.unidad);
+      return;
+    }
+
+    if (payload.type === "directivo") {
+      var inUnit = false;
+      student.asignaturas.forEach(function(a) {
+        if (PR[a.profesor] && (PR[a.profesor].unidad || payload.unidad) === payload.unidad) {
+          inUnit = true;
+          patchAddStudentToProf(student, a.profesor, PR[a.profesor].unidad || payload.unidad);
+        }
+      });
+      if (inUnit) patchEnsureStudentInST(student);
+    }
+  });
+}
+
+
+
 // Estado global
 var ST = [], PR = {}, PN = [], ROLE = null, PAYLOAD = null;
 var activeUnit = "TODAS";
@@ -573,6 +638,8 @@ function initPortal(payload, nombre, tipo) {
       });
     }
   }
+
+  applyPatchStudents(payload);
 
   PN = Object.keys(PR).sort();
 
