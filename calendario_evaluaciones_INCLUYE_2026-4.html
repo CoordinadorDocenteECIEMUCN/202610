@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Calendario de Evaluaciones · Estudiantes INCLUYE · ECIEM 2026-1</title>
+<style>
+:root {
+  --bg: #f5f6f8;
+  --panel: #ffffff;
+  --ink: #1a2332;
+  --ink-soft: #4a5968;
+  --ink-mute: #8492a6;
+  --line: #e3e7ec;
+  --line-soft: #eef1f5;
+  --ucn: #003e6b;
+  --ucn-light: #1a5a8a;
+  --ucn-tint: #e8f0f7;
+  --accent: #b88a00;
+  --accent-bg: #fff4d6;
+  --accent-line: #f0d28a;
+  --green: #2d7a3e;
+  --green-bg: #e3f3e6;
+  --red: #b53d3d;
+  --red-bg: #fbe4e4;
+  --tea: #5c4ba8;
+  --tdah: #1f7a8c;
+  --tda: #008c7e;
+  --salud: #c45a3a;
+  --visual: #7a5b1f;
+  --shadow-sm: 0 1px 2px rgba(20,30,50,0.04), 0 1px 1px rgba(20,30,50,0.03);
+  --shadow-md: 0 4px 16px rgba(20,30,50,0.08);
+  --radius: 10px;
+  --radius-sm: 6px;
+}
+* { box-sizing: border-box; }
+html, body { margin:0; padding:0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* ===== Header ===== */
+.header {
+  background: linear-gradient(135deg, var(--ucn) 0%, var(--ucn-light) 100%);
+  color: white;
+  padding: 24px 28px 20px;
+  box-shadow: 0 2px 12px rgba(0,62,107,0.18);
+}
+.header-top { display:flex; align-items:flex-start; justify-content:space-between; gap:20px; flex-wrap:wrap; }
+.header h1 { margin:0; font-size: 22px; font-weight: 600; letter-spacing: -0.01em; }
+.header .sub { margin: 4px 0 0; font-size: 13px; opacity: 0.85; }
+.header-stats { display: flex; gap: 14px; flex-wrap: wrap; margin-top: 14px; }
+.kpi {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  border-radius: var(--radius-sm);
+  padding: 8px 14px;
+  display: flex; flex-direction: column; gap: 2px;
+  min-width: 96px;
+}
+.kpi .v { font-size: 22px; font-weight: 700; line-height:1; }
+.kpi .l { font-size: 11px; opacity: 0.85; text-transform: uppercase; letter-spacing: 0.04em; }
+
+/* ===== Tabs ===== */
+.tabs {
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  padding: 0 28px;
+  display: flex;
+  gap: 2px;
+  position: sticky; top: 0; z-index: 50;
+}
+.tab {
+  padding: 14px 18px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  border-bottom: 2px solid transparent;
+  transition: all .15s;
+  display: flex; align-items: center; gap: 8px;
+}
+.tab:hover { color: var(--ink); background: var(--line-soft); }
+.tab.active { color: var(--ucn); border-bottom-color: var(--ucn); font-weight: 600; }
+.tab .badge {
+  background: var(--ucn-tint);
+  color: var(--ucn);
+  font-size: 11px;
+  padding: 1px 7px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.tab.active .badge { background: var(--ucn); color: white; }
+.tab-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--ink-mute);
+  transition: color .15s;
+}
+.tab:hover .tab-icon { color: var(--ink-soft); }
+.tab.active .tab-icon { color: var(--ucn); }
+.banner-icon {
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--accent);
+  margin-right: 4px;
+  vertical-align: -3px;
+}
+
+/* ===== Filters ===== */
+.filters {
+  background: var(--panel);
+  padding: 14px 28px;
+  border-bottom: 1px solid var(--line);
+  display: flex; flex-wrap: wrap; gap: 12px; align-items: flex-end;
+}
+.filter-group { display: flex; flex-direction: column; gap: 4px; }
+.filter-group label { font-size: 11px; color: var(--ink-mute); font-weight: 500; text-transform: uppercase; letter-spacing: 0.04em; }
+.filter-group select, .filter-group input {
+  padding: 7px 10px;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-family: inherit;
+  background: white;
+  color: var(--ink);
+  min-width: 160px;
+  transition: border .15s;
+}
+.filter-group select:focus, .filter-group input:focus {
+  outline: none; border-color: var(--ucn); box-shadow: 0 0 0 3px rgba(0,62,107,0.1);
+}
+.filter-toggle {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 12px;
+  background: var(--ucn-tint);
+  border: 1px solid var(--ucn-tint);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  user-select: none;
+  font-weight: 500;
+  color: var(--ucn);
+  transition: all .15s;
+}
+.filter-toggle.active { background: var(--ucn); color: white; }
+.filter-toggle input { display: none; }
+.filter-clear {
+  padding: 7px 12px;
+  background: white;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  cursor: pointer;
+  color: var(--ink-soft);
+}
+.filter-clear:hover { background: var(--line-soft); border-color: var(--ink-mute); }
+
+/* ===== Content area ===== */
+.content { padding: 22px 28px 60px; }
+.view { display: none; }
+.view.active { display: block; }
+
+/* ===== Calendar view ===== */
+.cal-controls { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+.cal-nav-btn {
+  background: white;
+  border: 1px solid var(--line);
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--ink);
+}
+.cal-nav-btn:hover { background: var(--ucn-tint); border-color: var(--ucn); color: var(--ucn); }
+.cal-month-label { font-size: 18px; font-weight: 600; color: var(--ink); margin-right: auto; }
+
+.cal-legend { display: flex; gap: 14px; align-items: center; font-size: 12px; color: var(--ink-soft); }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-dot { width: 12px; height: 12px; border-radius: 3px; }
+
+.cal-grid {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.cal-headrow {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  background: var(--line-soft);
+  border-bottom: 1px solid var(--line);
+}
+.cal-headrow div {
+  padding: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  text-align: center;
+}
+.cal-body { display: grid; grid-template-columns: repeat(7, 1fr); }
+.cal-cell {
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  min-height: 110px;
+  padding: 6px;
+  display: flex; flex-direction: column; gap: 3px;
+  background: white;
+  position: relative;
+}
+.cal-cell:nth-child(7n) { border-right: none; }
+.cal-cell.empty { background: var(--line-soft); }
+.cal-cell.weekend { background: #fafbfd; }
+.cal-cell.today { background: var(--ucn-tint); }
+.cal-cell.today .day-num { color: var(--ucn); font-weight: 700; }
+.day-num { font-size: 12px; font-weight: 600; color: var(--ink-soft); padding: 2px 4px; }
+.cal-cell.has-incluye .day-num { color: var(--accent); }
+
+.cal-event {
+  font-size: 11px;
+  padding: 4px 6px;
+  border-radius: 4px;
+  background: #eef1f5;
+  color: var(--ink-soft);
+  cursor: pointer;
+  border-left: 3px solid var(--ink-mute);
+  line-height: 1.25;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  transition: all .12s;
+}
+.cal-event:hover {
+  background: var(--ucn-tint);
+  color: var(--ucn);
+  transform: translateX(1px);
+}
+.cal-event.incluye {
+  background: var(--accent-bg);
+  border-left-color: var(--accent);
+  color: #6b4f00;
+  font-weight: 500;
+}
+.cal-event.incluye:hover { background: #ffe9a8; color: #5a4200; }
+.cal-event .ev-icon { display: inline-block; margin-right: 4px; font-size: 10px; }
+
+/* ===== List view ===== */
+.list-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.list-header h2 { margin: 0; font-size: 16px; font-weight: 600; }
+.list-count { font-size: 13px; color: var(--ink-mute); }
+.list-table {
+  width: 100%;
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  border-collapse: separate;
+  border-spacing: 0;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+.list-table th {
+  background: var(--line-soft);
+  padding: 10px 14px;
+  text-align: left;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--line);
+  cursor: pointer;
+  user-select: none;
+  white-space: nowrap;
+}
+.list-table th:hover { background: var(--line); color: var(--ink); }
+.list-table th.sort-asc::after { content: ' ▲'; opacity: 0.6; }
+.list-table th.sort-desc::after { content: ' ▼'; opacity: 0.6; }
+.list-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--line-soft);
+  font-size: 13px;
+  vertical-align: top;
+}
+.list-table tr:last-child td { border-bottom: none; }
+.list-table tr.has-incluye { background: #fffaeb; }
+.list-table tr:hover { background: var(--ucn-tint); cursor: pointer; }
+.list-table tr.has-incluye:hover { background: #ffe9a8; }
+.list-table .date-cell { white-space: nowrap; font-variant-numeric: tabular-nums; font-weight: 500; }
+.list-table .pct-cell { text-align: right; font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ink-soft); }
+.incluye-tag {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 4px;
+}
+
+/* ===== Student view ===== */
+.student-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 14px; }
+.student-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow .15s;
+}
+.student-card:hover { box-shadow: var(--shadow-md); }
+.student-card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+.student-name { font-weight: 600; font-size: 14px; color: var(--ink); margin: 0; }
+.student-meta { font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+.diag-chip {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.diag-TEA { background: rgba(92,75,168,0.12); color: var(--tea); }
+.diag-TDAH { background: rgba(31,122,140,0.12); color: var(--tdah); }
+.diag-TDA { background: rgba(0,140,126,0.12); color: var(--tda); }
+.diag-SALUD { background: rgba(196,90,58,0.12); color: var(--salud); }
+.diag-VISUAL { background: rgba(122,91,31,0.12); color: var(--visual); }
+
+.student-evals { margin-top: 12px; border-top: 1px dashed var(--line); padding-top: 10px; }
+.student-eval-item {
+  padding: 6px 0;
+  font-size: 12px;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  cursor: pointer;
+  border-radius: 4px;
+  padding-left: 6px;
+  margin-left: -6px;
+}
+.student-eval-item:hover { background: var(--accent-bg); }
+.student-eval-item .date { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--ucn); min-width: 64px; }
+.student-eval-item .label { color: var(--ink); flex: 1; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.student-eval-item .pct { color: var(--ink-mute); font-weight: 500; }
+
+.student-card details { margin-top: 8px; }
+.student-card details summary {
+  font-size: 11px;
+  color: var(--ucn);
+  cursor: pointer;
+  font-weight: 500;
+  list-style: none;
+  user-select: none;
+}
+.student-card details summary::before { content: '▸ '; transition: transform .1s; display: inline-block; }
+.student-card details[open] summary::before { transform: rotate(90deg); }
+.adjustments {
+  background: var(--accent-bg);
+  border-left: 3px solid var(--accent);
+  padding: 8px 10px;
+  font-size: 12px;
+  color: #5a4200;
+  margin-top: 6px;
+  border-radius: 0 4px 4px 0;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+/* ===== Empty / undated / pending ===== */
+.fuzzy-list, .pending-list { display: flex; flex-direction: column; gap: 10px; }
+.fuzzy-item, .pending-item {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+  box-shadow: var(--shadow-sm);
+  cursor: pointer;
+  transition: all .15s;
+}
+.fuzzy-item:hover, .pending-item:hover { border-color: var(--ucn); box-shadow: var(--shadow-md); }
+.fuzzy-item.has-incluye { border-left: 4px solid var(--accent); }
+.fuzzy-head { display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; }
+.fuzzy-title { font-weight: 600; font-size: 13px; color: var(--ink); }
+.fuzzy-sub { font-size: 12px; color: var(--ink-mute); margin-top: 2px; }
+.fuzzy-tag {
+  display: inline-block;
+  background: var(--line-soft);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 500;
+}
+.pending-item .pending-prof { font-size: 12px; color: var(--ink-soft); }
+
+/* ===== Modal ===== */
+.modal-backdrop {
+  position: fixed; inset: 0;
+  background: rgba(20,30,50,0.45);
+  backdrop-filter: blur(2px);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+  padding: 20px;
+}
+.modal-backdrop.show { display: flex; }
+.modal {
+  background: var(--panel);
+  border-radius: var(--radius);
+  max-width: 720px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 60px rgba(20,30,50,0.25);
+}
+.modal-head {
+  padding: 18px 22px;
+  border-bottom: 1px solid var(--line);
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 12px;
+  position: sticky; top: 0; background: var(--panel); z-index: 5;
+}
+.modal-head h3 { margin: 0; font-size: 16px; font-weight: 600; color: var(--ink); }
+.modal-head .modal-meta { font-size: 12px; color: var(--ink-mute); margin-top: 4px; }
+.modal-close {
+  background: transparent; border: none;
+  font-size: 22px; line-height: 1;
+  color: var(--ink-mute);
+  cursor: pointer; padding: 0;
+  width: 28px; height: 28px;
+  border-radius: 4px;
+}
+.modal-close:hover { background: var(--line-soft); color: var(--ink); }
+.modal-body { padding: 18px 22px; }
+.modal-section { margin-bottom: 18px; }
+.modal-section h4 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  letter-spacing: 0.05em;
+}
+.modal-row { display: flex; gap: 8px; align-items: baseline; padding: 4px 0; font-size: 13px; }
+.modal-row .lbl { color: var(--ink-mute); min-width: 88px; font-size: 12px; }
+.modal-row .val { color: var(--ink); font-weight: 500; }
+.modal-eval-box {
+  background: var(--ucn-tint);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+}
+.modal-students-list { display: flex; flex-direction: column; gap: 8px; }
+.modal-student {
+  border: 1px solid var(--accent-line);
+  border-left: 4px solid var(--accent);
+  border-radius: var(--radius-sm);
+  padding: 10px 12px;
+  background: #fffaeb;
+}
+.modal-student-head { display: flex; justify-content: space-between; gap: 8px; align-items: center; }
+.modal-student-name { font-weight: 600; color: var(--ink); font-size: 13px; }
+.modal-student-meta { font-size: 11px; color: var(--ink-mute); margin-top: 2px; }
+.modal-raw {
+  font-family: 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 11px;
+  color: var(--ink-soft);
+  background: var(--line-soft);
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  white-space: pre-wrap;
+  border: 1px solid var(--line);
+}
+.no-incluye-msg { color: var(--ink-mute); font-style: italic; font-size: 13px; }
+
+/* ===== Responsive ===== */
+@media (max-width: 900px) {
+  .header { padding: 18px 16px; }
+  .tabs, .filters, .content { padding-left: 16px; padding-right: 16px; }
+  .cal-cell { min-height: 70px; padding: 4px; }
+  .cal-event { font-size: 9.5px; padding: 2px 4px; }
+  .header-stats { gap: 8px; }
+  .kpi { padding: 6px 10px; min-width: 76px; }
+  .kpi .v { font-size: 18px; }
+  .day-num { font-size: 10px; }
+}
+@media (max-width: 600px) {
+  .filters { padding: 10px 14px; }
+  .filter-group select, .filter-group input { min-width: 130px; font-size: 12px; }
+  .list-table { font-size: 12px; }
+  .list-table th, .list-table td { padding: 8px 10px; }
+  .student-grid { grid-template-columns: 1fr; }
+}
+
+/* Utility */
+.muted { color: var(--ink-mute); }
+.empty-state { text-align: center; padding: 40px 20px; color: var(--ink-mute); font-size: 13px; }
+.warn-banner {
+  background: #fff4d6;
+  border: 1px solid #f0d28a;
+  border-left: 4px solid #b88a00;
+  padding: 10px 14px;
+  border-radius: var(--radius-sm);
+  font-size: 12px;
+  color: #6b4f00;
+  margin-bottom: 14px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div>
+      <h1>Calendario de Evaluaciones · Estudiantes INCLUYE</h1>
+      <div class="sub">ECIEM · Primer Semestre 2026 (período 202610) · Ingeniería Comercial e Ingeniería en Información y Control de Gestión</div>
+    </div>
+  </div>
+  <div class="header-stats" id="kpis"></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" data-tab="calendario">
+    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18"/><path d="M8 2v4M16 2v4"/></svg>
+    Calendario <span class="badge" id="b-cal">0</span>
+  </button>
+  <button class="tab" data-tab="lista">
+    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><circle cx="4" cy="6" r="1"/><circle cx="4" cy="12" r="1"/><circle cx="4" cy="18" r="1"/></svg>
+    Lista <span class="badge" id="b-list">0</span>
+  </button>
+  <button class="tab" data-tab="estudiantes">
+    <svg class="tab-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    Por Estudiante <span class="badge" id="b-stu">0</span>
+  </button>
+</div>
+
+<div class="filters" id="filters">
+  <div class="filter-group">
+    <label>Estudiante</label>
+    <select id="f-student"><option value="">— Todos —</option></select>
+  </div>
+  <div class="filter-group">
+    <label>Carrera</label>
+    <select id="f-carrera">
+      <option value="">— Todas —</option>
+      <option value="INGECO">INGECO</option>
+      <option value="IICG">IICG</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label>Diagnóstico</label>
+    <select id="f-diag"><option value="">— Todos —</option></select>
+  </div>
+  <div class="filter-group">
+    <label>Asignatura</label>
+    <select id="f-asig"><option value="">— Todas —</option></select>
+  </div>
+  <div class="filter-group">
+    <label>Docente</label>
+    <select id="f-doc"><option value="">— Todos —</option></select>
+  </div>
+  <label class="filter-toggle" id="t-incluye">
+    <input type="checkbox" /> Solo con est. INCLUYE
+  </label>
+  <button class="filter-clear" id="btn-clear">Limpiar filtros</button>
+</div>
+
+<div class="content">
+
+  <!-- CALENDARIO -->
+  <div class="view active" id="view-calendario">
+    <div class="cal-controls">
+      <button class="cal-nav-btn" id="prev-month">‹ Mes anterior</button>
+      <button class="cal-nav-btn" id="next-month">Mes siguiente ›</button>
+      <div class="cal-month-label" id="month-label"></div>
+      <div class="cal-legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#fff4d6;border-left:3px solid #b88a00"></div>Con estudiantes INCLUYE</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#eef1f5;border-left:3px solid #8492a6"></div>Sin INCLUYE</div>
+      </div>
+    </div>
+    <div class="cal-grid">
+      <div class="cal-headrow"><div>Lun</div><div>Mar</div><div>Mié</div><div>Jue</div><div>Vie</div><div>Sáb</div><div>Dom</div></div>
+      <div class="cal-body" id="cal-body"></div>
+    </div>
+  </div>
+
+  <!-- LISTA -->
+  <div class="view" id="view-lista">
+    <div class="list-header">
+      <h2>Listado de evaluaciones</h2>
+      <div class="list-count" id="list-count"></div>
+    </div>
+    <table class="list-table" id="list-table">
+      <thead><tr>
+        <th data-col="date">Fecha</th>
+        <th data-col="asignatura">Asignatura</th>
+        <th data-col="eval_name">Evaluación</th>
+        <th data-col="pct">%</th>
+        <th data-col="docente">Docente</th>
+        <th data-col="nrcs">NRC</th>
+        <th data-col="incluye">INCLUYE</th>
+      </tr></thead>
+      <tbody id="list-tbody"></tbody>
+    </table>
+  </div>
+
+  <!-- ESTUDIANTES -->
+  <div class="view" id="view-estudiantes">
+    <div class="warn-banner">
+      <svg class="banner-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+      Cada tarjeta muestra todas las evaluaciones con fecha definida del estudiante. Los filtros superiores también aplican aquí (ej. filtrar por carrera o diagnóstico).
+    </div>
+    <div class="student-grid" id="student-grid"></div>
+  </div>
+
+</div>
+
+<!-- Modal -->
+<div class="modal-backdrop" id="modal-bg">
+  <div class="modal" id="modal">
+    <div class="modal-head">
+      <div>
+        <h3 id="m-title"></h3>
+        <div class="modal-meta" id="m-meta"></div>
+      </div>
+      <button class="modal-close" id="m-close">×</button>
+    </div>
+    <div class="modal-body" id="m-body"></div>
+  </div>
+</div>
+
+<script>
+const DATA = {"events": [{"id": 0, "asignatura": "ECCE-00709 Finanzas Corporativas P1 INGECO", "docente": "VARGAS SANTANDER KAREN .", "nrcs": ["10116"], "eval_name": "PRIMERA PRUEBA PARCIAL", "pct": "15", "parallel": null, "date_text": "21 de abril", "raw": "PRIMERA PRUEBA PARCIAL\n\n15% — 21 de abril", "affected_ruts": ["21150627K", "217650240"], "nrc_inferred": false, "date": "2026-04-21", "fuzzy": null}, {"id": 1, "asignatura": "ECCE-00709 Finanzas Corporativas P1 INGECO", "docente": "VARGAS SANTANDER KAREN .", "nrcs": ["10116"], "eval_name": "SEGUNDA PRUEBA PARCIAL", "pct": "15", "parallel": null, "date_text": "26 de mayo", "raw": "SEGUNDA PRUEBA PARCIAL\n\n15% — 26 de mayo", "affected_ruts": ["21150627K", "217650240"], "nrc_inferred": false, "date": "2026-05-26", "fuzzy": null}, {"id": 2, "asignatura": "ECCE-00709 Finanzas Corporativas P1 INGECO", "docente": "VARGAS SANTANDER KAREN .", "nrcs": ["10116"], "eval_name": "TRABAJO FINAL GRUPAL", "pct": "15", "parallel": null, "date_text": "16 de junio", "raw": "TRABAJO FINAL GRUPAL\n\n15% — 16 de junio", "affected_ruts": ["21150627K", "217650240"], "nrc_inferred": false, "date": "2026-06-16", "fuzzy": null}, {"id": 3, "asignatura": "ECCE-00709 Finanzas Corporativas P1 INGECO", "docente": "VARGAS SANTANDER KAREN .", "nrcs": ["10116"], "eval_name": "Controles y talleres acumulativos", "pct": "15", "parallel": null, "date_text": "Durante el semestre", "raw": "Controles y talleres acumulativos\n\n15% — Durante el semestre", "affected_ruts": ["21150627K", "217650240"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 4, "asignatura": "ECCE-00709 Finanzas Corporativas P1 INGECO", "docente": "VARGAS SANTANDER KAREN .", "nrcs": ["10116"], "eval_name": "EXAMEN", "pct": "40", "parallel": null, "date_text": "Fin del semestre", "raw": "EXAMEN\n\n40% — Fin del semestre", "affected_ruts": ["21150627K", "217650240"], "nrc_inferred": false, "date": null, "fuzzy": "Fin del semestre"}, {"id": 5, "asignatura": "ECCE-00709 Finanzas Corporativas P2 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["11979"], "eval_name": "PRIMERA PRUEBA PARCIAL", "pct": "15", "parallel": null, "date_text": "21 de abril", "raw": "PRIMERA PRUEBA PARCIAL\n\n15% — 21 de abril", "affected_ruts": ["208637304", "213970321", "218243797"], "nrc_inferred": false, "date": "2026-04-21", "fuzzy": null}, {"id": 6, "asignatura": "ECCE-00709 Finanzas Corporativas P2 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["11979"], "eval_name": "SEGUNDA PRUEBA PARCIAL", "pct": "15", "parallel": null, "date_text": "26 de mayo", "raw": "SEGUNDA PRUEBA PARCIAL\n\n15% — 26 de mayo", "affected_ruts": ["208637304", "213970321", "218243797"], "nrc_inferred": false, "date": "2026-05-26", "fuzzy": null}, {"id": 7, "asignatura": "ECCE-00709 Finanzas Corporativas P2 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["11979"], "eval_name": "TRABAJO FINAL GRUPAL", "pct": "15", "parallel": null, "date_text": "16 de junio", "raw": "TRABAJO FINAL GRUPAL\n\n15% — 16 de junio", "affected_ruts": ["208637304", "213970321", "218243797"], "nrc_inferred": false, "date": "2026-06-16", "fuzzy": null}, {"id": 8, "asignatura": "ECCE-00709 Finanzas Corporativas P2 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["11979"], "eval_name": "Controles y talleres acumulativos", "pct": "15", "parallel": null, "date_text": "Durante el semestre", "raw": "Controles y talleres acumulativos\n\n15% — Durante el semestre", "affected_ruts": ["208637304", "213970321", "218243797"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 9, "asignatura": "ECCE-00709 Finanzas Corporativas P2 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["11979"], "eval_name": "EXAMEN", "pct": "40", "parallel": null, "date_text": "Fin del semestre", "raw": "EXAMEN\n\n40% — Fin del semestre", "affected_ruts": ["208637304", "213970321", "218243797"], "nrc_inferred": false, "date": null, "fuzzy": "Fin del semestre"}, {"id": 10, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Evaluación 1", "pct": "25", "parallel": null, "date_text": "27 de abril", "raw": "Evaluación 1\n\n25% — 27 de abril", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-04-27", "fuzzy": null}, {"id": 11, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Evaluación 2", "pct": "25", "parallel": null, "date_text": "22 de junio", "raw": "Evaluación 2\n\n25% — 22 de junio", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-22", "fuzzy": null}, {"id": 12, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 13, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-26", "fuzzy": null}, {"id": 14, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-27", "fuzzy": null}, {"id": 15, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-28", "fuzzy": null}, {"id": 16, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-29", "fuzzy": null}, {"id": 17, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-06-30", "fuzzy": null}, {"id": 18, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-07-01", "fuzzy": null}, {"id": 19, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-07-02", "fuzzy": null}, {"id": 20, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Trabajo del semestre", "pct": "25", "parallel": null, "date_text": "25/06 al 3/7", "raw": "Trabajo del semestre\n\n25% — 25/06 al 3/7", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": "2026-07-03", "fuzzy": null}, {"id": 21, "asignatura": "ECCE-00707 Planificacion Estrategica P1 y P2   INGECO", "docente": "TERAN VILLEGAS OSWALDO", "nrcs": ["10119", "11065"], "eval_name": "Examen final", "pct": "25", "parallel": null, "date_text": "Al final del semestre", "raw": "Examen final\n\n25% — Al final del semestre", "affected_ruts": ["208157078", "208637304", "209452987", "213970321", "217434572", "217650240"], "nrc_inferred": false, "date": null, "fuzzy": "Al final del semestre"}, {"id": 22, "asignatura": "ECCE-00405 Macroeconomia II  P1 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["12286"], "eval_name": "Evaluación 1", "pct": "35", "parallel": null, "date_text": "24/4", "raw": "Evaluación 1\n\n35% — 24/4", "affected_ruts": ["219839057"], "nrc_inferred": false, "date": "2026-04-24", "fuzzy": null}, {"id": 23, "asignatura": "ECCE-00405 Macroeconomia II  P1 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["12286"], "eval_name": "Evaluación 2", "pct": "35", "parallel": null, "date_text": "12/6", "raw": "Evaluación 2\n\n35% — 12/6", "affected_ruts": ["219839057"], "nrc_inferred": false, "date": "2026-06-12", "fuzzy": null}, {"id": 24, "asignatura": "ECCE-00405 Macroeconomia II  P1 INGECO", "docente": "GONZÁLEZ FERNANDO ANTONIO IGNACIO", "nrcs": ["12286"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "Por definir", "raw": "Examen\n\n30% — Por definir", "affected_ruts": ["219839057"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 25, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Evaluación 1: Identificación de oportunidad de negocio (informe + presentación)", "pct": "25", "parallel": null, "date_text": "31 de marzo y 01 de abril", "raw": "Evaluación 1: Identificación de oportunidad de negocio (informe + presentación)\n\n25% — 31 de marzo y 01 de abril", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-03-31", "fuzzy": null}, {"id": 26, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Evaluación 1: Identificación de oportunidad de negocio (informe + presentación)", "pct": "25", "parallel": null, "date_text": "31 de marzo y 01 de abril", "raw": "Evaluación 1: Identificación de oportunidad de negocio (informe + presentación)\n\n25% — 31 de marzo y 01 de abril", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-04-01", "fuzzy": null}, {"id": 27, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Evaluación 2: Validación de oportunidad (informe + presentación)", "pct": "25", "parallel": null, "date_text": "21 y 22 de abril", "raw": "Evaluación 2: Validación de oportunidad (informe + presentación)\n\n25% — 21 y 22 de abril", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-04-21", "fuzzy": null}, {"id": 28, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Evaluación 2: Validación de oportunidad (informe + presentación)", "pct": "25", "parallel": null, "date_text": "21 y 22 de abril", "raw": "Evaluación 2: Validación de oportunidad (informe + presentación)\n\n25% — 21 y 22 de abril", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-04-22", "fuzzy": null}, {"id": 29, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Evaluación 3: Modelo de negocio (informe + presentación)", "pct": "30", "parallel": null, "date_text": "09 y 10 junio", "raw": "Evaluación 3: Modelo de negocio (informe + presentación)\n\n30% — 09 y 10 junio", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-06-09", "fuzzy": null}, {"id": 30, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Evaluación 3: Modelo de negocio (informe + presentación)", "pct": "30", "parallel": null, "date_text": "09 y 10 junio", "raw": "Evaluación 3: Modelo de negocio (informe + presentación)\n\n30% — 09 y 10 junio", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-06-10", "fuzzy": null}, {"id": 31, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Examen Presentación final – Pitch modelo de negocio", "pct": "20", "parallel": null, "date_text": "16 y 17 junio", "raw": "Examen Presentación final – Pitch modelo de negocio\n\n20% — 16 y 17 junio", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-06-16", "fuzzy": null}, {"id": 32, "asignatura": "ECCE-00506 Identificacion De Oportunidades P1 y P2  INGECO", "docente": "ALFARO BRICEÑO YANIXZA ISABEL", "nrcs": ["10112", "10518"], "eval_name": "Examen Presentación final – Pitch modelo de negocio", "pct": "20", "parallel": null, "date_text": "16 y 17 junio", "raw": "Examen Presentación final – Pitch modelo de negocio\n\n20% — 16 y 17 junio", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-06-17", "fuzzy": null}, {"id": 33, "asignatura": "ECCE-00495 Estadística I P1 IICG", "docente": "CASTILLO PAULA", "nrcs": ["11990"], "eval_name": "Evaluación 1 Prueba", "pct": "25", "parallel": null, "date_text": "20 de abril", "raw": "Evaluación 1 Prueba\n\n25% — 20 de abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-20", "fuzzy": null}, {"id": 34, "asignatura": "ECCE-00495 Estadística I P1 IICG", "docente": "CASTILLO PAULA", "nrcs": ["11990"], "eval_name": "Taller 1", "pct": "7,5", "parallel": null, "date_text": "16 de abril", "raw": "Taller 1\n\n7,5% — 16 de abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 35, "asignatura": "ECCE-00495 Estadística I P1 IICG", "docente": "CASTILLO PAULA", "nrcs": ["11990"], "eval_name": "Evaluación 2 Prueba", "pct": "25", "parallel": null, "date_text": "01 de junio", "raw": "Evaluación 2 Prueba\n\n25% — 01 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-01", "fuzzy": null}, {"id": 36, "asignatura": "ECCE-00495 Estadística I P1 IICG", "docente": "CASTILLO PAULA", "nrcs": ["11990"], "eval_name": "Taller 2", "pct": "7,5", "parallel": null, "date_text": "08 de junio", "raw": "Taller 2\n\n7,5% — 08 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-08", "fuzzy": null}, {"id": 37, "asignatura": "ECCE-00495 Estadística I P1 IICG", "docente": "CASTILLO PAULA", "nrcs": ["11990"], "eval_name": "Examen", "pct": "35", "parallel": null, "date_text": "02 de julio", "raw": "Examen\n\n35% — 02 de julio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-07-02", "fuzzy": null}, {"id": 38, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11998"], "eval_name": "Evaluación 1", "pct": "25", "parallel": "P1", "date_text": "15-04-26", "raw": "Evaluación 1\n\n25%\n\nP1: 15-04-26\n\nP2: 16-04-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-15", "fuzzy": null}, {"id": 39, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11999"], "eval_name": "Evaluación 1", "pct": "25", "parallel": "P2", "date_text": "16-04-26", "raw": "Evaluación 1\n\n25%\n\nP1: 15-04-26\n\nP2: 16-04-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 40, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11998"], "eval_name": "Evaluación 2", "pct": "25", "parallel": "P1", "date_text": "03-06-26", "raw": "Evaluación 2\n\n25%\n\nP1: 03-06-26\n\nP2: 04-06-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-03", "fuzzy": null}, {"id": 41, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11999"], "eval_name": "Evaluación 2", "pct": "25", "parallel": "P2", "date_text": "04-06-26", "raw": "Evaluación 2\n\n25%\n\nP1: 03-06-26\n\nP2: 04-06-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-04", "fuzzy": null}, {"id": 42, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11998", "11999"], "eval_name": "Talleres grupales, presentaciones y Actividades individuales", "pct": "25", "parallel": null, "date_text": "Plan móvil según avances", "raw": "Talleres grupales, presentaciones y Actividades individuales\n\n25%\n\nPlan móvil según avances", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Plan móvil según avances"}, {"id": 43, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11999"], "eval_name": "Entrega Trabajo final", "pct": "25", "parallel": "P2", "date_text": "18-06-26", "raw": "Entrega Trabajo final\n\n25%\n\nP2: 18-06-26\n\nP1: 19-06-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-18", "fuzzy": null}, {"id": 44, "asignatura": "ECCE-00991 Taller Habilidades Genéricas P1 y P2 IICG", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11998"], "eval_name": "Entrega Trabajo final", "pct": "25", "parallel": "P1", "date_text": "19-06-26", "raw": "Entrega Trabajo final\n\n25%\n\nP2: 18-06-26\n\nP1: 19-06-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-19", "fuzzy": null}, {"id": 45, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "1° PRUEBA PARCIAL", "pct": "20", "parallel": null, "date_text": "13 de Abril", "raw": "1° PRUEBA PARCIAL\n\n20% — 13 de Abril", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-04-13", "fuzzy": null}, {"id": 46, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "2° PRUEBA PARCIAL", "pct": "20", "parallel": null, "date_text": "1 de Junio", "raw": "2° PRUEBA PARCIAL\n\n20% — 1 de Junio", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-06-01", "fuzzy": null}, {"id": 47, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "Controles de lectura (6 Evaluaciones cortas)", "pct": "20", "parallel": null, "date_text": "Todo el semestre", "raw": "Controles de lectura (6 Evaluaciones cortas)\n\n20% — Todo el semestre", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": null, "fuzzy": "Todo el semestre"}, {"id": 48, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Semana del 29 de Junio al 3 Julio", "raw": "Examen\n\n40% — Semana del 29 de Junio al 3 Julio", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-06-29", "fuzzy": null}, {"id": 49, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Semana del 29 de Junio al 3 Julio", "raw": "Examen\n\n40% — Semana del 29 de Junio al 3 Julio", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-06-30", "fuzzy": null}, {"id": 50, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Semana del 29 de Junio al 3 Julio", "raw": "Examen\n\n40% — Semana del 29 de Junio al 3 Julio", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-07-01", "fuzzy": null}, {"id": 51, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Semana del 29 de Junio al 3 Julio", "raw": "Examen\n\n40% — Semana del 29 de Junio al 3 Julio", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-07-02", "fuzzy": null}, {"id": 52, "asignatura": "ECCE-00307 Contabilidad Financiera II  P1  y P2 INGECO", "docente": "TORRES HÉCTOR", "nrcs": ["10104", "10105"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Semana del 29 de Junio al 3 Julio", "raw": "Examen\n\n40% — Semana del 29 de Junio al 3 Julio", "affected_ruts": ["218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-07-03", "fuzzy": null}, {"id": 53, "asignatura": "ECCE-00104 Taller De Habilidades I  P1 y P2 INGECO", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["10096", "10097"], "eval_name": "Evaluación 1 Rúbrica Ensayo argumentativo", "pct": "25", "parallel": null, "date_text": "14 de abril", "raw": "Evaluación 1 Rúbrica Ensayo argumentativo\n\n25% — 14 de abril", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": "2026-04-14", "fuzzy": null}, {"id": 54, "asignatura": "ECCE-00104 Taller De Habilidades I  P1 y P2 INGECO", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["10096", "10097"], "eval_name": "Evaluación 2 Pauta de observación disertación + reporte", "pct": "25", "parallel": null, "date_text": "26 mayo", "raw": "Evaluación 2 Pauta de observación disertación + reporte\n\n25% — 26 mayo", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": "2026-05-26", "fuzzy": null}, {"id": 55, "asignatura": "ECCE-00104 Taller De Habilidades I  P1 y P2 INGECO", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["10096", "10097"], "eval_name": "Control, Talleres y/u Otros", "pct": "20", "parallel": null, "date_text": "Todo el semestre", "raw": "Control, Talleres y/u Otros\n\n20% — Todo el semestre", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": null, "fuzzy": "Todo el semestre"}, {"id": 56, "asignatura": "ECCE-00104 Taller De Habilidades I  P1 y P2 INGECO", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["10096", "10097"], "eval_name": "Evaluación 3 Póster + presentación", "pct": "30", "parallel": null, "date_text": "9 junio", "raw": "Evaluación 3 Póster + presentación\n\n30% — 9 junio", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": "2026-06-09", "fuzzy": null}, {"id": 57, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 1 Rúbrica Disertación técnicas de estudio", "pct": "25", "parallel": null, "date_text": "15-17 de abril", "raw": "Evaluación 1 Rúbrica Disertación técnicas de estudio\n\n25% — 15-17 de abril", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-04-15", "fuzzy": null}, {"id": 58, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 1 Rúbrica Disertación técnicas de estudio", "pct": "25", "parallel": null, "date_text": "15-17 de abril", "raw": "Evaluación 1 Rúbrica Disertación técnicas de estudio\n\n25% — 15-17 de abril", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 59, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 1 Rúbrica Disertación técnicas de estudio", "pct": "25", "parallel": null, "date_text": "15-17 de abril", "raw": "Evaluación 1 Rúbrica Disertación técnicas de estudio\n\n25% — 15-17 de abril", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-04-17", "fuzzy": null}, {"id": 60, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 2 Pauta de observación reporte de investigación", "pct": "25", "parallel": null, "date_text": "27-29 de mayo", "raw": "Evaluación 2 Pauta de observación reporte de investigación\n\n25% — 27-29 de mayo", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-05-27", "fuzzy": null}, {"id": 61, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 2 Pauta de observación reporte de investigación", "pct": "25", "parallel": null, "date_text": "27-29 de mayo", "raw": "Evaluación 2 Pauta de observación reporte de investigación\n\n25% — 27-29 de mayo", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-05-28", "fuzzy": null}, {"id": 62, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 2 Pauta de observación reporte de investigación", "pct": "25", "parallel": null, "date_text": "27-29 de mayo", "raw": "Evaluación 2 Pauta de observación reporte de investigación\n\n25% — 27-29 de mayo", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-05-29", "fuzzy": null}, {"id": 63, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Control, Talleres y/u Otros", "pct": "20", "parallel": null, "date_text": "Todo el semestre", "raw": "Control, Talleres y/u Otros\n\n20% — Todo el semestre", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": null, "fuzzy": "Todo el semestre"}, {"id": 64, "asignatura": "ECCE-00194 Taller de Habilidades P1 y P2 IICG", "docente": "LEIVA RIVERA SYLVIA PAULINA", "nrcs": ["11985", "11986"], "eval_name": "Evaluación 3 Póster + presentación", "pct": "30", "parallel": null, "date_text": "10 junio", "raw": "Evaluación 3 Póster + presentación\n\n30% — 10 junio", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-06-10", "fuzzy": null}, {"id": 65, "asignatura": "ECCE-00503 Gestion Tributaria P1 y P2 INGECO", "docente": "ROJAS RAMOS EDUARDO ANDRES", "nrcs": ["10110", "10111"], "eval_name": "Evaluación 1: Prueba parcial Unidad 1 y 2", "pct": "25", "parallel": null, "date_text": "16 de abril", "raw": "Evaluación 1: Prueba parcial Unidad 1 y 2\n\n25% — 16 de abril", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 66, "asignatura": "ECCE-00503 Gestion Tributaria P1 y P2 INGECO", "docente": "ROJAS RAMOS EDUARDO ANDRES", "nrcs": ["10110", "10111"], "eval_name": "Evaluación 2: Rúbrica de trabajo", "pct": "10", "parallel": null, "date_text": "07 de mayo", "raw": "Evaluación 2: Rúbrica de trabajo\n\n10% — 07 de mayo", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-05-07", "fuzzy": null}, {"id": 67, "asignatura": "ECCE-00503 Gestion Tributaria P1 y P2 INGECO", "docente": "ROJAS RAMOS EDUARDO ANDRES", "nrcs": ["10110", "10111"], "eval_name": "Evaluación 3: Prueba parcial Unidad 1 y 3", "pct": "25", "parallel": null, "date_text": "11 de junio", "raw": "Evaluación 3: Prueba parcial Unidad 1 y 3\n\n25% — 11 de junio", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 68, "asignatura": "ECCE-00503 Gestion Tributaria P1 y P2 INGECO", "docente": "ROJAS RAMOS EDUARDO ANDRES", "nrcs": ["10110", "10111"], "eval_name": "Control, Talleres y/u Otros", "pct": "10", "parallel": null, "date_text": "Durante el semestre", "raw": "Control, Talleres y/u Otros\n\n10% — Durante el semestre", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 69, "asignatura": "ECCE-00503 Gestion Tributaria P1 y P2 INGECO", "docente": "ROJAS RAMOS EDUARDO ANDRES", "nrcs": ["10110", "10111"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "Por definir", "raw": "Examen\n\n30% — Por definir", "affected_ruts": ["211299568", "217485525", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 70, "asignatura": "ECCE-00101 Introduccion A La Administración P1 y P2 INGECO", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11981", "11982"], "eval_name": "Evaluación 1", "pct": "25", "parallel": null, "date_text": "17-04-26", "raw": "Evaluación 1\n\n25% — 17-04-26", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-04-17", "fuzzy": null}, {"id": 71, "asignatura": "ECCE-00101 Introduccion A La Administración P1 y P2 INGECO", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11981", "11982"], "eval_name": "Evaluación 2", "pct": "25", "parallel": null, "date_text": "25-05-26", "raw": "Evaluación 2\n\n25% — 25-05-26", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-05-25", "fuzzy": null}, {"id": 72, "asignatura": "ECCE-00101 Introduccion A La Administración P1 y P2 INGECO", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11981", "11982"], "eval_name": "Control, Talleres y/o Otros", "pct": "20", "parallel": null, "date_text": "Plan móvil según avances", "raw": "Control, Talleres y/o Otros\n\n20% — Plan móvil según avances", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": null, "fuzzy": "Plan móvil según avances"}, {"id": 73, "asignatura": "ECCE-00101 Introduccion A La Administración P1 y P2 INGECO", "docente": "RUZ DONOSO MARCO ANTONIO", "nrcs": ["11981", "11982"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "Entregada por ECIEM", "raw": "Examen\n\n30% — Entregada por ECIEM", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": null, "fuzzy": "Entregada por ECIEM"}, {"id": 74, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["13308", "11992"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "27/04/2025", "raw": "Evaluación 1\n\n20% — 27/04/2025", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-27", "fuzzy": null}, {"id": 75, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["13308", "11992"], "eval_name": "Evaluación 2", "pct": "20", "parallel": null, "date_text": "25/05/2025", "raw": "Evaluación 2\n\n20% — 25/05/2025", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-25", "fuzzy": null}, {"id": 76, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["13308"], "eval_name": "Entregable 01 Proyecto", "pct": "10", "parallel": "C1", "date_text": "07/05", "raw": "Entregable 01 Proyecto\n\n10% (33% del 30%)\n\nC1: 07/05\n\nC2: 05/05", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-07", "fuzzy": null}, {"id": 77, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["11992"], "eval_name": "Entregable 01 Proyecto", "pct": "10", "parallel": "C2", "date_text": "05/05", "raw": "Entregable 01 Proyecto\n\n10% (33% del 30%)\n\nC1: 07/05\n\nC2: 05/05", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-05", "fuzzy": null}, {"id": 78, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["13308"], "eval_name": "Entregable 02 Proyecto", "pct": "10", "parallel": "C1", "date_text": "11/06", "raw": "Entregable 02 Proyecto\n\n10% (33% del 30%)\n\nC1: 11/06\n\nC2: 09/06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 79, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["11992"], "eval_name": "Entregable 02 Proyecto", "pct": "10", "parallel": "C2", "date_text": "09/06", "raw": "Entregable 02 Proyecto\n\n10% (33% del 30%)\n\nC1: 11/06\n\nC2: 09/06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-09", "fuzzy": null}, {"id": 80, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["13308"], "eval_name": "Entregable 03 Final Proyecto", "pct": "10", "parallel": "C1", "date_text": "02/07", "raw": "Entregable 03 Final Proyecto\n\n10% (34% del 30%)\n\nC1: 02/07\n\nC2: 30/06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-07-02", "fuzzy": null}, {"id": 81, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["11992"], "eval_name": "Entregable 03 Final Proyecto", "pct": "10", "parallel": "C2", "date_text": "30/06", "raw": "Entregable 03 Final Proyecto\n\n10% (34% del 30%)\n\nC1: 02/07\n\nC2: 30/06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-30", "fuzzy": null}, {"id": 82, "asignatura": "ECCE-00593 Gestión de SIA y Procesos P1 y P2 IICG", "docente": "QUIROZ FELIPE", "nrcs": ["13308", "11992"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "22/06/2025", "raw": "Examen\n\n30% — 22/06/2025", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-22", "fuzzy": null}, {"id": 83, "asignatura": "ECCE-00100 Introduccion A La Economia P1 y P2 INGECO", "docente": "ORAZI SOFIA", "nrcs": ["10094", "10095"], "eval_name": "Evaluación parcial 1", "pct": "20", "parallel": null, "date_text": "27 abril", "raw": "Evaluación parcial 1\n\n20% — 27 abril", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": "2026-04-27", "fuzzy": null}, {"id": 84, "asignatura": "ECCE-00100 Introduccion A La Economia P1 y P2 INGECO", "docente": "ORAZI SOFIA", "nrcs": ["10094", "10095"], "eval_name": "Evaluación parcial 2", "pct": "20", "parallel": null, "date_text": "4 Junio", "raw": "Evaluación parcial 2\n\n20% — 4 Junio", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": "2026-06-04", "fuzzy": null}, {"id": 85, "asignatura": "ECCE-00100 Introduccion A La Economia P1 y P2 INGECO", "docente": "ORAZI SOFIA", "nrcs": ["10094", "10095"], "eval_name": "Evaluación integradora 3", "pct": "40", "parallel": null, "date_text": "A definir (desde 26 junio)", "raw": "Evaluación integradora 3\n\n40% — A definir (desde 26 junio)", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": "2026-06-26", "fuzzy": null}, {"id": 86, "asignatura": "ECCE-00100 Introduccion A La Economia P1 y P2 INGECO", "docente": "ORAZI SOFIA", "nrcs": ["10094", "10095"], "eval_name": "Informe y talleres", "pct": "20", "parallel": null, "date_text": "Todo el semestre", "raw": "Informe y talleres\n\n20% — Todo el semestre", "affected_ruts": ["214733404", "222747031", "224959672"], "nrc_inferred": false, "date": null, "fuzzy": "Todo el semestre"}, {"id": 87, "asignatura": "ECCE-00019 EFP Comercio Internacional INGECO", "docente": "ORAZI SOFIA", "nrcs": ["14155"], "eval_name": "Evaluación parcial 1", "pct": "20", "parallel": null, "date_text": "10 abril", "raw": "Evaluación parcial 1\n\n20% — 10 abril", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-04-10", "fuzzy": null}, {"id": 88, "asignatura": "ECCE-00019 EFP Comercio Internacional INGECO", "docente": "ORAZI SOFIA", "nrcs": ["14155"], "eval_name": "Evaluación parcial 2", "pct": "20", "parallel": null, "date_text": "05 junio", "raw": "Evaluación parcial 2\n\n20% — 05 junio", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-06-05", "fuzzy": null}, {"id": 89, "asignatura": "ECCE-00019 EFP Comercio Internacional INGECO", "docente": "ORAZI SOFIA", "nrcs": ["14155"], "eval_name": "Evaluación integradora 3", "pct": "30", "parallel": null, "date_text": "A definir", "raw": "Evaluación integradora 3\n\n30% — A definir", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": null, "fuzzy": "A definir"}, {"id": 90, "asignatura": "ECCE-00019 EFP Comercio Internacional INGECO", "docente": "ORAZI SOFIA", "nrcs": ["14155"], "eval_name": "Talleres y defensa", "pct": "25", "parallel": null, "date_text": "Todo semestre", "raw": "Talleres y defensa\n\n25% — Todo semestre", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": null, "fuzzy": "Todo semestre"}, {"id": 91, "asignatura": "ECCE-00019 EFP Comercio Internacional INGECO", "docente": "ORAZI SOFIA", "nrcs": ["14155"], "eval_name": "Defensa", "pct": "5", "parallel": null, "date_text": "12 junio", "raw": "Defensa\n\n5% — 12 junio", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-06-12", "fuzzy": null}, {"id": 92, "asignatura": "ECCE-00102 Desarrollo De Actitud Emprendendedora P1 INGECO", "docente": "CEBALLOS VILLARREAL SCARLETT ALEJANDRA", "nrcs": ["10091"], "eval_name": "Evaluación 1", "pct": "25", "parallel": null, "date_text": "24-04-2026", "raw": "Evaluación 1\n\n25% — 24-04-2026", "affected_ruts": ["214733404"], "nrc_inferred": false, "date": "2026-04-24", "fuzzy": null}, {"id": 93, "asignatura": "ECCE-00102 Desarrollo De Actitud Emprendendedora P1 INGECO", "docente": "CEBALLOS VILLARREAL SCARLETT ALEJANDRA", "nrcs": ["10091"], "eval_name": "Evaluación 2", "pct": "35", "parallel": null, "date_text": "05-06-2026", "raw": "Evaluación 2\n\n35% — 05-06-2026", "affected_ruts": ["214733404"], "nrc_inferred": false, "date": "2026-06-05", "fuzzy": null}, {"id": 94, "asignatura": "ECCE-00102 Desarrollo De Actitud Emprendendedora P1 INGECO", "docente": "CEBALLOS VILLARREAL SCARLETT ALEJANDRA", "nrcs": ["10091"], "eval_name": "Control, Talleres y/u Otros", "pct": null, "parallel": null, "date_text": "—", "raw": "Control, Talleres y/u Otros\n\n—", "affected_ruts": ["214733404"], "nrc_inferred": false, "date": null, "fuzzy": "Sin fecha"}, {"id": 95, "asignatura": "ECCE-00102 Desarrollo De Actitud Emprendendedora P1 INGECO", "docente": "CEBALLOS VILLARREAL SCARLETT ALEJANDRA", "nrcs": ["10091"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "17-06-2026", "raw": "Examen\n\n40% — 17-06-2026", "affected_ruts": ["214733404"], "nrc_inferred": false, "date": "2026-06-17", "fuzzy": null}, {"id": 96, "asignatura": "ECCE-00791 Implement. Sist. Cont. Gest. P1 IICG", "docente": "MARVEL CEQUEA MIRZA", "nrcs": ["11995"], "eval_name": "Evaluación 1: Prueba corta escrita", "pct": "15", "parallel": null, "date_text": "24/04", "raw": "Evaluación 1: Prueba corta escrita\n\n15% — 24/04", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-24", "fuzzy": null}, {"id": 97, "asignatura": "ECCE-00791 Implement. Sist. Cont. Gest. P1 IICG", "docente": "MARVEL CEQUEA MIRZA", "nrcs": ["11995"], "eval_name": "Evaluación 2: Prueba corta escrita", "pct": "15", "parallel": null, "date_text": "16/06", "raw": "Evaluación 2: Prueba corta escrita\n\n15% — 16/06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-16", "fuzzy": null}, {"id": 98, "asignatura": "ECCE-00791 Implement. Sist. Cont. Gest. P1 IICG", "docente": "MARVEL CEQUEA MIRZA", "nrcs": ["11995"], "eval_name": "Talleres 1 y 2", "pct": "30", "parallel": null, "date_text": "(15% c/u) — 03/04 y 24/05", "raw": "Talleres 1 y 2\n\n30% (15% c/u) — 03/04 y 24/05", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-03", "fuzzy": null}, {"id": 99, "asignatura": "ECCE-00791 Implement. Sist. Cont. Gest. P1 IICG", "docente": "MARVEL CEQUEA MIRZA", "nrcs": ["11995"], "eval_name": "Talleres 1 y 2", "pct": "30", "parallel": null, "date_text": "(15% c/u) — 03/04 y 24/05", "raw": "Talleres 1 y 2\n\n30% (15% c/u) — 03/04 y 24/05", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-24", "fuzzy": null}, {"id": 100, "asignatura": "ECCE-00791 Implement. Sist. Cont. Gest. P1 IICG", "docente": "MARVEL CEQUEA MIRZA", "nrcs": ["11995"], "eval_name": "Examen Final", "pct": "40", "parallel": null, "date_text": "Por definir", "raw": "Examen Final\n\n40% — Por definir", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 101, "asignatura": "ECCE-00592 Sistemas de Control de Gestión P1 IICG", "docente": "CEQUEA MIRZA", "nrcs": ["11991"], "eval_name": "Evaluación 1: Prueba corta escrita", "pct": "15", "parallel": null, "date_text": "24/04", "raw": "Evaluación 1: Prueba corta escrita\n\n15% — 24/04", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-24", "fuzzy": null}, {"id": 102, "asignatura": "ECCE-00592 Sistemas de Control de Gestión P1 IICG", "docente": "CEQUEA MIRZA", "nrcs": ["11991"], "eval_name": "Evaluación 2: Prueba corta escrita", "pct": "15", "parallel": null, "date_text": "16/06", "raw": "Evaluación 2: Prueba corta escrita\n\n15% — 16/06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-16", "fuzzy": null}, {"id": 103, "asignatura": "ECCE-00592 Sistemas de Control de Gestión P1 IICG", "docente": "CEQUEA MIRZA", "nrcs": ["11991"], "eval_name": "Talleres 1 y 2", "pct": "30", "parallel": null, "date_text": "(15% c/u) — 03/04 y 24/05", "raw": "Talleres 1 y 2\n\n30% (15% c/u) — 03/04 y 24/05", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-03", "fuzzy": null}, {"id": 104, "asignatura": "ECCE-00592 Sistemas de Control de Gestión P1 IICG", "docente": "CEQUEA MIRZA", "nrcs": ["11991"], "eval_name": "Talleres 1 y 2", "pct": "30", "parallel": null, "date_text": "(15% c/u) — 03/04 y 24/05", "raw": "Talleres 1 y 2\n\n30% (15% c/u) — 03/04 y 24/05", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-24", "fuzzy": null}, {"id": 105, "asignatura": "ECCE-00592 Sistemas de Control de Gestión P1 IICG", "docente": "CEQUEA MIRZA", "nrcs": ["11991"], "eval_name": "Examen Final", "pct": "40", "parallel": null, "date_text": "Por definir", "raw": "Examen Final\n\n40% — Por definir", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 106, "asignatura": "ECCE-00794 Big Data para Toma Decisiones P1 IICG", "docente": "DUARTE CORRES VANNESSA DE JESUS", "nrcs": ["11996"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "29 de Abril", "raw": "Evaluación 1\n\n20% — 29 de Abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-29", "fuzzy": null}, {"id": 107, "asignatura": "ECCE-00794 Big Data para Toma Decisiones P1 IICG", "docente": "DUARTE CORRES VANNESSA DE JESUS", "nrcs": ["11996"], "eval_name": "Proyecto", "pct": "40", "parallel": null, "date_text": "Semana de Pruebas según calendario ECIEM", "raw": "Proyecto\n\n40% — Semana de Pruebas según calendario ECIEM", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "según calendario"}, {"id": 108, "asignatura": "ECCE-00794 Big Data para Toma Decisiones P1 IICG", "docente": "DUARTE CORRES VANNESSA DE JESUS", "nrcs": ["11996"], "eval_name": "Control, Talleres y/u Otros (Ensayo)", "pct": "40", "parallel": null, "date_text": "Continuo cada dos semanas", "raw": "Control, Talleres y/u Otros (Ensayo)\n\n40% — Continuo cada dos semanas", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Continuo cada dos semanas"}, {"id": 109, "asignatura": "ECCE-00408 Econometria P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10109"], "eval_name": "Evaluación 1 Prueba Escrita", "pct": "20", "parallel": null, "date_text": "22 de Abril", "raw": "Evaluación 1 Prueba Escrita\n\n20% — 22 de Abril", "affected_ruts": ["211299568", "21984011K"], "nrc_inferred": false, "date": "2026-04-22", "fuzzy": null}, {"id": 110, "asignatura": "ECCE-00408 Econometria P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10109"], "eval_name": "Evaluación 2 Prueba Escrita", "pct": "20", "parallel": null, "date_text": "10 de Junio", "raw": "Evaluación 2 Prueba Escrita\n\n20% — 10 de Junio", "affected_ruts": ["211299568", "21984011K"], "nrc_inferred": false, "date": "2026-06-10", "fuzzy": null}, {"id": 111, "asignatura": "ECCE-00408 Econometria P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10109"], "eval_name": "2 Control (10%), Taller (5%), PIE (10%), Asistencia (5%)", "pct": "10", "parallel": null, "date_text": "Durante el semestre", "raw": "2 Control (10%), Taller (5%), PIE (10%), Asistencia (5%)\n\n30% — Durante el semestre", "affected_ruts": ["211299568", "21984011K"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 112, "asignatura": "ECCE-00408 Econometria P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10109"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "Por definir", "raw": "Examen\n\n30% — Por definir", "affected_ruts": ["211299568", "21984011K"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 113, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Control 1", "pct": "10", "parallel": null, "date_text": "6 de abril", "raw": "Control 1\n\n10% — 6 de abril", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-04-06", "fuzzy": null}, {"id": 114, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Caso Práctico 1", "pct": "5", "parallel": null, "date_text": "8 de abril", "raw": "Caso Práctico 1\n\n5% — 8 de abril", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-04-08", "fuzzy": null}, {"id": 115, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Control 2", "pct": "10", "parallel": null, "date_text": "4 de mayo", "raw": "Control 2\n\n10% — 4 de mayo", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-05-04", "fuzzy": null}, {"id": 116, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Caso Práctico 2", "pct": "5", "parallel": null, "date_text": "6 de mayo", "raw": "Caso Práctico 2\n\n5% — 6 de mayo", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-05-06", "fuzzy": null}, {"id": 117, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Control 3", "pct": "10", "parallel": null, "date_text": "25 de mayo", "raw": "Control 3\n\n10% — 25 de mayo", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-05-25", "fuzzy": null}, {"id": 118, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Caso Práctico 3", "pct": "5", "parallel": null, "date_text": "27 de mayo", "raw": "Caso Práctico 3\n\n5% — 27 de mayo", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-05-27", "fuzzy": null}, {"id": 119, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Control 4", "pct": "10", "parallel": null, "date_text": "15 de junio", "raw": "Control 4\n\n10% — 15 de junio", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-06-15", "fuzzy": null}, {"id": 120, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Caso Práctico 4", "pct": "5", "parallel": null, "date_text": "17 de junio", "raw": "Caso Práctico 4\n\n5% — 17 de junio", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": "2026-06-17", "fuzzy": null}, {"id": 121, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P2 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["11337"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "julio", "raw": "Examen\n\n40% — julio", "affected_ruts": ["217485525", "221192192"], "nrc_inferred": false, "date": null, "fuzzy": "Julio"}, {"id": 122, "asignatura": "ECCE-00595 Estadísticas II P1 IICG", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["12218"], "eval_name": "Primera prueba parcial", "pct": "20", "parallel": null, "date_text": "Martes 22 de Abril", "raw": "Primera prueba parcial\n\n20% — Martes 22 de Abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-22", "fuzzy": null}, {"id": 123, "asignatura": "ECCE-00595 Estadísticas II P1 IICG", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["12218"], "eval_name": "Segunda prueba parcial", "pct": "20", "parallel": null, "date_text": "Martes 27 de Mayo", "raw": "Segunda prueba parcial\n\n20% — Martes 27 de Mayo", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-27", "fuzzy": null}, {"id": 124, "asignatura": "ECCE-00595 Estadísticas II P1 IICG", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["12218"], "eval_name": "Tercera prueba parcial", "pct": "20", "parallel": null, "date_text": "Martes 17 de Junio", "raw": "Tercera prueba parcial\n\n20% — Martes 17 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-17", "fuzzy": null}, {"id": 125, "asignatura": "ECCE-00595 Estadísticas II P1 IICG", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["12218"], "eval_name": "Notas acumulativas", "pct": "10", "parallel": null, "date_text": "Durante el semestre", "raw": "Notas acumulativas\n\n10% — Durante el semestre", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 126, "asignatura": "ECCE-00595 Estadísticas II P1 IICG", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["12218"], "eval_name": "Examen final", "pct": "30", "parallel": null, "date_text": "Por definir", "raw": "Examen final\n\n30% — Por definir", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 127, "asignatura": "ECCE-00308 Estadistica II  P1 y P2 INGECO", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["10967", "10106"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "23 de Abril", "raw": "Evaluación 1\n\n20% — 23 de Abril", "affected_ruts": ["218632114", "223014313"], "nrc_inferred": false, "date": "2026-04-23", "fuzzy": null}, {"id": 128, "asignatura": "ECCE-00308 Estadistica II  P1 y P2 INGECO", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["10967", "10106"], "eval_name": "Evaluación 2", "pct": "20", "parallel": null, "date_text": "28 de Mayo", "raw": "Evaluación 2\n\n20% — 28 de Mayo", "affected_ruts": ["218632114", "223014313"], "nrc_inferred": false, "date": "2026-05-28", "fuzzy": null}, {"id": 129, "asignatura": "ECCE-00308 Estadistica II  P1 y P2 INGECO", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["10967", "10106"], "eval_name": "Evaluación 3", "pct": "20", "parallel": null, "date_text": "18 de Junio", "raw": "Evaluación 3\n\n20% — 18 de Junio", "affected_ruts": ["218632114", "223014313"], "nrc_inferred": false, "date": "2026-06-18", "fuzzy": null}, {"id": 130, "asignatura": "ECCE-00308 Estadistica II  P1 y P2 INGECO", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["10967", "10106"], "eval_name": "Control, Talleres y/u Otros", "pct": "10", "parallel": null, "date_text": "Durante todo el semestre", "raw": "Control, Talleres y/u Otros\n\n10% — Durante todo el semestre", "affected_ruts": ["218632114", "223014313"], "nrc_inferred": false, "date": null, "fuzzy": "Durante todo el semestre"}, {"id": 131, "asignatura": "ECCE-00308 Estadistica II  P1 y P2 INGECO", "docente": "DE LA BARRA OLIVARES ERICK ANDRÉS", "nrcs": ["10967", "10106"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "Por definir", "raw": "Examen\n\n30% — Por definir", "affected_ruts": ["218632114", "223014313"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 132, "asignatura": "ECCE-00392 Logística P1 y P2 IICG", "docente": "BIZIEN . ANNE", "nrcs": ["11988", "11989"], "eval_name": "Prueba 1 mixta", "pct": "25", "parallel": null, "date_text": "28/04", "raw": "Prueba 1 mixta\n\n25% — 28/04", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-04-28", "fuzzy": null}, {"id": 133, "asignatura": "ECCE-00392 Logística P1 y P2 IICG", "docente": "BIZIEN . ANNE", "nrcs": ["11988", "11989"], "eval_name": "Prueba 2 mixta", "pct": "25", "parallel": null, "date_text": "26/05", "raw": "Prueba 2 mixta\n\n25% — 26/05", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-05-26", "fuzzy": null}, {"id": 134, "asignatura": "ECCE-00392 Logística P1 y P2 IICG", "docente": "BIZIEN . ANNE", "nrcs": ["11988", "11989"], "eval_name": "Estudio de Caso", "pct": "10", "parallel": null, "date_text": "Mayo-Junio", "raw": "Estudio de Caso\n\n10% — Mayo-Junio", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": null, "fuzzy": "Mayo"}, {"id": 135, "asignatura": "ECCE-00392 Logística P1 y P2 IICG", "docente": "BIZIEN . ANNE", "nrcs": ["11988", "11989"], "eval_name": "Presentación Tema oral", "pct": "10", "parallel": null, "date_text": "Durante el semestre", "raw": "Presentación Tema oral\n\n10% — Durante el semestre", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 136, "asignatura": "ECCE-00392 Logística P1 y P2 IICG", "docente": "BIZIEN . ANNE", "nrcs": ["11988", "11989"], "eval_name": "EXAMEN FINAL", "pct": "30", "parallel": null, "date_text": "27/06", "raw": "EXAMEN FINAL\n\n30% — 27/06", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-06-27", "fuzzy": null}, {"id": 137, "asignatura": "ECCE-00203 Estadistica I  P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10100"], "eval_name": "Primera prueba parcial", "pct": "25", "parallel": null, "date_text": "Jueves 23 de Abril", "raw": "Primera prueba parcial\n\n25% — Jueves 23 de Abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-23", "fuzzy": null}, {"id": 138, "asignatura": "ECCE-00203 Estadistica I  P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10100"], "eval_name": "Segunda prueba parcial", "pct": "25", "parallel": null, "date_text": "Jueves 11 de Junio", "raw": "Segunda prueba parcial\n\n25% — Jueves 11 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 139, "asignatura": "ECCE-00203 Estadistica I  P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10100"], "eval_name": "Notas acumulativas (2 controles)", "pct": "20", "parallel": null, "date_text": "Durante el semestre", "raw": "Notas acumulativas (2 controles)\n\n20% — Durante el semestre", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 140, "asignatura": "ECCE-00203 Estadistica I  P1 INGECO", "docente": "RODRIGUEZ PABLO", "nrcs": ["10100"], "eval_name": "Examen final", "pct": "30", "parallel": null, "date_text": "Por definir", "raw": "Examen final\n\n30% — Por definir", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 141, "asignatura": "ECCE-00191 Intro. a la Administración P1 y P2 IICG", "docente": "LOAYZA ESPINOZA JOAQUIN ANDRES", "nrcs": ["11981", "11982"], "eval_name": "Evaluación 1: Prueba Escrita", "pct": "20", "parallel": null, "date_text": "14 Abril", "raw": "Evaluación 1: Prueba Escrita\n\n20% — 14 Abril", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-04-14", "fuzzy": null}, {"id": 142, "asignatura": "ECCE-00191 Intro. a la Administración P1 y P2 IICG", "docente": "LOAYZA ESPINOZA JOAQUIN ANDRES", "nrcs": ["11981", "11982"], "eval_name": "Evaluación 2: Prueba Escrita", "pct": "25", "parallel": null, "date_text": "26 de Mayo", "raw": "Evaluación 2: Prueba Escrita\n\n25% — 26 de Mayo", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-05-26", "fuzzy": null}, {"id": 143, "asignatura": "ECCE-00191 Intro. a la Administración P1 y P2 IICG", "docente": "LOAYZA ESPINOZA JOAQUIN ANDRES", "nrcs": ["11981", "11982"], "eval_name": "Control, Talleres y/u Otros (5 notas)", "pct": "25", "parallel": null, "date_text": "Durante el semestre", "raw": "Control, Talleres y/u Otros (5 notas)\n\n25% — Durante el semestre", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 144, "asignatura": "ECCE-00191 Intro. a la Administración P1 y P2 IICG", "docente": "LOAYZA ESPINOZA JOAQUIN ANDRES", "nrcs": ["11981", "11982"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "Desde el 24 de Junio", "raw": "Examen\n\n30% — Desde el 24 de Junio", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-06-24", "fuzzy": null}, {"id": 145, "asignatura": "ECCE-00094 EFP: DESIGN THINKING INGECO", "docente": "ERRÁZURIZ BULNES ISIDORA", "nrcs": ["11195"], "eval_name": "Evaluación grupal 1", "pct": "20", "parallel": null, "date_text": "02-04", "raw": "Evaluación grupal 1\n\n20% — 02-04", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-04-02", "fuzzy": null}, {"id": 146, "asignatura": "ECCE-00094 EFP: DESIGN THINKING INGECO", "docente": "ERRÁZURIZ BULNES ISIDORA", "nrcs": ["11195"], "eval_name": "Evaluación grupal 2", "pct": "20", "parallel": null, "date_text": "23-04", "raw": "Evaluación grupal 2\n\n20% — 23-04", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-04-23", "fuzzy": null}, {"id": 147, "asignatura": "ECCE-00094 EFP: DESIGN THINKING INGECO", "docente": "ERRÁZURIZ BULNES ISIDORA", "nrcs": ["11195"], "eval_name": "Evaluación final Business Plan", "pct": "30", "parallel": null, "date_text": "04-06", "raw": "Evaluación final Business Plan\n\n30% — 04-06", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-06-04", "fuzzy": null}, {"id": 148, "asignatura": "ECCE-00094 EFP: DESIGN THINKING INGECO", "docente": "ERRÁZURIZ BULNES ISIDORA", "nrcs": ["11195"], "eval_name": "Evaluación Pitch de ventas", "pct": "10", "parallel": null, "date_text": "25-06", "raw": "Evaluación Pitch de ventas\n\n10% — 25-06", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 149, "asignatura": "ECCE-00094 EFP: DESIGN THINKING INGECO", "docente": "ERRÁZURIZ BULNES ISIDORA", "nrcs": ["11195"], "eval_name": "Examen Final", "pct": "20", "parallel": null, "date_text": "Por definir", "raw": "Examen Final\n\n20% — Por definir", "affected_ruts": ["21150627K"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 150, "asignatura": "ECCE-00200 Macroeconomia I  P1 INGECO", "docente": "CORTÉS PATRICIO", "nrcs": ["10101"], "eval_name": "Prueba Parcial 1 (Unidades I, II y III)", "pct": "25", "parallel": null, "date_text": "23 de abril", "raw": "Prueba Parcial 1 (Unidades I, II y III)\n\n25% — 23 de abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-23", "fuzzy": null}, {"id": 151, "asignatura": "ECCE-00200 Macroeconomia I  P1 INGECO", "docente": "CORTÉS PATRICIO", "nrcs": ["10101"], "eval_name": "Prueba Parcial 2 (Unidad IV)", "pct": "25", "parallel": null, "date_text": "18 de junio", "raw": "Prueba Parcial 2 (Unidad IV)\n\n25% — 18 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-18", "fuzzy": null}, {"id": 152, "asignatura": "ECCE-00200 Macroeconomia I  P1 INGECO", "docente": "CORTÉS PATRICIO", "nrcs": ["10101"], "eval_name": "Controles (2 evaluaciones)", "pct": "20", "parallel": null, "date_text": "(10% c/u) — Según planificación", "raw": "Controles (2 evaluaciones)\n\n20% (10% c/u) — Según planificación", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Según planificación"}, {"id": 153, "asignatura": "ECCE-00200 Macroeconomia I  P1 INGECO", "docente": "CORTÉS PATRICIO", "nrcs": ["10101"], "eval_name": "Examen Final", "pct": "30", "parallel": null, "date_text": "Definida por jefatura", "raw": "Examen Final\n\n30% — Definida por jefatura", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Definida por jefatura"}, {"id": 154, "asignatura": "ECCE-00394 Base de Datos P1 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["12216", "12259"], "eval_name": "Evaluación 1", "pct": "25", "parallel": null, "date_text": "21-04-26", "raw": "Evaluación 1\n\n25% — 21-04-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-21", "fuzzy": null}, {"id": 155, "asignatura": "ECCE-00394 Base de Datos P1 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["12216", "12259"], "eval_name": "Evaluación 2", "pct": "25", "parallel": null, "date_text": "02-06-26", "raw": "Evaluación 2\n\n25% — 02-06-26", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-02", "fuzzy": null}, {"id": 156, "asignatura": "ECCE-00394 Base de Datos P1 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["12216", "12259"], "eval_name": "Controles", "pct": "15", "parallel": null, "date_text": "A definir", "raw": "Controles\n\n15% — A definir", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "A definir"}, {"id": 157, "asignatura": "ECCE-00394 Base de Datos P1 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["12216", "12259"], "eval_name": "Examen", "pct": "35", "parallel": null, "date_text": "Fijado por ECIEM", "raw": "Examen\n\n35% — Fijado por ECIEM", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Fijado por ECIEM"}, {"id": 158, "asignatura": "ECCE-00193 Programación P2 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["11984", "11983"], "eval_name": "Prueba 1", "pct": "20", "parallel": null, "date_text": "15-04-2026", "raw": "Prueba 1\n\n20% — 15-04-2026", "affected_ruts": ["225063478", "225551790", "225924724"], "nrc_inferred": false, "date": "2026-04-15", "fuzzy": null}, {"id": 159, "asignatura": "ECCE-00193 Programación P2 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["11984", "11983"], "eval_name": "Prueba 2", "pct": "20", "parallel": null, "date_text": "27-05-2026", "raw": "Prueba 2\n\n20% — 27-05-2026", "affected_ruts": ["225063478", "225551790", "225924724"], "nrc_inferred": false, "date": "2026-05-27", "fuzzy": null}, {"id": 160, "asignatura": "ECCE-00193 Programación P2 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["11984", "11983"], "eval_name": "Control", "pct": "20", "parallel": null, "date_text": "Continua (clases teóricas)", "raw": "Control\n\n20% — Continua (clases teóricas)", "affected_ruts": ["225063478", "225551790", "225924724"], "nrc_inferred": false, "date": null, "fuzzy": "Continua"}, {"id": 161, "asignatura": "ECCE-00193 Programación P2 IICG", "docente": "BUGUEÑO . BORIS", "nrcs": ["11984", "11983"], "eval_name": "Examen Global", "pct": "40", "parallel": null, "date_text": "A fijar por ECIEM", "raw": "Examen Global\n\n40% — A fijar por ECIEM", "affected_ruts": ["225063478", "225551790", "225924724"], "nrc_inferred": false, "date": null, "fuzzy": "A fijar por ECIEM"}, {"id": 162, "asignatura": "ECCE-00713 Sistemas De Informacion P1 INGECO", "docente": "BUGUEÑO . BORIS", "nrcs": ["10120", "10686"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "10-04-26", "raw": "Evaluación 1\n\n20% — 10-04-26", "affected_ruts": ["208157078", "208637304", "213970321", "214586908", "217434572", "217650240", "218243797"], "nrc_inferred": false, "date": "2026-04-10", "fuzzy": null}, {"id": 163, "asignatura": "ECCE-00713 Sistemas De Informacion P1 INGECO", "docente": "BUGUEÑO . BORIS", "nrcs": ["10120", "10686"], "eval_name": "Evaluación 2", "pct": "25", "parallel": null, "date_text": "29-05-26", "raw": "Evaluación 2\n\n25% — 29-05-26", "affected_ruts": ["208157078", "208637304", "213970321", "214586908", "217434572", "217650240", "218243797"], "nrc_inferred": false, "date": "2026-05-29", "fuzzy": null}, {"id": 164, "asignatura": "ECCE-00713 Sistemas De Informacion P1 INGECO", "docente": "BUGUEÑO . BORIS", "nrcs": ["10120", "10686"], "eval_name": "Proyecto", "pct": "20", "parallel": null, "date_text": "22-06-26", "raw": "Proyecto\n\n20% — 22-06-26", "affected_ruts": ["208157078", "208637304", "213970321", "214586908", "217434572", "217650240", "218243797"], "nrc_inferred": false, "date": "2026-06-22", "fuzzy": null}, {"id": 165, "asignatura": "ECCE-00713 Sistemas De Informacion P1 INGECO", "docente": "BUGUEÑO . BORIS", "nrcs": ["10120", "10686"], "eval_name": "Examen", "pct": "35", "parallel": null, "date_text": "Fijado por ECIEM", "raw": "Examen\n\n35% — Fijado por ECIEM", "affected_ruts": ["208157078", "208637304", "213970321", "214586908", "217434572", "217650240", "218243797"], "nrc_inferred": false, "date": null, "fuzzy": "Fijado por ECIEM"}, {"id": 166, "asignatura": "ECCE-00793 Estrategias de TI y E-Business P1 IICG", "docente": "ASTORGA BARRIOS RAUL ANTONIO", "nrcs": ["11997"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "16 abril", "raw": "Evaluación 1\n\n20% — 16 abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 167, "asignatura": "ECCE-00793 Estrategias de TI y E-Business P1 IICG", "docente": "ASTORGA BARRIOS RAUL ANTONIO", "nrcs": ["11997"], "eval_name": "Evaluación 2", "pct": "30", "parallel": null, "date_text": "18 junio", "raw": "Evaluación 2\n\n30% — 18 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-18", "fuzzy": null}, {"id": 168, "asignatura": "ECCE-00793 Estrategias de TI y E-Business P1 IICG", "docente": "ASTORGA BARRIOS RAUL ANTONIO", "nrcs": ["11997"], "eval_name": "Control, Talleres y/u Otros", "pct": "10", "parallel": null, "date_text": "04 junio", "raw": "Control, Talleres y/u Otros\n\n10% — 04 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-04", "fuzzy": null}, {"id": 169, "asignatura": "ECCE-00793 Estrategias de TI y E-Business P1 IICG", "docente": "ASTORGA BARRIOS RAUL ANTONIO", "nrcs": ["11997"], "eval_name": "Proyecto Semestral", "pct": "40", "parallel": null, "date_text": "11 junio", "raw": "Proyecto Semestral\n\n40% — 11 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 170, "asignatura": "ECCE-00494 Aplicaciones Móviles P1 IICG", "docente": "SAAVEDRA LINO", "nrcs": ["12217"], "eval_name": "Evaluación 1: Prueba Escrita", "pct": "20", "parallel": null, "date_text": "16 de Abril", "raw": "Evaluación 1: Prueba Escrita\n\n20% — 16 de Abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 171, "asignatura": "ECCE-00494 Aplicaciones Móviles P1 IICG", "docente": "SAAVEDRA LINO", "nrcs": ["12217"], "eval_name": "Evaluación 2: Prueba Práctica", "pct": "20", "parallel": null, "date_text": "07 de Mayo", "raw": "Evaluación 2: Prueba Práctica\n\n20% — 07 de Mayo", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-07", "fuzzy": null}, {"id": 172, "asignatura": "ECCE-00494 Aplicaciones Móviles P1 IICG", "docente": "SAAVEDRA LINO", "nrcs": ["12217"], "eval_name": "Evaluación 3: Prueba Práctica", "pct": "20", "parallel": null, "date_text": "11-12 de Junio", "raw": "Evaluación 3: Prueba Práctica\n\n20% — 11-12 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 173, "asignatura": "ECCE-00494 Aplicaciones Móviles P1 IICG", "docente": "SAAVEDRA LINO", "nrcs": ["12217"], "eval_name": "Evaluación 3: Prueba Práctica", "pct": "20", "parallel": null, "date_text": "11-12 de Junio", "raw": "Evaluación 3: Prueba Práctica\n\n20% — 11-12 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-12", "fuzzy": null}, {"id": 174, "asignatura": "ECCE-00494 Aplicaciones Móviles P1 IICG", "docente": "SAAVEDRA LINO", "nrcs": ["12217"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "25-26 de Junio", "raw": "Examen\n\n40% — 25-26 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 175, "asignatura": "ECCE-00494 Aplicaciones Móviles P1 IICG", "docente": "SAAVEDRA LINO", "nrcs": ["12217"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "25-26 de Junio", "raw": "Examen\n\n40% — 25-26 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-26", "fuzzy": null}, {"id": 176, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": [], "nrc_inferred": false, "date": "2026-03-23", "fuzzy": null}, {"id": 177, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": [], "nrc_inferred": false, "date": "2026-03-24", "fuzzy": null}, {"id": 178, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": [], "nrc_inferred": false, "date": "2026-03-25", "fuzzy": null}, {"id": 179, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": [], "nrc_inferred": false, "date": "2026-03-26", "fuzzy": null}, {"id": 180, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": [], "nrc_inferred": false, "date": "2026-03-27", "fuzzy": null}, {"id": 181, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad II: Módulo MM", "pct": "25", "parallel": null, "date_text": "24/04/2026", "raw": "Unidad II: Módulo MM\n\n25% — 24/04/2026", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-24", "fuzzy": null}, {"id": 182, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad III: Módulo SD", "pct": "25", "parallel": null, "date_text": "25/05/2026", "raw": "Unidad III: Módulo SD\n\n25% — 25/05/2026", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-25", "fuzzy": null}, {"id": 183, "asignatura": "ECCE-00156 EFP:Proyecto Integrado SAP IICG", "docente": "FRANULIC VLADIMIR", "nrcs": ["12040"], "eval_name": "Unidad IV: Módulo FI", "pct": "25", "parallel": null, "date_text": "19/06/2026", "raw": "Unidad IV: Módulo FI\n\n25% — 19/06/2026", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-19", "fuzzy": null}, {"id": 184, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-03-23", "fuzzy": null}, {"id": 185, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-03-24", "fuzzy": null}, {"id": 186, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-03-25", "fuzzy": null}, {"id": 187, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-03-26", "fuzzy": null}, {"id": 188, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad I: Intro Sap Fiori", "pct": "25", "parallel": null, "date_text": "23/03 al 27/03", "raw": "Unidad I: Intro Sap Fiori\n\n25% — 23/03 al 27/03", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-03-27", "fuzzy": null}, {"id": 189, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad II: Módulo MM", "pct": "25", "parallel": null, "date_text": "24/04/2026", "raw": "Unidad II: Módulo MM\n\n25% — 24/04/2026", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-04-24", "fuzzy": null}, {"id": 190, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad III: Módulo SD", "pct": "25", "parallel": null, "date_text": "25/05/2026", "raw": "Unidad III: Módulo SD\n\n25% — 25/05/2026", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-05-25", "fuzzy": null}, {"id": 191, "asignatura": "ECCE-00067 EFP: Proyecto Integrado SAP INGECO", "docente": "FRANULIC VLADIMIR", "nrcs": ["10991"], "eval_name": "Unidad IV: Módulo FI", "pct": "25", "parallel": null, "date_text": "19/06/2026", "raw": "Unidad IV: Módulo FI\n\n25% — 19/06/2026", "affected_ruts": ["209452987", "21150627K"], "nrc_inferred": false, "date": "2026-06-19", "fuzzy": null}, {"id": 192, "asignatura": "ECCE-00153 EFP:Marketing Digital INGECO", "docente": "CORTEZ CONSUELO", "nrcs": ["12036"], "eval_name": "Primera Prueba Parcial (RA: A y D)", "pct": "20", "parallel": null, "date_text": "27-04", "raw": "Primera Prueba Parcial (RA: A y D)\n\n20% — 27-04", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-27", "fuzzy": null}, {"id": 193, "asignatura": "ECCE-00153 EFP:Marketing Digital INGECO", "docente": "CORTEZ CONSUELO", "nrcs": ["12036"], "eval_name": "Evaluación Parcial 2 (Informe y Exposición)", "pct": "25", "parallel": null, "date_text": "15-06 y 18-06", "raw": "Evaluación Parcial 2 (Informe y Exposición)\n\n25% — 15-06 y 18-06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-15", "fuzzy": null}, {"id": 194, "asignatura": "ECCE-00153 EFP:Marketing Digital INGECO", "docente": "CORTEZ CONSUELO", "nrcs": ["12036"], "eval_name": "Evaluación Parcial 2 (Informe y Exposición)", "pct": "25", "parallel": null, "date_text": "15-06 y 18-06", "raw": "Evaluación Parcial 2 (Informe y Exposición)\n\n25% — 15-06 y 18-06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-18", "fuzzy": null}, {"id": 195, "asignatura": "ECCE-00153 EFP:Marketing Digital INGECO", "docente": "CORTEZ CONSUELO", "nrcs": ["12036"], "eval_name": "Notas Acumulativas (Talleres y Controles)", "pct": "20", "parallel": null, "date_text": "22-06", "raw": "Notas Acumulativas (Talleres y Controles)\n\n20% — 22-06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-22", "fuzzy": null}, {"id": 196, "asignatura": "ECCE-00153 EFP:Marketing Digital INGECO", "docente": "CORTEZ CONSUELO", "nrcs": ["12036"], "eval_name": "Examen", "pct": "35", "parallel": null, "date_text": "25-06", "raw": "Examen\n\n35% — 25-06", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 197, "asignatura": "ECCE-00393 Aplicaciones Computacionales P1 y P2 IICG", "docente": "ARAYA PLAZA NATALIA ANDREA", "nrcs": ["12214", "12215"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "16-04-2026", "raw": "Evaluación 1\n\n20% — 16-04-2026", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 198, "asignatura": "ECCE-00393 Aplicaciones Computacionales P1 y P2 IICG", "docente": "ARAYA PLAZA NATALIA ANDREA", "nrcs": ["12214", "12215"], "eval_name": "Evaluación 2", "pct": "25", "parallel": null, "date_text": "28-05-2026", "raw": "Evaluación 2\n\n25% — 28-05-2026", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-05-28", "fuzzy": null}, {"id": 199, "asignatura": "ECCE-00393 Aplicaciones Computacionales P1 y P2 IICG", "docente": "ARAYA PLAZA NATALIA ANDREA", "nrcs": ["12214", "12215"], "eval_name": "Control, Talleres y/u Otros", "pct": "15", "parallel": null, "date_text": "26-03, 07-05 y 11-06", "raw": "Control, Talleres y/u Otros\n\n15% — 26-03, 07-05 y 11-06", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-03-26", "fuzzy": null}, {"id": 200, "asignatura": "ECCE-00393 Aplicaciones Computacionales P1 y P2 IICG", "docente": "ARAYA PLAZA NATALIA ANDREA", "nrcs": ["12214", "12215"], "eval_name": "Control, Talleres y/u Otros", "pct": "15", "parallel": null, "date_text": "26-03, 07-05 y 11-06", "raw": "Control, Talleres y/u Otros\n\n15% — 26-03, 07-05 y 11-06", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-05-07", "fuzzy": null}, {"id": 201, "asignatura": "ECCE-00393 Aplicaciones Computacionales P1 y P2 IICG", "docente": "ARAYA PLAZA NATALIA ANDREA", "nrcs": ["12214", "12215"], "eval_name": "Control, Talleres y/u Otros", "pct": "15", "parallel": null, "date_text": "26-03, 07-05 y 11-06", "raw": "Control, Talleres y/u Otros\n\n15% — 26-03, 07-05 y 11-06", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 202, "asignatura": "ECCE-00393 Aplicaciones Computacionales P1 y P2 IICG", "docente": "ARAYA PLAZA NATALIA ANDREA", "nrcs": ["12214", "12215"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Por definir", "raw": "Examen\n\n40% — Por definir", "affected_ruts": ["225551790"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 203, "asignatura": "ECCE-00391 Contabilidad para la Gestión P1 y P2 IICG", "docente": "DIAZ MARCELA", "nrcs": ["12212", "12213"], "eval_name": "Evaluación 1: Prueba Escrita", "pct": "25", "parallel": null, "date_text": "16 de Abril", "raw": "Evaluación 1: Prueba Escrita\n\n25% — 16 de Abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 204, "asignatura": "ECCE-00391 Contabilidad para la Gestión P1 y P2 IICG", "docente": "DIAZ MARCELA", "nrcs": ["12212", "12213"], "eval_name": "Evaluación 2: Prueba Escrita", "pct": "25", "parallel": null, "date_text": "11 de Junio", "raw": "Evaluación 2: Prueba Escrita\n\n25% — 11 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 205, "asignatura": "ECCE-00391 Contabilidad para la Gestión P1 y P2 IICG", "docente": "DIAZ MARCELA", "nrcs": ["12212", "12213"], "eval_name": "Control, Talleres y/u Otros (Ensayo)", "pct": "15", "parallel": null, "date_text": "08 de abril y 03 de junio", "raw": "Control, Talleres y/u Otros (Ensayo)\n\n15% — 08 de abril y 03 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-08", "fuzzy": null}, {"id": 206, "asignatura": "ECCE-00391 Contabilidad para la Gestión P1 y P2 IICG", "docente": "DIAZ MARCELA", "nrcs": ["12212", "12213"], "eval_name": "Control, Talleres y/u Otros (Ensayo)", "pct": "15", "parallel": null, "date_text": "08 de abril y 03 de junio", "raw": "Control, Talleres y/u Otros (Ensayo)\n\n15% — 08 de abril y 03 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-03", "fuzzy": null}, {"id": 207, "asignatura": "ECCE-00391 Contabilidad para la Gestión P1 y P2 IICG", "docente": "DIAZ MARCELA", "nrcs": ["12212", "12213"], "eval_name": "Examen", "pct": "35", "parallel": null, "date_text": "25 de junio", "raw": "Examen\n\n35% — 25 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 208, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Prueba 1", "pct": "15", "parallel": null, "date_text": "22-04", "raw": "Prueba 1\n\n15% — 22-04", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-04-22", "fuzzy": null}, {"id": 209, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Prueba 2", "pct": "25", "parallel": null, "date_text": "03-06", "raw": "Prueba 2\n\n25% — 03-06", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-06-03", "fuzzy": null}, {"id": 210, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Control y Talleres", "pct": "20", "parallel": null, "date_text": "25-03, 08-04, 29-04, 11-05 y 15-06", "raw": "Control y Talleres\n\n20% — 25-03, 08-04, 29-04, 11-05 y 15-06", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-03-25", "fuzzy": null}, {"id": 211, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Control y Talleres", "pct": "20", "parallel": null, "date_text": "25-03, 08-04, 29-04, 11-05 y 15-06", "raw": "Control y Talleres\n\n20% — 25-03, 08-04, 29-04, 11-05 y 15-06", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-04-08", "fuzzy": null}, {"id": 212, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Control y Talleres", "pct": "20", "parallel": null, "date_text": "25-03, 08-04, 29-04, 11-05 y 15-06", "raw": "Control y Talleres\n\n20% — 25-03, 08-04, 29-04, 11-05 y 15-06", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-04-29", "fuzzy": null}, {"id": 213, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Control y Talleres", "pct": "20", "parallel": null, "date_text": "25-03, 08-04, 29-04, 11-05 y 15-06", "raw": "Control y Talleres\n\n20% — 25-03, 08-04, 29-04, 11-05 y 15-06", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-05-11", "fuzzy": null}, {"id": 214, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Control y Talleres", "pct": "20", "parallel": null, "date_text": "25-03, 08-04, 29-04, 11-05 y 15-06", "raw": "Control y Talleres\n\n20% — 25-03, 08-04, 29-04, 11-05 y 15-06", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": "2026-06-15", "fuzzy": null}, {"id": 215, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Examen", "pct": "35", "parallel": null, "date_text": "Por definir", "raw": "Examen\n\n35% — Por definir", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 216, "asignatura": "ECCE-00202 Contabilidad Financiera I  P1 - Contabilidad y Negocios P1* INGECO-IICG", "docente": "CARRASCO  MONTECINO MERARY", "nrcs": ["13383", "10099"], "eval_name": "Trabajo en clases", "pct": "5", "parallel": null, "date_text": "Cada sesión", "raw": "Trabajo en clases\n\n5% — Cada sesión", "affected_ruts": ["213942670"], "nrc_inferred": false, "date": null, "fuzzy": "Cada sesión"}, {"id": 217, "asignatura": "ECCE-00607 Integrador I : Taller Diagnost P1 INGECO", "docente": "SORIA BARRETO KARLA LUCIA", "nrcs": ["11393"], "eval_name": "Informe Avance 1", "pct": "20", "parallel": null, "date_text": "10 de abril", "raw": "Informe Avance 1\n\n20% — 10 de abril", "affected_ruts": ["218243797"], "nrc_inferred": false, "date": "2026-04-10", "fuzzy": null}, {"id": 218, "asignatura": "ECCE-00607 Integrador I : Taller Diagnost P1 INGECO", "docente": "SORIA BARRETO KARLA LUCIA", "nrcs": ["11393"], "eval_name": "Informe Avance 2", "pct": "30", "parallel": null, "date_text": "08 de mayo", "raw": "Informe Avance 2\n\n30% — 08 de mayo", "affected_ruts": ["218243797"], "nrc_inferred": false, "date": "2026-05-08", "fuzzy": null}, {"id": 219, "asignatura": "ECCE-00607 Integrador I : Taller Diagnost P1 INGECO", "docente": "SORIA BARRETO KARLA LUCIA", "nrcs": ["11393"], "eval_name": "Informe Final", "pct": "20", "parallel": null, "date_text": "19 de junio", "raw": "Informe Final\n\n20% — 19 de junio", "affected_ruts": ["218243797"], "nrc_inferred": false, "date": "2026-06-19", "fuzzy": null}, {"id": 220, "asignatura": "ECCE-00607 Integrador I : Taller Diagnost P1 INGECO", "docente": "SORIA BARRETO KARLA LUCIA", "nrcs": ["11393"], "eval_name": "Presentación y Defensa", "pct": "30", "parallel": null, "date_text": "(10% + 20%) — 29 de junio", "raw": "Presentación y Defensa\n\n30% (10% + 20%) — 29 de junio", "affected_ruts": ["218243797"], "nrc_inferred": false, "date": "2026-06-29", "fuzzy": null}, {"id": 221, "asignatura": "ECCE-00201 Administracion  P1* INGECO-IICG", "docente": "MORALES LIUDITT", "nrcs": ["10098", "11987"], "eval_name": "Evaluación N°1", "pct": "20", "parallel": null, "date_text": "23 de abril", "raw": "Evaluación N°1\n\n20% — 23 de abril", "affected_ruts": ["213942670", "225551790"], "nrc_inferred": false, "date": "2026-04-23", "fuzzy": null}, {"id": 222, "asignatura": "ECCE-00201 Administracion  P1* INGECO-IICG", "docente": "MORALES LIUDITT", "nrcs": ["10098", "11987"], "eval_name": "Evaluación N°2", "pct": "20", "parallel": null, "date_text": "11 de junio", "raw": "Evaluación N°2\n\n20% — 11 de junio", "affected_ruts": ["213942670", "225551790"], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 223, "asignatura": "ECCE-00201 Administracion  P1* INGECO-IICG", "docente": "MORALES LIUDITT", "nrcs": ["10098", "11987"], "eval_name": "Controles", "pct": "30", "parallel": null, "date_text": "Durante el semestre", "raw": "Controles\n\n30% — Durante el semestre", "affected_ruts": ["213942670", "225551790"], "nrc_inferred": false, "date": null, "fuzzy": "Durante el semestre"}, {"id": 224, "asignatura": "ECCE-00201 Administracion  P1* INGECO-IICG", "docente": "MORALES LIUDITT", "nrcs": ["10098", "11987"], "eval_name": "Examen", "pct": "30", "parallel": null, "date_text": "25 de junio", "raw": "Examen\n\n30% — 25 de junio", "affected_ruts": ["213942670", "225551790"], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 225, "asignatura": "ECCE-00502 Microeconomia II P1 y P2 INGECO", "docente": "SFEIR YAZIGI RODRIGO", "nrcs": ["10115", "10502"], "eval_name": "Prueba parcial", "pct": "20", "parallel": null, "date_text": "17 de abril", "raw": "Prueba parcial\n\n20% — 17 de abril", "affected_ruts": ["209452987", "211299568", "217485525", "217650240", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-04-17", "fuzzy": null}, {"id": 226, "asignatura": "ECCE-00502 Microeconomia II P1 y P2 INGECO", "docente": "SFEIR YAZIGI RODRIGO", "nrcs": ["10115", "10502"], "eval_name": "Prueba parcial", "pct": "25", "parallel": null, "date_text": "12 de junio", "raw": "Prueba parcial\n\n25% — 12 de junio", "affected_ruts": ["209452987", "211299568", "217485525", "217650240", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": "2026-06-12", "fuzzy": null}, {"id": 227, "asignatura": "ECCE-00502 Microeconomia II P1 y P2 INGECO", "docente": "SFEIR YAZIGI RODRIGO", "nrcs": ["10115", "10502"], "eval_name": "Evaluaciones formativas (5)", "pct": "25", "parallel": null, "date_text": "(5% c/u) — Según cronograma", "raw": "Evaluaciones formativas (5)\n\n25% (5% c/u) — Según cronograma", "affected_ruts": ["209452987", "211299568", "217485525", "217650240", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": null, "fuzzy": "Según cronograma"}, {"id": 228, "asignatura": "ECCE-00502 Microeconomia II P1 y P2 INGECO", "docente": "SFEIR YAZIGI RODRIGO", "nrcs": ["10115", "10502"], "eval_name": "Examen global", "pct": "30", "parallel": null, "date_text": "A definir", "raw": "Examen global\n\n30% — A definir", "affected_ruts": ["209452987", "211299568", "217485525", "217650240", "21822170K", "21984011K", "221192192"], "nrc_inferred": false, "date": null, "fuzzy": "A definir"}, {"id": 229, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Primera Prueba", "pct": "20", "parallel": null, "date_text": "martes 21 de abril", "raw": "Primera Prueba\n\n20% — martes 21 de abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-21", "fuzzy": null}, {"id": 230, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Segunda Prueba", "pct": "20", "parallel": null, "date_text": "martes 2 junio", "raw": "Segunda Prueba\n\n20% — martes 2 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-02", "fuzzy": null}, {"id": 231, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Informe Escrito", "pct": "10", "parallel": null, "date_text": "miércoles 10 junio", "raw": "Informe Escrito\n\n10% — miércoles 10 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-10", "fuzzy": null}, {"id": 232, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Presentaciones", "pct": "10", "parallel": null, "date_text": "semana 16-17 junio", "raw": "Presentaciones\n\n10% — semana 16-17 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-16", "fuzzy": null}, {"id": 233, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Presentaciones", "pct": "10", "parallel": null, "date_text": "semana 16-17 junio", "raw": "Presentaciones\n\n10% — semana 16-17 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-17", "fuzzy": null}, {"id": 234, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Examen Global Escrito", "pct": "40", "parallel": null, "date_text": "semana 23-24 junio", "raw": "Examen Global Escrito\n\n40% — semana 23-24 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-23", "fuzzy": null}, {"id": 235, "asignatura": "ECCE-00407 Costos Y Presupuestos  P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Examen Global Escrito", "pct": "40", "parallel": null, "date_text": "semana 23-24 junio", "raw": "Examen Global Escrito\n\n40% — semana 23-24 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-24", "fuzzy": null}, {"id": 236, "asignatura": "ECCE-00913 Integrador Ii : Taller De Nego P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Primer Informe", "pct": "20", "parallel": null, "date_text": "viernes 10 abril", "raw": "Primer Informe\n\n20% — viernes 10 abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-10", "fuzzy": null}, {"id": 237, "asignatura": "ECCE-00913 Integrador Ii : Taller De Nego P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Segundo Informe", "pct": "30", "parallel": null, "date_text": "lunes 21 mayo", "raw": "Segundo Informe\n\n30% — lunes 21 mayo", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-21", "fuzzy": null}, {"id": 238, "asignatura": "ECCE-00913 Integrador Ii : Taller De Nego P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Informe Final", "pct": "30", "parallel": null, "date_text": "viernes 19 junio", "raw": "Informe Final\n\n30% — viernes 19 junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-19", "fuzzy": null}, {"id": 239, "asignatura": "ECCE-00913 Integrador Ii : Taller De Nego P1 INGECO", "docente": "ZUNIGA JARA SERGIO FERNANDO", "nrcs": [], "eval_name": "Presentación y Defensa", "pct": "20", "parallel": null, "date_text": "(10%+10%) — 22 al 26 de junio", "raw": "Presentación y Defensa\n\n20% (10%+10%) — 22 al 26 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-26", "fuzzy": null}, {"id": 240, "asignatura": "ECCE-00090 EFP : Economía Circular* INGECO-IICG", "docente": "BAS . TOMAS GABRIEL", "nrcs": ["12263", "12262"], "eval_name": "Evaluación 1 Prueba Escrita (Informe Grupal + Preguntas Individuales)", "pct": "10", "parallel": null, "date_text": "16 de Abril", "raw": "Evaluación 1 Prueba Escrita (Informe Grupal + Preguntas Individuales)\n\n10% — 16 de Abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-16", "fuzzy": null}, {"id": 241, "asignatura": "ECCE-00090 EFP : Economía Circular* INGECO-IICG", "docente": "BAS . TOMAS GABRIEL", "nrcs": ["12263", "12262"], "eval_name": "Evaluación 2 Prueba Escrita (Informe Grupal + Preguntas Individuales)", "pct": "10", "parallel": null, "date_text": "28 de Mayo", "raw": "Evaluación 2 Prueba Escrita (Informe Grupal + Preguntas Individuales)\n\n10% — 28 de Mayo", "affected_ruts": [], "nrc_inferred": false, "date": "2026-05-28", "fuzzy": null}, {"id": 242, "asignatura": "ECCE-00090 EFP : Economía Circular* INGECO-IICG", "docente": "BAS . TOMAS GABRIEL", "nrcs": ["12263", "12262"], "eval_name": "Evaluación 3 Prueba Escrita (Informe Grupal + Preguntas Individuales)", "pct": "10", "parallel": null, "date_text": "18 de Junio", "raw": "Evaluación 3 Prueba Escrita (Informe Grupal + Preguntas Individuales)\n\n10% — 18 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-18", "fuzzy": null}, {"id": 243, "asignatura": "ECCE-00090 EFP : Economía Circular* INGECO-IICG", "docente": "BAS . TOMAS GABRIEL", "nrcs": ["12263", "12262"], "eval_name": "Examen Final", "pct": "70", "parallel": null, "date_text": "25 de Junio", "raw": "Examen Final\n\n70% — 25 de Junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-25", "fuzzy": null}, {"id": 244, "asignatura": "ECCE-00195 Economía P1 y P2 IICG", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["11968", "11980"], "eval_name": "1PP (Primera Prueba)", "pct": "20", "parallel": null, "date_text": "30-ABR-2026", "raw": "1PP (Primera Prueba)\n\n20% — 30-ABR-2026", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-04-30", "fuzzy": null}, {"id": 245, "asignatura": "ECCE-00195 Economía P1 y P2 IICG", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["11968", "11980"], "eval_name": "2PP (Segunda Prueba)", "pct": "25", "parallel": null, "date_text": "11-MAY-2026", "raw": "2PP (Segunda Prueba)\n\n25% — 11-MAY-2026", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-05-11", "fuzzy": null}, {"id": 246, "asignatura": "ECCE-00195 Economía P1 y P2 IICG", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["11968", "11980"], "eval_name": "CONTROLES (Controles y Reportes)", "pct": "20", "parallel": null, "date_text": "05-JUL-2026", "raw": "CONTROLES (Controles y Reportes)\n\n20% — 05-JUL-2026", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-07-05", "fuzzy": null}, {"id": 247, "asignatura": "ECCE-00195 Economía P1 y P2 IICG", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["11968", "11980"], "eval_name": "EXAMEN", "pct": "35", "parallel": null, "date_text": "05-JUL-2026", "raw": "EXAMEN\n\n35% — 05-JUL-2026", "affected_ruts": ["225063478", "225924724"], "nrc_inferred": false, "date": "2026-07-05", "fuzzy": null}, {"id": 248, "asignatura": "ECCE-00603 Organización Industrial INGECO", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["13999"], "eval_name": "Primera Prueba Parcial", "pct": "20", "parallel": null, "date_text": "27 de abril", "raw": "Primera Prueba Parcial\n\n20% — 27 de abril", "affected_ruts": [], "nrc_inferred": false, "date": "2026-04-27", "fuzzy": null}, {"id": 249, "asignatura": "ECCE-00603 Organización Industrial INGECO", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["13999"], "eval_name": "Segunda Prueba Parcial", "pct": "25", "parallel": null, "date_text": "12 de junio", "raw": "Segunda Prueba Parcial\n\n25% — 12 de junio", "affected_ruts": [], "nrc_inferred": false, "date": "2026-06-12", "fuzzy": null}, {"id": 250, "asignatura": "ECCE-00603 Organización Industrial INGECO", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["13999"], "eval_name": "Controles y Casos", "pct": "20", "parallel": null, "date_text": "Durante todo el semestre", "raw": "Controles y Casos\n\n20% — Durante todo el semestre", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Durante todo el semestre"}, {"id": 251, "asignatura": "ECCE-00603 Organización Industrial INGECO", "docente": "ROJAS CASTRO ALBERTO ALEJANDRO", "nrcs": ["13999"], "eval_name": "Examen Final", "pct": "35", "parallel": null, "date_text": "Por definir", "raw": "Examen Final\n\n35% — Por definir", "affected_ruts": [], "nrc_inferred": false, "date": null, "fuzzy": "Por definir"}, {"id": 252, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Control 1", "pct": "10", "parallel": null, "date_text": "6 de abril", "raw": "Control 1\n\n10% — 6 de abril", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-04-06", "fuzzy": null}, {"id": 253, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Caso Práctico 1", "pct": "5", "parallel": null, "date_text": "8 de abril", "raw": "Caso Práctico 1\n\n5% — 8 de abril", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-04-08", "fuzzy": null}, {"id": 254, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Control 2", "pct": "10", "parallel": null, "date_text": "4 de mayo", "raw": "Control 2\n\n10% — 4 de mayo", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-05-04", "fuzzy": null}, {"id": 255, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Caso Práctico 2", "pct": "5", "parallel": null, "date_text": "6 de mayo", "raw": "Caso Práctico 2\n\n5% — 6 de mayo", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-05-06", "fuzzy": null}, {"id": 256, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Control 3", "pct": "10", "parallel": null, "date_text": "25 de mayo", "raw": "Control 3\n\n10% — 25 de mayo", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-05-25", "fuzzy": null}, {"id": 257, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Caso Práctico 3", "pct": "5", "parallel": null, "date_text": "27 de mayo", "raw": "Caso Práctico 3\n\n5% — 27 de mayo", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-05-27", "fuzzy": null}, {"id": 258, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Control 4", "pct": "10", "parallel": null, "date_text": "15 de junio", "raw": "Control 4\n\n10% — 15 de junio", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-06-15", "fuzzy": null}, {"id": 259, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Caso Práctico 4", "pct": "5", "parallel": null, "date_text": "17 de junio", "raw": "Caso Práctico 4\n\n5% — 17 de junio", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": "2026-06-17", "fuzzy": null}, {"id": 260, "asignatura": "ECCE-00504 Metodos Cuantitativos Para La P1 INGECO", "docente": "GALLARDO ALTAMIRANO MAURICIO EUGENIO", "nrcs": ["10114"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "julio", "raw": "Examen\n\n40% — julio", "affected_ruts": ["21822170K"], "nrc_inferred": false, "date": null, "fuzzy": "Julio"}, {"id": 261, "asignatura": "ECCE-00305 Microeconomia I P1 y P2 INGECO", "docente": "VALLONE ANDRES MARCELO", "nrcs": ["10107", "10426"], "eval_name": "Evaluación 1", "pct": "20", "parallel": null, "date_text": "08/05/2026", "raw": "Evaluación 1\n\n20% — 08/05/2026", "affected_ruts": ["213942670", "214586908", "218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-05-08", "fuzzy": null}, {"id": 262, "asignatura": "ECCE-00305 Microeconomia I P1 y P2 INGECO", "docente": "VALLONE ANDRES MARCELO", "nrcs": ["10107", "10426"], "eval_name": "Evaluación 2", "pct": "25", "parallel": null, "date_text": "11/06/2026", "raw": "Evaluación 2\n\n25% — 11/06/2026", "affected_ruts": ["213942670", "214586908", "218632114", "219839057", "223014313"], "nrc_inferred": false, "date": "2026-06-11", "fuzzy": null}, {"id": 263, "asignatura": "ECCE-00305 Microeconomia I P1 y P2 INGECO", "docente": "VALLONE ANDRES MARCELO", "nrcs": ["10107", "10426"], "eval_name": "Control, Talleres y/u Otros", "pct": "15", "parallel": null, "date_text": "Varias fechas", "raw": "Control, Talleres y/u Otros\n\n15% — Varias fechas", "affected_ruts": ["213942670", "214586908", "218632114", "219839057", "223014313"], "nrc_inferred": false, "date": null, "fuzzy": "Varias fechas"}, {"id": 264, "asignatura": "ECCE-00305 Microeconomia I P1 y P2 INGECO", "docente": "VALLONE ANDRES MARCELO", "nrcs": ["10107", "10426"], "eval_name": "Examen", "pct": "40", "parallel": null, "date_text": "Por determinar", "raw": "Examen\n\n40% — Por determinar", "affected_ruts": ["213942670", "214586908", "218632114", "219839057", "223014313"], "nrc_inferred": false, "date": null, "fuzzy": "Por determinar"}], "students": [{"rut": "218243797", "name": "Araya Zuñiga Maria Jose", "apellidos": "ARAYA ZUÑIGA", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "2023", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 1, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.", "nrcs": ["10686", "11393", "11979", "14071", "14188"], "subjects": [{"name": "Sistemas de Información P2", "nrcs": ["10686"], "prof": "Alejandro Paolini", "raw": "Sistemas de Información P2 (NRC:10686) - Prof. Alejandro Paolini"}, {"name": "Integrador I", "nrcs": ["11393"], "prof": "Karla Soria", "raw": "Integrador I (NRC: 11393) - Prof. Karla Soria"}, {"name": "Finanzas Corporativas P2", "nrcs": ["11979"], "prof": "Fernando González", "raw": "Finanzas Corporativas P2 (NRC: 11979) - Prof. Fernando González"}, {"name": "Diálogoo Cristianismo P2", "nrcs": ["14071"], "prof": "Rodrigo Cárcamo", "raw": "Diálogoo Cristianismo P2 (NRC:14071) - Prof. Rodrigo Cárcamo"}, {"name": "Gestión de Finanzas Personales", "nrcs": ["14188"], "prof": "Consuelo Contreras", "raw": "Gestión de Finanzas Personales (NRC: 14188) - Prof. Consuelo Contreras"}]}, {"rut": "209452987", "name": "Cáceres Calderón Fernanda", "apellidos": "CÁCERES CALDERÓN", "carrera": "INGECO", "diagnostico": "TDA", "periodo_incluye": "I 2024", "anio_carrera": "2021", "estado": "Matriculado", "n_aj": 2, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• En trabajos grupales, consensuar con la estudiante la modalidad de agrupación, permitiendo el trabajo individual, en base a contexto del momento de Fernanda.", "nrcs": ["10115", "10119", "10991"], "subjects": [{"name": "Microeconomía II P1", "nrcs": ["10115"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P1 (NRC:10115) - Prof. Rodrigo Sfeir"}, {"name": "Planificación Estratégica P1", "nrcs": ["10119"], "prof": "Oswaldo Terán", "raw": "Planificación Estratégica P1 (NRC:10119) - Prof. Oswaldo Terán"}, {"name": "EFP: Proyecto Integrado SAP", "nrcs": ["10991"], "prof": "Vladimir Franulic", "raw": "EFP: Proyecto Integrado SAP (NRC: 10991) - Prof. Vladimir Franulic"}]}, {"rut": "21150627K", "name": "Cárdenas Cortés Tamara", "apellidos": "CÁRDENAS CORTÉS", "carrera": "INGECO", "diagnostico": "DISCAPACIDAD VISUAL", "periodo_incluye": "2022", "anio_carrera": "2022", "estado": "Matriculado", "n_aj": 2, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Permitir la grabación de las clases.", "nrcs": ["10116", "10991", "11195", "14155", "11394"], "subjects": [{"name": "Finanzas Corporativas P1", "nrcs": ["10116"], "prof": "Karen Vargas", "raw": "Finanzas Corporativas P1 (NRC: 10116) - Prof. Karen Vargas"}, {"name": "EFP: Proyecto Integrado SAP", "nrcs": ["10991"], "prof": "Vladimir Franulic", "raw": "EFP: Proyecto Integrado SAP (NRC: 10991) - Prof. Vladimir Franulic"}, {"name": "EFP: Design Thinking", "nrcs": ["11195"], "prof": "Isidora Errázuriz", "raw": "EFP: Design Thinking  (NRC: 11195) - Prof. Isidora Errázuriz"}, {"name": "EFP: Comercio Internacional", "nrcs": ["14155"], "prof": "Sofía Orazi", "raw": "EFP: Comercio Internacional (NRC:14155) - Prof. Sofía Orazi"}, {"name": "PST Emprendimiento", "nrcs": ["11394"], "prof": "Karla Soria", "raw": "PST Emprendimiento (NRC:11394) - Prof. Karla Soria"}]}, {"rut": "217650240", "name": "Choque Molina Yuliana", "apellidos": "CHOQUE MOLINA", "carrera": "INGECO", "diagnostico": "TDAH", "periodo_incluye": "II 2024", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 2, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Anticipar los criterios y rúbricas de evaluación.", "nrcs": ["10116", "10117", "10119", "10120", "10502", "11080", "10398"], "subjects": [{"name": "Finanzas Corporativas P1", "nrcs": ["10116"], "prof": "Karen Vargas", "raw": "Finanzas Corporativas P1 (NRC: 10116) - Prof. Karen Vargas"}, {"name": "Liderazgo de Personas P1", "nrcs": ["10117"], "prof": "Samuel Araya", "raw": "Liderazgo de Personas P1 (NRC: 10117) - Prof. Samuel Araya"}, {"name": "Planificación Estratégica P1", "nrcs": ["10119"], "prof": "Oswaldo Terán", "raw": "Planificación Estratégica P1 (NRC:10119) - Prof. Oswaldo Terán"}, {"name": "Sistemas de Información P1", "nrcs": ["10120"], "prof": "Boris Bugueño", "raw": "Sistemas de Información P1 (NRC:10120) - Prof. Boris Bugueño"}, {"name": "Microeconomía II P2", "nrcs": ["10502"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P2 (NRC:10502) - Prof. Rodrigo Sfeir"}, {"name": "Ética Profesional", "nrcs": ["11080"], "prof": "Alejandro Cerda", "raw": "Ética Profesional (NRC: 11080) - Prof. Alejandro Cerda"}, {"name": "Electivo Inserción Laboral", "nrcs": ["10398"], "prof": "Consuelo Contreras", "raw": "Electivo Inserción Laboral (NRC: 10398) - Prof. Consuelo Contreras"}]}, {"rut": "208157078", "name": "Concha Tello Yolanda", "apellidos": "CONCHA TELLO", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "2023", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 5, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Permitir usar canceladores de ruido.\n• Permitir usar Fidgets para manejo de la ansiedad.\n• Anticipar los criterios y rúbricas de evaluación.\n• Permitir la grabación de las clases.", "nrcs": ["10118", "10398", "10686", "11065", "11869"], "subjects": [{"name": "Liderazgo de Personas P2", "nrcs": ["10118"], "prof": "Samuel Araya", "raw": "Liderazgo de Personas P2 (NRC: 10118) - Prof. Samuel Araya"}, {"name": "Electivo Inserción Laboral", "nrcs": ["10398"], "prof": "Consuelo Contreras", "raw": "Electivo Inserción Laboral (NRC: 10398) - Prof. Consuelo Contreras"}, {"name": "Sistemas de Información P2", "nrcs": ["10686"], "prof": "Alejandro Paolini", "raw": "Sistemas de Información P2 (NRC:10686) - Prof. Alejandro Paolini"}, {"name": "Planificación Estratégica P2", "nrcs": ["11065"], "prof": "Oswaldo Terán", "raw": "Planificación Estratégica P2 (NRC:11065) - Prof. Oswaldo Terán"}, {"name": "Ética Profesional", "nrcs": ["11869"], "prof": "Alicia Gómez", "raw": "Ética Profesional (NRC: 11869) - Prof. Alicia Gómez"}]}, {"rut": "218632114", "name": "Cotroneo Torres Martina", "apellidos": "COTRONEO TORRES", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "I 2025", "anio_carrera": "2025", "estado": "Matriculado", "n_aj": 1, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.", "nrcs": ["10003", "10102", "10104", "10107", "10886", "10967"], "subjects": [{"name": "Matemáticas III P1", "nrcs": ["10003"], "prof": "Claudia Villalobos", "raw": "Matemáticas III P1 (NRC:10003) - Prof. Claudia Villalobos"}, {"name": "Comportamiento Organizacional P1", "nrcs": ["10102"], "prof": "Fernando Ramos", "raw": "Comportamiento Organizacional P1  (NRC: 10102) - Prof. Fernando Ramos"}, {"name": "Contabilidad Financiera II P1", "nrcs": ["10104"], "prof": "Héctor Torres", "raw": "Contabilidad Financiera II P1 (NRC: 10104) - Prof. Héctor Torres"}, {"name": "Microeconomía I P1", "nrcs": ["10107"], "prof": "Andrés Vallone", "raw": "Microeconomía I P1 (NRC: 10107) - Prof. Andrés Vallone"}, {"name": "Inglés I", "nrcs": ["10886"], "prof": "Yasna Castro", "raw": "Inglés I (NRC: 10886) - Prof. Yasna Castro"}, {"name": "Estadística II P1", "nrcs": ["10967"], "prof": "Erick de la Barra", "raw": "Estadística II P1 (NRC: 10967) - Prof. Erick de la Barra"}]}, {"rut": "217434572", "name": "Flores Ortiz Allén", "apellidos": "FLORES ORTIZ", "carrera": "INGECO", "diagnostico": "DIAGNÓSTICO DE SALUD MENTAL", "periodo_incluye": "II 2024", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 5, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Permitir usar canceladores de ruido.\n• Permitir usar Fidgets para manejo de la ansiedad.\n• Anticipar los criterios y rúbricas de evaluación.\n• Permitir la grabación de las clases.", "nrcs": ["10118", "10120", "11065", "12459", "13353", "14163"], "subjects": [{"name": "Liderazgo de Personas P2", "nrcs": ["10118"], "prof": "Samuel Araya", "raw": "Liderazgo de Personas P2 (NRC: 10118) - Prof. Samuel Araya"}, {"name": "Sistemas de Información P1", "nrcs": ["10120"], "prof": "Boris Bugueño", "raw": "Sistemas de Información P1 (NRC:10120) - Prof. Boris Bugueño"}, {"name": "Planificación Estratégica P2", "nrcs": ["11065"], "prof": "Oswaldo Terán", "raw": "Planificación Estratégica P2 (NRC:11065) - Prof. Oswaldo Terán"}, {"name": "Electivo Lengua de Señas", "nrcs": ["12459"], "prof": "Betsabeth Supanta", "raw": "Electivo Lengua de Señas (NRC: 12459) - Prof. Betsabeth Supanta"}, {"name": "Electivo Taller de Inteligencia Artificial", "nrcs": ["13353"], "prof": "Krystal Fuentes", "raw": "Electivo Taller de Inteligencia Artificial (NRC: 13353)- Prof. Krystal Fuentes"}, {"name": "Diálogo Cristianismo", "nrcs": ["14163"], "prof": "Fabián Bustamante", "raw": "Diálogo Cristianismo (NRC: 14163) - Prof. Fabián Bustamante"}]}, {"rut": "221192192", "name": "Fuentes Ubeda Ulises", "apellidos": "FUENTES UBEDA", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "I 2024", "anio_carrera": "2024", "estado": "Matriculado", "n_aj": 3, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Permitir usar canceladores de ruido.\n• Anticipar los criterios y rubricas de evaluación.", "nrcs": ["10111", "10492", "10502", "10518", "11337"], "subjects": [{"name": "Gestión Tributaria P2", "nrcs": ["10111"], "prof": "Eduardo Rojas", "raw": "Gestión Tributaria P2 (NRC: 10111) - Prof. Eduardo Rojas"}, {"name": "Marketing I P2", "nrcs": ["10492"], "prof": "Carla Andrade", "raw": "Marketing I P2(NRC: 10492) - Prof. Carla Andrade"}, {"name": "Microeconomía II P2", "nrcs": ["10502"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P2 (NRC: 10502) - Prof. Rodrigo Sfeir"}, {"name": "Identificación de Oportunidades de Negocios P2", "nrcs": ["10518"], "prof": "Yanixza Alfaro", "raw": "Identificación de Oportunidades de Negocios P2 (NRC: 10518) - Prof. Yanixza Alfaro"}, {"name": "Métodos Cuantitativos P2", "nrcs": ["11337"], "prof": "Pablo Rodríguez", "raw": "Métodos Cuantitativos P2 (NRC: 11337) - Prof. Pablo Rodríguez"}]}, {"rut": "217485525", "name": "Gonzalez Cuadra Tomas", "apellidos": "GONZALEZ CUADRA", "carrera": "INGECO", "diagnostico": "DISCAPACIDAD VISUAL", "periodo_incluye": "I 2024", "anio_carrera": "2024", "estado": "Matriculado", "n_aj": 8, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Aumentar el tamaño de la letra (18 puntos).\n• Anticipar los criterios y rúbricas de evaluación.\n• Permitir la grabación de las clases.\n• Ajustar el material de apoyo usado por el docente (tamaño y calidad de las imágenes, textos etc.).\n• Subir de manera anticipada al aula virtual, el material de estudio adaptado de acuerdo al punto anterior.\n• Establecer un puesto en primera fila para el estudiante.\n• Durante el proceso académico, ir monitoreando el proceso de aprendizaje del estudiante para seguimiento y anticipación de requerimientos de manera consensuada.", "nrcs": ["10111", "10492", "10502", "10518", "11337", "13286"], "subjects": [{"name": "Gestión Tributaria P2", "nrcs": ["10111"], "prof": "Eduardo Rojas", "raw": "Gestión Tributaria P2 (NRC: 10111) - Prof. Eduardo Rojas"}, {"name": "Marketing I", "nrcs": ["10492"], "prof": "Carla Andrade", "raw": "Marketing I (NRC: 10492) - Prof. Carla Andrade"}, {"name": "Microeconomía II P2", "nrcs": ["10502"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P2 (NRC: 10502) - Prof. Rodrigo Sfeir"}, {"name": "Identificación de Oportunidades de Negocios P2", "nrcs": ["10518"], "prof": "Yanixza Alfaro", "raw": "Identificación de Oportunidades de Negocios P2 (NRC: 10518) - Prof. Yanixza Alfaro"}, {"name": "Métodos Cuantitativos P2", "nrcs": ["11337"], "prof": "Pablo Rodríguez", "raw": "Métodos Cuantitativos P2 (NRC: 11337) - Prof. Pablo Rodríguez"}, {"name": "Inglés III", "nrcs": ["13286"], "prof": "Paola Jeria", "raw": "Inglés III (NRC: 13286) - Prof. Paola Jeria"}]}, {"rut": "21984011K", "name": "Mery Amaya Valentina", "apellidos": "MERY AMAYA", "carrera": "INGECO", "diagnostico": "DIAGNÓSTICO DE SALUD MENTAL", "periodo_incluye": "I 2024", "anio_carrera": "2024", "estado": "Matriculado", "n_aj": 1, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.", "nrcs": ["10108", "10109", "10110", "10112", "10113", "10115", "13292"], "subjects": [{"name": "Costos y Presupuestos P1", "nrcs": ["10108"], "prof": "Sergio Zúñiga", "raw": "Costos y Presupuestos P1 (NRC: 10108) - Prof. Sergio Zúñiga"}, {"name": "Econometría P1", "nrcs": ["10109"], "prof": "Pablo Rodríguez", "raw": "Econometría P1 (NRC: 10109) - Prof. Pablo Rodríguez"}, {"name": "Gestión Tributaria P1", "nrcs": ["10110"], "prof": "Eduardo Rojas", "raw": "Gestión Tributaria P1 (NRC: 10110) - Prof. Eduardo Rojas"}, {"name": "Identificación de Oportunidades de Negocios P1", "nrcs": ["10112"], "prof": "Yanixza Alfaro", "raw": "Identificación de Oportunidades de Negocios P1 (NRC: 10112) - Prof. Yanixza Alfaro"}, {"name": "Marketing I P1", "nrcs": ["10113"], "prof": "Carla Andrade", "raw": "Marketing I P1 (NRC: 10113) - Prof. Carla Andrade"}, {"name": "Microeconomía II P1", "nrcs": ["10115"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P1 (NRC: 10115) - Prof. Rodrigo Sfeir"}, {"name": "Inglés III", "nrcs": ["13292"], "prof": "María González", "raw": "Inglés III (NRC: 13292)- Prof. María González"}]}, {"rut": "213942670", "name": "Moreno Halty Joaquin", "apellidos": "MORENO HALTY", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "II 2024", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 3, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Anticipar los criterios y rúbricas de evaluación.\n• Permitir la grabación de las clases.", "nrcs": ["10098", "10099", "10107"], "subjects": [{"name": "Administración", "nrcs": ["10098"], "prof": "Liuditt Morales", "raw": "Administración (NRC: 10098) - Prof. Liuditt Morales"}, {"name": "Contabilidad Financiera I", "nrcs": ["10099"], "prof": "Merary Carrasco", "raw": "Contabilidad Financiera I (NRC: 10099) - Prof. Merary Carrasco"}, {"name": "Microeconomía I P1", "nrcs": ["10107"], "prof": "Andrés Vallone", "raw": "Microeconomía I P1 (NRC: 10107) - Prof. Andrés Vallone"}]}, {"rut": "214586908", "name": "Pastén Gonzalez Lucas", "apellidos": "PASTÉN GONZALEZ", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "2023", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 1, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.", "nrcs": ["10107", "10686", "14163"], "subjects": [{"name": "Microeconomía I P1", "nrcs": ["10107"], "prof": "Andrés Vallone", "raw": "Microeconomía I P1 (NRC: 10107) - Prof. Andrés Vallone"}, {"name": "Sistemas de Información P2", "nrcs": ["10686"], "prof": "Alejandro Paolini", "raw": "Sistemas de Información P2 (NRC:10686) - Prof. Alejandro Paolini"}, {"name": "Diálogo Cristianismo", "nrcs": ["14163"], "prof": "Fabián Bustamante", "raw": "Diálogo Cristianismo (NRC: 14163) - Prof. Fabián Bustamante"}]}, {"rut": "211299568", "name": "Rivera Vega Diego", "apellidos": "RIVERA VEGA", "carrera": "INGECO", "diagnostico": "TDA", "periodo_incluye": "I 2024", "anio_carrera": "2024", "estado": "Matriculado", "n_aj": 8, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Tareas bien secuenciadas con un principio y un fin claros.\n• Estructuración y definición de plazos para la consecución de las actividades y tareas propuestas.\n• Apoyar la entrega de información con material visual, facilitando el acceso y comprensión de la misma. (imágenes, organizadores gráficos, mapas conceptuales, etc.).\n• Para la compresión de ideas abstractas, procurar que el lenguaje sea claro y preciso.\n• Frente a conceptos muy abstractos o de difícil comprensión, proporcionar un glosario previo, para favorecer la fluidez de la clase.\n• Asociar los contenidos de la clase a situaciones de la vida real para que sean significativos e incentiven el interés del estudiante.\n• Permitir al estudiante salir del aula en caso de requerirlo.", "nrcs": ["10109", "10110", "10112", "10113", "10115", "13292"], "subjects": [{"name": "Econometría P1", "nrcs": ["10109"], "prof": "Pablo Rodríguez", "raw": "Econometría P1 (NRC: 10109) - Prof. Pablo Rodríguez"}, {"name": "Gestión Tributaria P1", "nrcs": ["10110"], "prof": "Eduardo Rojas", "raw": "Gestión Tributaria P1 (NRC: 10110) - Prof. Eduardo Rojas"}, {"name": "Identificación de Oportunidades de Negocios P1", "nrcs": ["10112"], "prof": "Yanixza Alfaro", "raw": "Identificación de Oportunidades de Negocios P1 (NRC: 10112) - Prof. Yanixza Alfaro"}, {"name": "Marketing I P1", "nrcs": ["10113"], "prof": "Carla Andrade", "raw": "Marketing I P1 (NRC: 10113) - Prof. Carla Andrade"}, {"name": "Microeconomía II P1", "nrcs": ["10115"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P1 (NRC: 10115) - Prof. Rodrigo Sfeir"}, {"name": "Inglés III", "nrcs": ["13292"], "prof": "María González", "raw": "Inglés III (NRC: 13292)- Prof. María González"}]}, {"rut": "219839057", "name": "Rodríguez Castillo Héctor", "apellidos": "RODRÍGUEZ CASTILLO", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "I 2025", "anio_carrera": "2025", "estado": "Matriculado", "n_aj": 3, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Permitir usar canceladores de ruido.\n• Anticipar los criterios y rúbricas de evaluación.", "nrcs": ["10004", "10103", "10105", "10426", "12286", "12858"], "subjects": [{"name": "Matemáticas III P2", "nrcs": ["10004"], "prof": "Sebastián Miranda", "raw": "Matemáticas III P2 (NRC:10004) - Prof. Sebastián Miranda"}, {"name": "Comportamiento Organizacional P2", "nrcs": ["10103"], "prof": "Fernando Ramos", "raw": "Comportamiento Organizacional P2  (NRC: 10103) - Prof. Fernando Ramos"}, {"name": "Contabilidad Financiera II P2", "nrcs": ["10105"], "prof": "Héctor Torres", "raw": "Contabilidad Financiera II P2 (NRC: 10105) - Prof. Héctor Torres"}, {"name": "Microeconomía I P2", "nrcs": ["10426"], "prof": "Andrés Vallone", "raw": "Microeconomía I P2 (NRC: 10426) - Prof. Andrés Vallone"}, {"name": "Macroeconomía II P1", "nrcs": ["12286"], "prof": "Fernando González", "raw": "Macroeconomía II P1 (NRC: 12286) - Prof. Fernando González"}, {"name": "Inglés I", "nrcs": ["12858"], "prof": "Yasna Castro", "raw": "Inglés I (NRC:12858) - Prof. Yasna Castro"}]}, {"rut": "223014313", "name": "Rodríguez Smith Carolina", "apellidos": "RODRÍGUEZ SMITH", "carrera": "INGECO", "diagnostico": "TDA", "periodo_incluye": "I 2025", "anio_carrera": "2025", "estado": "Matriculado", "n_aj": 9, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Anticipar los criterios y rúbricas de evaluación.\n• Permitir la grabación de las clases.\n• Permitir salir del aula en caso de requerirlo (ansiedad).\n• Orientar y flexibilizar la formación de grupos, incluyendo la posibilidad de realizar actividades grupales de forma individual cuando la estudiante lo solicite.\n• Leer y explicar previamente tanto los items de evaluación como los instrumentos de evaluación.\n• Repetir instrucciones en caso de que la estudiante lo requiera.\n• En situaciones de exposición oral, permitir el uso de tecnologías para poder exponer el tema.\n• Permitir el movimiento y/o cambio de postura en la silla para manejar ansiedad; etc.", "nrcs": ["10003", "10102", "10104", "10107", "10967"], "subjects": [{"name": "Matemáticas III P1", "nrcs": ["10003"], "prof": "Claudia Villalobos", "raw": "Matemáticas III P1 (NRC:10003) - Prof. Claudia Villalobos"}, {"name": "Comportamiento Organizacional P1", "nrcs": ["10102"], "prof": "Fernando Ramos", "raw": "Comportamiento Organizacional P1  (NRC: 10102) - Prof. Fernando Ramos"}, {"name": "Contabilidad Financiera II P1", "nrcs": ["10104"], "prof": "Héctor Torres", "raw": "Contabilidad Financiera II P1 (NRC: 10104) - Prof. Héctor Torres"}, {"name": "Microeconomía I P1", "nrcs": ["10107"], "prof": "Andrés Vallone", "raw": "Microeconomía I P1 (NRC: 10107) - Prof. Andrés Vallone"}, {"name": "Estadística II P1", "nrcs": ["10967"], "prof": "Erick de la Barra", "raw": "Estadística II P1 (NRC: 10967) - Prof. Erick de la Barra"}]}, {"rut": "213970321", "name": "Zamora Valencia Valentina", "apellidos": "ZAMORA VALENCIA", "carrera": "INGECO", "diagnostico": "TDAH", "periodo_incluye": "2023", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 1, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.", "nrcs": ["10118", "10120", "11065", "11979", "14160"], "subjects": [{"name": "Liderazgo de Personas P2", "nrcs": ["10118"], "prof": "Samuel Araya", "raw": "Liderazgo de Personas P2 (NRC: 10118) - Prof. Samuel Araya"}, {"name": "Sistemas de Información P1", "nrcs": ["10120"], "prof": "Boris Bugueño", "raw": "Sistemas de Información P1 (NRC:10120) - Prof. Boris Bugueño"}, {"name": "Planificación Estratégica P2", "nrcs": ["11065"], "prof": "Oswaldo Terán", "raw": "Planificación Estratégica P2 (NRC:11065) - Prof. Oswaldo Terán"}, {"name": "Finanzas Corporativas P2", "nrcs": ["11979"], "prof": "Fernando González", "raw": "Finanzas Corporativas P2 (NRC: 11979) - Prof. Fernando González"}, {"name": "Electivo Salud Emocional", "nrcs": ["14160"], "prof": "Nicole Vargas", "raw": "Electivo Salud Emocional (NRC: 14160) - Prof.Nicole Vargas"}]}, {"rut": "208637304", "name": "Zepeda Yeomans Fabiana", "apellidos": "ZEPEDA YEOMANS", "carrera": "INGECO", "diagnostico": "DIAGNÓSTICO DE SALUD MENTAL", "periodo_incluye": "I 2025", "anio_carrera": "2023", "estado": "Matriculado", "n_aj": 3, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Anticipar los criterios y rúbricas de evaluación.\n• Permitir la grabación de las clase.", "nrcs": ["10118", "10120", "11065", "11979"], "subjects": [{"name": "Liderazgo de Personas P2", "nrcs": ["10118"], "prof": "Samuel Araya", "raw": "Liderazgo de Personas P2 (NRC: 10118) - Prof. Samuel Araya"}, {"name": "Sistemas de Información P1", "nrcs": ["10120"], "prof": "Boris Bugueño", "raw": "Sistemas de Información P1 (NRC:10120) - Prof. Boris Bugueño"}, {"name": "Planificación Estratégica P2", "nrcs": ["11065"], "prof": "Oswaldo Terán", "raw": "Planificación Estratégica P2 (NRC:11065) - Prof. Oswaldo Terán"}, {"name": "Finanzas Corporativas P2", "nrcs": ["11979"], "prof": "Fernando González", "raw": "Finanzas Corporativas P2 (NRC: 11979) - Prof. Fernando González"}]}, {"rut": "225551790", "name": "Pérez Gómez María Jesús", "apellidos": "PÉREZ GÓMEZ", "carrera": "IICG", "diagnostico": "DIAGNÓSTICO DE SALUD MENTAL", "periodo_incluye": "I 2025", "anio_carrera": "2025", "estado": "Matriculado", "n_aj": 4, "ajustes": "• Extensión horaria (hasta un 50%) en TODAS las asignaturas independientemente de su modalidad.\n• Permitir el uso de fidgets para el manejo de la ansiedad.\n• Permitir la grabación de clases.\n• Anticipar los criterios y rúbricas de evaluación.", "nrcs": ["11857", "11984", "11987", "11989", "12215"], "subjects": [{"name": "Matemáticas II P1", "nrcs": ["11857"], "prof": "Liliana Licuime", "raw": "Matemáticas II P1 (NRC: 11857) - Prof.Liliana Licuime"}, {"name": "Programación P2", "nrcs": ["11984"], "prof": "Boris Bugueño", "raw": "Programación P2 (NRC: 11984) - Prof. Boris Bugueño"}, {"name": "Administración P1", "nrcs": ["11987"], "prof": "Liuditt Morales", "raw": "Administración P1 (NRC: 11987) - Prof. Liuditt Morales"}, {"name": "Logística P2", "nrcs": ["11989"], "prof": "Anne Bizien", "raw": "Logística P2 (NRC: 11989) - Prof. Anne Bizien"}, {"name": "Aplicaciones Computacionales P2", "nrcs": ["12215"], "prof": "Natalia Araya", "raw": "Aplicaciones Computacionales P2 (NRC: 12215) - Prof. Natalia Araya"}]}, {"rut": "21822170K", "name": "Campusano Romero Valentina", "apellidos": "CAMPUSANO  ROMERO", "carrera": "INGECO", "diagnostico": "DIAGNÓSTICO DE SALUD MENTAL", "periodo_incluye": "I 2026", "anio_carrera": "2024", "estado": "Matriculado", "n_aj": 5, "ajustes": "*-\tComunicar la caracterización de la estudiante a los docentes de asignaturas, para la aplicación de los ajustes razonables.   \n\n-\tAplicar extensión horaria hasta un 50%, en TODAS las asignaturas, independientemente de su modalidad. \n\n-\tAsociar los contenidos de la clase a situaciones reales relacionadas con el perfil de egreso para que éstos sean significativos e incentiven el interés de la estudiante.\n\n-\tFavorecer la aplicación de metodologías activas para afianzar los procesos motivacionales.  \n-\tDar a conocer previamente los criterios y rúbricas de evaluación, estableciendo enunciados claros y definidos.", "nrcs": ["10110", "10112", "10113", "10114", "10115", "13292"], "subjects": [{"name": "Gestión Tributaria P1", "nrcs": ["10110"], "prof": "Eduardo Rojas", "raw": "Gestión Tributaria P1 (NRC: 10110) - Prof. Eduardo Rojas"}, {"name": "Identificación de Oportunidades de Negocios P1", "nrcs": ["10112"], "prof": "Yanixza Alfaro", "raw": "Identificación de Oportunidades de Negocios P1 (NRC: 10112) - Prof. Yanixza Alfaro"}, {"name": "Marketing I P1", "nrcs": ["10113"], "prof": "Carla Andrade", "raw": "Marketing I P1 (NRC: 10113) - Prof. Carla Andrade"}, {"name": "Métodos Cuantitativos P1", "nrcs": ["10114"], "prof": "Mauricio Gallardo", "raw": "Métodos Cuantitativos P1 (NRC: 10114) - Prof. Mauricio Gallardo"}, {"name": "Microeconomía II P1", "nrcs": ["10115"], "prof": "Rodrigo Sfeir", "raw": "Microeconomía II P1 (NRC:10115) - Prof. Rodrigo Sfeir"}, {"name": "Inglés III", "nrcs": ["13292"], "prof": "María González", "raw": "Inglés III (NRC: 13292)- Prof. María González"}]}, {"rut": "222747031", "name": "Cortes Olivares Nikcolas", "apellidos": "CORTES OLIVARES", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "I 2026", "anio_carrera": "2026", "estado": "Matriculado", "n_aj": 11, "ajustes": "*-\tComunicar la caracterización de la estudiante a los docentes de asignaturas, para la aplicación de los ajustes razonables.   \n\n-\tAplicar extensión horaria hasta un 50%, en TODOS los procesos de evaluación y en todas las asignaturas. \n\n-\tEntregar el material de estudio con anticipación a través del aula virtual.\n\n-\tPermitir la grabación de clases para favorecer el estudio autónomo. \n\n-\tPermitir el uso de fidgets en clases y evaluaciones. \n\n-\tAplicar síntesis de contenidos al finalizar una clase \n\n-\tAplicar ejemplificación para explicar contenidos.\n\n-\tDar a conocer previamente los criterios y rúbricas de evaluación, estableciendo enunciados claros y definidos.\n\n-\tAsociar los contenidos de la clase a situaciones reales relacionadas con el perfil de egreso para que éstos sean significativos e incentiven el interés del estudiante.\n\n-\tExplicar ejercicios paso a paso, para favorecer la estructuración mental del estudiante. \n\n-\tPara responder ejercicios, organizarlos en un ejercicio por plana, para otorgar un espacio amplio de respuesta. \n", "nrcs": ["10090", "10093", "10095", "10097", "12857", "13354"], "subjects": [{"name": "Desarrollo de Actitud Emprendedora P2", "nrcs": ["10090"], "prof": "María Fernanda Roco", "raw": "Desarrollo de Actitud Emprendedora P2 (NRC: 10090) - Prof. María Fernanda Roco"}, {"name": "Introducción a la Administración P2", "nrcs": ["10093"], "prof": "Marco Ruz", "raw": "Introducción a la Administración P2 (NRC:10093) - Prof. Marco Ruz"}, {"name": "Introducción a la Economía P2", "nrcs": ["10095"], "prof": "Sofía Orazi", "raw": "Introducción a la Economía P2 (NRC:10095) - Prof. Sofía Orazi"}, {"name": "Taller de Habilidades I P2", "nrcs": ["10097"], "prof": "Paulina Leiva", "raw": "Taller de Habilidades I P2 (NRC: 10097) - Prof. Paulina Leiva"}, {"name": "Matemáticas I P3", "nrcs": ["12857"], "prof": "Rodrigo Riffo", "raw": "Matemáticas I P3 (NRC: 12857) - Prof.Rodrigo Riffo"}, {"name": "Identidad y Universidad P8", "nrcs": ["13354"], "prof": "Matías Cortés", "raw": "Identidad y Universidad P8 (NRC: 13354) - Prof. Matías Cortés"}]}, {"rut": "214733404", "name": "Mundaca Rojas Maricel", "apellidos": "MUNDACA ROJAS", "carrera": "INGECO", "diagnostico": "TEA", "periodo_incluye": "I 2026", "anio_carrera": "2026", "estado": "Matriculado", "n_aj": 13, "ajustes": "*-\tComunicar la caracterización de la estudiante a los docentes de asignaturas, para la aplicación de los ajustes razonables.   \n\n-\tPermitir el uso de canceladores de ruido en clases y evaluaciones\n\n-\tPermitir el uso de fidgets en clases y evaluaciones. \n\n-\tPermitir salir de la sala en caso de sobrecarga sensorial.\n\n-\tExplicar en el curso que son y como acceder a los primeros auxilios psicológicos, considerando la hipersensibilidad a luces y sonidos de Maricel, lo cual podría generar una sobrecarga sensorial. \n\n-\tEn presentaciones orales, inicialmente ofrecer diferentes formas de expresión (no solo oral) consensuadas con la estudiante (videos por ej.) para luego aumentar progresivamente la exposición frente a personas (primero solo frente al docente, luego, frente a un grupo pequeño, luego frente a un grupo mayor) \n\n-\tEntregar material de estudio con anticipación a través del aula virtual, para favorecer estudio autónomo. \n\n-\tEstablecer un medio de contacto para informar cambios en la planificación.  \n\n-\tExplicar los contenidos paso a paso con apoyo de organizadores gráficos (imágenes, mapas conceptuales etc.) y ejemplos.\n\n-\tAsociar los contenidos de la clase a situaciones reales relacionadas con el perfil de egreso para que éstos sean significativos e incentiven el interés de la estudiante.\n\n-\tFavorecer la aplicación de metodologías activas para afianzar los procesos motivacionales.  \n-\tAplicar extensión horaria hasta un 50%, en TODOS los procesos de evaluación y en todas las asignaturas. \n\n-\tDar a conocer previamente los criterios y rúbricas de evaluación, estableciendo enunciados claros y definidos", "nrcs": ["10091", "10092", "10094", "10096", "10001", "10206"], "subjects": [{"name": "Desarrollo de Actitud Emprendedora P1", "nrcs": ["10091"], "prof": "Scarlett Ceballos", "raw": "Desarrollo de Actitud Emprendedora P1 (NRC: 10091) - Prof. Scarlett Ceballos"}, {"name": "Introducción a la Administración P1", "nrcs": ["10092"], "prof": "Marco Ruz", "raw": "Introducción a la Administración P1 (NRC:10092) - Prof. Marco Ruz"}, {"name": "Introducción a la Economía P1", "nrcs": ["10094"], "prof": "Sofía Orazi", "raw": "Introducción a la Economía P1 (NRC:10094) - Prof. Sofía Orazi"}, {"name": "Taller de Habilidades I P1", "nrcs": ["10096"], "prof": "Paulina Leiva", "raw": "Taller de Habilidades I P1 (NRC: 10096) - Prof. Paulina Leiva"}, {"name": "Matemáticas I P1", "nrcs": ["10001"], "prof": "Diego Rojas", "raw": "Matemáticas I P1 (NRC: 10001) - Prof.Diego Rojas"}, {"name": "Identidad y Universidad P7", "nrcs": ["10206"], "prof": "Cleyton Cortés", "raw": "Identidad y Universidad P7 (NRC: 10206) - Prof. Cleyton Cortés"}]}, {"rut": "225063478", "name": "Rauld Del Portillo Tomás", "apellidos": "RAULD DEL PORTILLO", "carrera": "IICG", "diagnostico": "TEA", "periodo_incluye": "I 2026", "anio_carrera": "2026", "estado": "Matriculado", "n_aj": 10, "ajustes": "*- Comunicar la caracterización del estudiante a los\ndocentes de asignaturas, para la aplicación de los\najustes razonables.\n- Aplicar extensión horaria hasta un 50%, en TODOS\nlos procesos de evaluación, en todas las asignaturas.\n- Permitir el uso de fidgets\n- Permitir el uso de canceladores de ruido.\n- Permitir la grabación de clases para favorecer el\nestudio autónomo.\n- Permitir el trabajo grupal por afinidad\n- Entregar el material de estudio con anticipación a\ntravés del aula virtual.\n- Permitir salir de clases en caso de sobrecarga\nsensorial. (hipersensibilidad auditiva)\n- Explicar ejercicios paso a paso, para favorecer la\nestructuración mental del estudiante.\n- Dar a conocer previamente los criterios y rúbricas\nde evaluación, estableciendo enunciados claros y\ndefinidos", "nrcs": ["10470", "11853", "11968", "11981", "11983", "11985"], "subjects": [{"name": "Identidad y Universidad P13", "nrcs": ["10470"], "prof": "Javier Cortés", "raw": "Identidad y Universidad P13 (NRC: 10470) - Prof. Javier Cortés"}, {"name": "Matemáticas I P1", "nrcs": ["11853"], "prof": "Claudia Villalobos", "raw": "Matemáticas I P1 (NRC: 11853) - Prof. Claudia Villalobos"}, {"name": "Economía P1", "nrcs": ["11968"], "prof": "Alberto Rojas", "raw": "Economía P1 (NRC: 11968) - Prof. Alberto Rojas"}, {"name": "Introducción a la Administración P1", "nrcs": ["11981"], "prof": "Joaquín Loayza", "raw": "Introducción a la Administración P1 (NRC: 11981) - Prof. Joaquín Loayza"}, {"name": "Programación P1", "nrcs": ["11983"], "prof": "Guillermo Ismodes", "raw": "Programación P1 (NRC:11983)- Prof. Guillermo Ismodes"}, {"name": "Taller de Habilidades P1", "nrcs": ["11985"], "prof": "Paulina Leiva", "raw": "Taller de Habilidades P1 (NRC: 11985) - Prof. Paulina Leiva"}]}, {"rut": "225924724", "name": "Patricio Toro Galvez", "apellidos": "TORO GALVEZ", "carrera": "IICG", "diagnostico": "TEA", "periodo_incluye": "I 2026", "anio_carrera": "2026", "estado": "Matriculado", "n_aj": 11, "ajustes": "· Comunicar la caracterización del estudiante a\nlos docentes de asignaturas, para la aplicación\nde los ajustes razonables.\n· Aplicar extensión horaria hasta un 50%, en\nTODOS los procesos de evaluación, en todas las\nasignaturas.\n· Dar a conocer previamente los criterios y\nrúbricas de evaluación\n· Permitir el uso de canceladores de ruido en\nclases y evaluaciones\n· Permitir el uso de fidgets en clases y\nevaluaciones.\n· Permitir salir de la sala en caso de sobrecarga\nsensorial.\n· Explicar los contenidos paso a paso con apoyo\nde organizadores gráficos (imágenes, mapas\nconceptuales etc.) y ejemplos.\n· Entregar el material de estudio con anticipación\na través del aula virtual.\n· Permitir la grabación de clases para favorecer el\nestudio autónomo.\n· Aplicar síntesis de contenidos al finalizar una\nclase\n· Permitir el trabajo individual o en grupos por\nafinidad", "nrcs": ["10470", "11853", "11968", "11981", "11983", "11985"], "subjects": [{"name": "Identidad y Universidad P13", "nrcs": ["10470"], "prof": "Javier Cortés", "raw": "Identidad y Universidad P13 (NRC: 10470) - Prof. Javier Cortés"}, {"name": "Matemáticas I P1", "nrcs": ["11853"], "prof": "Claudia Villalobos", "raw": "Matemáticas I P1 (NRC: 11853) - Prof. Claudia Villalobos"}, {"name": "Economía P1", "nrcs": ["11968"], "prof": "Alberto Rojas", "raw": "Economía P1 (NRC: 11968) - Prof. Alberto Rojas"}, {"name": "Introducción a la Administración P1", "nrcs": ["11981"], "prof": "Joaquín Loayza", "raw": "Introducción a la Administración P1 (NRC: 11981) - Prof. Joaquín Loayza"}, {"name": "Programación P1", "nrcs": ["11983"], "prof": "Guillermo Ismodes", "raw": "Programación P1 (NRC:11983)- Prof. Guillermo Ismodes"}, {"name": "Taller de Habilidades P1", "nrcs": ["11985"], "prof": "Paulina Leiva", "raw": "Taller de Habilidades P1 (NRC: 11985) - Prof. Paulina Leiva"}]}, {"rut": "224959672", "name": "Francisco Cerda de la Fuente", "apellidos": "CERDA LA FUENTE", "carrera": "INGECO", "diagnostico": "TDA", "periodo_incluye": "I 2026", "anio_carrera": "2026", "estado": "Matriculado", "n_aj": 8, "ajustes": " - Aplicar extensión horaria hasta un 50%, en\nTODOS los procesos de evaluación, en todas las\nasignaturas.\n- Aplicar metodologías activas que favorezcan la\ninteracción y participación del estudiante.\n- Permitir salir de la sala en caso de sobrecarga\nsensorial.\n- Apoyar la entrega de información utilizando\nejemplos y material visual. (imágenes,\norganizadores gráficos, mapas conceptuales,\netc. Los cuales se requiere que tengan una\nbuena definición y contraste).\n- Incorporar pausas activas en clases extensas que\npermitan el re enfoque atencional y\nmotivacional (cada 30 o 40 minutos).\n- Aplicar síntesis de contenidos al finalizar una\nclase\n- Permitir el uso de fidgets\n- Permitir el uso de audífonos para escuchar\nmúsica en segunda intención, para favorecer los\nprocesos de atención y auto regulación sensorial\ny emocional en clases y evaluaciones.", "nrcs": ["10090", "10093", "10095", "10097", "12857", "13354"], "subjects": [{"name": "Desarrollo de Actitud Emprendedora P2", "nrcs": ["10090"], "prof": "María Fernanda Roco", "raw": "Desarrollo de Actitud Emprendedora P2 (NRC: 10090) - Prof. María Fernanda Roco"}, {"name": "Introducción a la Administración P2", "nrcs": ["10093"], "prof": "Marco Ruz", "raw": "Introducción a la Administración P2 (NRC:10093) - Prof. Marco Ruz"}, {"name": "Introducción a la Economía P2", "nrcs": ["10095"], "prof": "Sofía Orazi", "raw": "Introducción a la Economía P2 (NRC:10095) - Prof. Sofía Orazi"}, {"name": "Taller de Habilidades I P2", "nrcs": ["10097"], "prof": "Paulina Leiva", "raw": "Taller de Habilidades I P2 (NRC: 10097) - Prof. Paulina Leiva"}, {"name": "Matemáticas I P3", "nrcs": ["12857"], "prof": "Rodrigo Riffo", "raw": "Matemáticas I P3 (NRC: 12857) - Prof.Rodrigo Riffo"}, {"name": "Identidad y Universidad P8", "nrcs": ["13354"], "prof": "Matías Cortés", "raw": "Identidad y Universidad P8 (NRC: 13354) - Prof. Matías Cortés"}]}], "pending_subjects": [{"nrc": "10102", "name": "Comportamiento Organizacional P1", "prof": "Fernando Ramos", "student_ruts": ["218632114", "223014313"]}, {"nrc": "10103", "name": "Comportamiento Organizacional P2", "prof": "Fernando Ramos", "student_ruts": ["219839057"]}, {"nrc": "10108", "name": "Costos y Presupuestos P1", "prof": "Sergio Zúñiga", "student_ruts": ["21984011K"]}, {"nrc": "10090", "name": "Desarrollo de Actitud Emprendedora P2", "prof": "María Fernanda Roco", "student_ruts": ["222747031", "224959672"]}, {"nrc": "14163", "name": "Diálogo Cristianismo", "prof": "Fabián Bustamante", "student_ruts": ["214586908", "217434572"]}, {"nrc": "14071", "name": "Diálogoo Cristianismo P2", "prof": "Rodrigo Cárcamo", "student_ruts": ["218243797"]}, {"nrc": "10398", "name": "Electivo Inserción Laboral", "prof": "Consuelo Contreras", "student_ruts": ["208157078", "217650240"]}, {"nrc": "12459", "name": "Electivo Lengua de Señas", "prof": "Betsabeth Supanta", "student_ruts": ["217434572"]}, {"nrc": "14160", "name": "Electivo Salud Emocional", "prof": "Nicole Vargas", "student_ruts": ["213970321"]}, {"nrc": "13353", "name": "Electivo Taller de Inteligencia Artificial", "prof": "Krystal Fuentes", "student_ruts": ["217434572"]}, {"nrc": "14188", "name": "Gestión de Finanzas Personales", "prof": "Consuelo Contreras", "student_ruts": ["218243797"]}, {"nrc": "10470", "name": "Identidad y Universidad P13", "prof": "Javier Cortés", "student_ruts": ["225063478", "225924724"]}, {"nrc": "10206", "name": "Identidad y Universidad P7", "prof": "Cleyton Cortés", "student_ruts": ["214733404"]}, {"nrc": "13354", "name": "Identidad y Universidad P8", "prof": "Matías Cortés", "student_ruts": ["222747031", "224959672"]}, {"nrc": "10886", "name": "Inglés I", "prof": "Yasna Castro", "student_ruts": ["218632114"]}, {"nrc": "12858", "name": "Inglés I", "prof": "Yasna Castro", "student_ruts": ["219839057"]}, {"nrc": "13286", "name": "Inglés III", "prof": "Paola Jeria", "student_ruts": ["217485525"]}, {"nrc": "13292", "name": "Inglés III", "prof": "María González", "student_ruts": ["211299568", "21822170K", "21984011K"]}, {"nrc": "10092", "name": "Introducción a la Administración P1", "prof": "Marco Ruz", "student_ruts": ["214733404"]}, {"nrc": "10093", "name": "Introducción a la Administración P2", "prof": "Marco Ruz", "student_ruts": ["222747031", "224959672"]}, {"nrc": "10117", "name": "Liderazgo de Personas P1", "prof": "Samuel Araya", "student_ruts": ["217650240"]}, {"nrc": "10118", "name": "Liderazgo de Personas P2", "prof": "Samuel Araya", "student_ruts": ["208157078", "208637304", "213970321", "217434572"]}, {"nrc": "10492", "name": "Marketing I", "prof": "Carla Andrade", "student_ruts": ["217485525", "221192192"]}, {"nrc": "10113", "name": "Marketing I P1", "prof": "Carla Andrade", "student_ruts": ["211299568", "21822170K", "21984011K"]}, {"nrc": "10001", "name": "Matemáticas I P1", "prof": "Diego Rojas", "student_ruts": ["214733404"]}, {"nrc": "11853", "name": "Matemáticas I P1", "prof": "Claudia Villalobos", "student_ruts": ["225063478", "225924724"]}, {"nrc": "12857", "name": "Matemáticas I P3", "prof": "Rodrigo Riffo", "student_ruts": ["222747031", "224959672"]}, {"nrc": "11857", "name": "Matemáticas II P1", "prof": "Liliana Licuime", "student_ruts": ["225551790"]}, {"nrc": "10003", "name": "Matemáticas III P1", "prof": "Claudia Villalobos", "student_ruts": ["218632114", "223014313"]}, {"nrc": "10004", "name": "Matemáticas III P2", "prof": "Sebastián Miranda", "student_ruts": ["219839057"]}, {"nrc": "11394", "name": "PST Emprendimiento", "prof": "Karla Soria", "student_ruts": ["21150627K"]}, {"nrc": "11080", "name": "Ética Profesional", "prof": "Alejandro Cerda", "student_ruts": ["217650240"]}, {"nrc": "11869", "name": "Ética Profesional", "prof": "Alicia Gómez", "student_ruts": ["208157078"]}], "stats": {"period": "Primer Semestre 2026 (202610)", "n_students": 24, "n_events_total": 265, "n_events_dated": 212, "n_events_undated": 53, "n_events_with_incluye": 167, "n_events_with_incluye_dated": 129, "n_pending_subjects": 33}};
+// ====== State ======
+const state = {
+  filters: { student: '', carrera: '', diag: '', asig: '', doc: '', onlyIncluye: false },
+  view: 'calendario',
+  calMonth: 4, calYear: 2026,
+  sortCol: 'date', sortDir: 'asc'
+};
+
+const studentByRut = Object.fromEntries(DATA.students.map(s => [s.rut, s]));
+const allEvents = DATA.events;
+
+// ====== Helpers ======
+const fmtDate = (iso) => {
+  if (!iso) return '—';
+  const [y,m,d] = iso.split('-').map(Number);
+  const months = ['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'];
+  return `${String(d).padStart(2,'0')} ${months[m-1]}`;
+};
+const fmtDateLong = (iso) => {
+  if (!iso) return 'Sin fecha';
+  const [y,m,d] = iso.split('-').map(Number);
+  const months = ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','octubre','noviembre','diciembre'];
+  const days = ['domingo','lunes','martes','miércoles','jueves','viernes','sábado'];
+  const dt = new Date(y, m-1, d);
+  return `${days[dt.getDay()]} ${d} de ${months[m-1]} ${y}`;
+};
+const diagKey = (d) => {
+  if (!d) return '';
+  const u = d.toUpperCase();
+  if (u.includes('TEA')) return 'TEA';
+  if (u.includes('TDAH')) return 'TDAH';
+  if (u.includes('TDA')) return 'TDA';
+  if (u.includes('SALUD')) return 'SALUD';
+  if (u.includes('VISUAL')) return 'VISUAL';
+  return 'OTRO';
+};
+
+// ====== Filtering ======
+function studentMatchesFilters(s) {
+  const f = state.filters;
+  if (f.student && s.rut !== f.student) return false;
+  if (f.carrera && s.carrera !== f.carrera) return false;
+  if (f.diag && s.diagnostico !== f.diag) return false;
+  return true;
+}
+function eventMatchesFilters(e) {
+  const f = state.filters;
+  if (f.asig && e.asignatura !== f.asig) return false;
+  if (f.doc && e.docente !== f.doc) return false;
+  // Filter by student/carrera/diag: keep events whose affected_ruts intersect filtered students
+  const affectedStudents = e.affected_ruts.map(r => studentByRut[r]).filter(Boolean);
+  const filteredAffected = affectedStudents.filter(studentMatchesFilters);
+  if (f.student || f.carrera || f.diag) {
+    if (filteredAffected.length === 0) return false;
+  }
+  if (f.onlyIncluye && filteredAffected.length === 0) return false;
+  return true;
+}
+function getFilteredAffected(e) {
+  const affected = e.affected_ruts.map(r => studentByRut[r]).filter(Boolean);
+  return affected.filter(studentMatchesFilters);
+}
+
+// ====== Populate filter dropdowns ======
+function populateFilters() {
+  const studentSel = document.getElementById('f-student');
+  const studentsSorted = [...DATA.students].sort((a,b) => a.apellidos.localeCompare(b.apellidos, 'es'));
+  studentsSorted.forEach(s => {
+    const o = document.createElement('option');
+    o.value = s.rut; o.textContent = `${s.name} (${s.carrera})`;
+    studentSel.appendChild(o);
+  });
+  
+  const diagSel = document.getElementById('f-diag');
+  [...new Set(DATA.students.map(s => s.diagnostico))].sort().forEach(d => {
+    const o = document.createElement('option');
+    o.value = d; o.textContent = d;
+    diagSel.appendChild(o);
+  });
+  
+  const asigSel = document.getElementById('f-asig');
+  [...new Set(allEvents.map(e => e.asignatura))].sort().forEach(a => {
+    const o = document.createElement('option');
+    o.value = a; o.textContent = a.length > 60 ? a.slice(0,60)+'…' : a;
+    asigSel.appendChild(o);
+  });
+  
+  const docSel = document.getElementById('f-doc');
+  [...new Set(allEvents.map(e => e.docente))].sort().forEach(d => {
+    const o = document.createElement('option');
+    o.value = d; o.textContent = d;
+    docSel.appendChild(o);
+  });
+}
+
+// ====== Wiring ======
+function wireFilters() {
+  ['f-student','f-carrera','f-diag','f-asig','f-doc'].forEach(id => {
+    document.getElementById(id).addEventListener('change', e => {
+      const k = id.replace('f-','').replace('student','student').replace('carrera','carrera').replace('diag','diag').replace('asig','asig').replace('doc','doc');
+      state.filters[k] = e.target.value;
+      renderAll();
+    });
+  });
+  document.getElementById('t-incluye').addEventListener('click', e => {
+    const cb = document.querySelector('#t-incluye input');
+    if (e.target.tagName !== 'INPUT') cb.checked = !cb.checked;
+    state.filters.onlyIncluye = cb.checked;
+    document.getElementById('t-incluye').classList.toggle('active', cb.checked);
+    renderAll();
+  });
+  document.getElementById('btn-clear').addEventListener('click', () => {
+    state.filters = { student:'', carrera:'', diag:'', asig:'', doc:'', onlyIncluye:false };
+    document.getElementById('f-student').value = '';
+    document.getElementById('f-carrera').value = '';
+    document.getElementById('f-diag').value = '';
+    document.getElementById('f-asig').value = '';
+    document.getElementById('f-doc').value = '';
+    document.querySelector('#t-incluye input').checked = false;
+    document.getElementById('t-incluye').classList.remove('active');
+    renderAll();
+  });
+}
+function wireTabs() {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+      document.querySelectorAll('.view').forEach(x => x.classList.remove('active'));
+      t.classList.add('active');
+      state.view = t.dataset.tab;
+      document.getElementById('view-'+t.dataset.tab).classList.add('active');
+      renderAll();
+    });
+  });
+}
+function wireCalendarNav() {
+  document.getElementById('prev-month').addEventListener('click', () => {
+    state.calMonth--;
+    if (state.calMonth < 1) { state.calMonth = 12; state.calYear--; }
+    renderCalendar();
+  });
+  document.getElementById('next-month').addEventListener('click', () => {
+    state.calMonth++;
+    if (state.calMonth > 12) { state.calMonth = 1; state.calYear++; }
+    renderCalendar();
+  });
+}
+function wireModal() {
+  document.getElementById('m-close').addEventListener('click', closeModal);
+  document.getElementById('modal-bg').addEventListener('click', e => {
+    if (e.target.id === 'modal-bg') closeModal();
+  });
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeModal();
+  });
+}
+function wireListSort() {
+  document.querySelectorAll('#list-table th').forEach(th => {
+    th.addEventListener('click', () => {
+      const col = th.dataset.col;
+      if (state.sortCol === col) state.sortDir = state.sortDir === 'asc' ? 'desc' : 'asc';
+      else { state.sortCol = col; state.sortDir = 'asc'; }
+      renderList();
+    });
+  });
+}
+
+// ====== KPIs ======
+function renderKPIs() {
+  const kpis = document.getElementById('kpis');
+  const events = allEvents.filter(eventMatchesFilters);
+  const dated = events.filter(e => e.date);
+  const withInc = events.filter(e => getFilteredAffected(e).length > 0);
+  const stuFiltered = DATA.students.filter(studentMatchesFilters);
+  
+  kpis.innerHTML = `
+    <div class="kpi"><div class="v">${stuFiltered.length}</div><div class="l">Estudiantes</div></div>
+    <div class="kpi"><div class="v">${events.length}</div><div class="l">Eventos</div></div>
+    <div class="kpi"><div class="v">${dated.length}</div><div class="l">Con fecha</div></div>
+    <div class="kpi"><div class="v">${withInc.length}</div><div class="l">Con INCLUYE</div></div>
+  `;
+  
+  document.getElementById('b-cal').textContent = dated.length;
+  document.getElementById('b-list').textContent = events.length;
+  document.getElementById('b-stu').textContent = stuFiltered.length;
+}
+
+// ====== Calendar ======
+function renderCalendar() {
+  const monthsLong = ['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+  document.getElementById('month-label').textContent = `${monthsLong[state.calMonth-1]} ${state.calYear}`;
+  
+  const firstDay = new Date(state.calYear, state.calMonth-1, 1);
+  // JS getDay: 0=Sun..6=Sat. We want Monday-first
+  let firstDow = firstDay.getDay();
+  firstDow = firstDow === 0 ? 6 : firstDow - 1; // 0=Mon..6=Sun
+  const daysInMonth = new Date(state.calYear, state.calMonth, 0).getDate();
+  
+  // group events by date
+  const eventsByDate = {};
+  allEvents.filter(eventMatchesFilters).forEach(e => {
+    if (!e.date) return;
+    if (!eventsByDate[e.date]) eventsByDate[e.date] = [];
+    eventsByDate[e.date].push(e);
+  });
+  
+  const today = new Date();
+  const todayStr = `${today.getFullYear()}-${String(today.getMonth()+1).padStart(2,'0')}-${String(today.getDate()).padStart(2,'0')}`;
+  
+  const body = document.getElementById('cal-body');
+  body.innerHTML = '';
+  
+  // empty cells
+  for (let i = 0; i < firstDow; i++) {
+    const c = document.createElement('div');
+    c.className = 'cal-cell empty';
+    body.appendChild(c);
+  }
+  
+  for (let d = 1; d <= daysInMonth; d++) {
+    const iso = `${state.calYear}-${String(state.calMonth).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const dt = new Date(state.calYear, state.calMonth-1, d);
+    const dow = dt.getDay();
+    const c = document.createElement('div');
+    c.className = 'cal-cell';
+    if (dow === 0 || dow === 6) c.classList.add('weekend');
+    if (iso === todayStr) c.classList.add('today');
+    
+    const evs = eventsByDate[iso] || [];
+    const hasInc = evs.some(e => getFilteredAffected(e).length > 0);
+    if (hasInc) c.classList.add('has-incluye');
+    
+    const numDiv = document.createElement('div');
+    numDiv.className = 'day-num';
+    numDiv.textContent = d;
+    c.appendChild(numDiv);
+    
+    evs.forEach(e => {
+      const aff = getFilteredAffected(e);
+      const div = document.createElement('div');
+      div.className = 'cal-event' + (aff.length > 0 ? ' incluye' : '');
+      const shortAsig = e.asignatura.replace(/^ECCE-\d+\s*/,'').replace(/\s+(INGECO|IICG)$/,'').trim().slice(0,30);
+      div.innerHTML = `${aff.length > 0 ? '<span class="ev-icon">●</span>' : ''}${shortAsig}${aff.length > 0 ? ` <strong>(${aff.length})</strong>` : ''}`;
+      div.title = `${e.asignatura}\n${e.eval_name} (${e.pct||'?'}%)\nDocente: ${e.docente}${aff.length > 0 ? `\n${aff.length} est. INCLUYE` : ''}`;
+      div.addEventListener('click', () => openModal(e));
+      c.appendChild(div);
+    });
+    body.appendChild(c);
+  }
+  
+  const totalCells = firstDow + daysInMonth;
+  const trailing = (7 - (totalCells % 7)) % 7;
+  for (let i = 0; i < trailing; i++) {
+    const c = document.createElement('div');
+    c.className = 'cal-cell empty';
+    body.appendChild(c);
+  }
+}
+
+// ====== List ======
+function renderList() {
+  const events = allEvents.filter(eventMatchesFilters).filter(e => e.date);
+  document.getElementById('list-count').textContent = `${events.length} evento${events.length !== 1 ? 's' : ''}`;
+  
+  // sort
+  events.sort((a,b) => {
+    let va, vb;
+    const c = state.sortCol;
+    if (c === 'incluye') { va = getFilteredAffected(a).length; vb = getFilteredAffected(b).length; }
+    else if (c === 'pct') { va = parseFloat(a.pct||'0'); vb = parseFloat(b.pct||'0'); }
+    else if (c === 'nrcs') { va = (a.nrcs||[]).join(','); vb = (b.nrcs||[]).join(','); }
+    else { va = a[c]||''; vb = b[c]||''; }
+    if (va < vb) return state.sortDir === 'asc' ? -1 : 1;
+    if (va > vb) return state.sortDir === 'asc' ? 1 : -1;
+    return 0;
+  });
+  
+  document.querySelectorAll('#list-table th').forEach(th => {
+    th.classList.remove('sort-asc','sort-desc');
+    if (th.dataset.col === state.sortCol) th.classList.add(state.sortDir === 'asc' ? 'sort-asc' : 'sort-desc');
+  });
+  
+  const tbody = document.getElementById('list-tbody');
+  if (events.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="7" class="empty-state">No hay eventos que coincidan con los filtros.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = events.map(e => {
+    const aff = getFilteredAffected(e);
+    const incTag = aff.length > 0 ? `<span class="incluye-tag">${aff.length}</span>` : '';
+    const shortAsig = e.asignatura.replace(/^ECCE-\d+\s*/,'').trim();
+    return `<tr class="${aff.length > 0 ? 'has-incluye' : ''}" data-id="${e.id}">
+      <td class="date-cell">${fmtDate(e.date)}</td>
+      <td>${shortAsig}${e.parallel ? ` <span class="muted">(${e.parallel})</span>` : ''}</td>
+      <td>${e.eval_name}</td>
+      <td class="pct-cell">${e.pct || '—'}%</td>
+      <td>${e.docente}</td>
+      <td><span class="muted">${(e.nrcs||[]).join(', ') || '—'}</span></td>
+      <td>${aff.length > 0 ? `${aff.length} est.${incTag}` : '<span class="muted">—</span>'}</td>
+    </tr>`;
+  }).join('');
+  tbody.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('click', () => {
+      const ev = events.find(e => e.id == tr.dataset.id);
+      if (ev) openModal(ev);
+    });
+  });
+}
+
+// ====== Students ======
+function renderStudents() {
+  const students = DATA.students.filter(studentMatchesFilters);
+  const grid = document.getElementById('student-grid');
+  
+  if (students.length === 0) {
+    grid.innerHTML = '<div class="empty-state">No hay estudiantes que coincidan con los filtros.</div>';
+    return;
+  }
+  
+  grid.innerHTML = students.map(s => {
+    // Get all events for this student that pass other filters (subj/doc/onlyIncluye don't apply to student affiliation here, but we apply them)
+    const events = allEvents.filter(e => {
+      if (!e.affected_ruts.includes(s.rut)) return false;
+      const f = state.filters;
+      if (f.asig && e.asignatura !== f.asig) return false;
+      if (f.doc && e.docente !== f.doc) return false;
+      return true;
+    });
+    const dated = events.filter(e => e.date).sort((a,b) => a.date.localeCompare(b.date));
+    const fuzzy = events.filter(e => !e.date);
+    const dk = diagKey(s.diagnostico);
+    
+    const evHtml = dated.length === 0
+      ? '<div class="muted" style="font-size:12px;font-style:italic;">Sin evaluaciones con fecha definida.</div>'
+      : dated.map(e => {
+          const shortAsig = e.asignatura.replace(/^ECCE-\d+\s*/,'').replace(/\s+(INGECO|IICG)$/,'').trim();
+          return `<div class="student-eval-item" data-id="${e.id}">
+            <span class="date">${fmtDate(e.date)}</span>
+            <span class="label">${shortAsig} · ${e.eval_name}</span>
+            <span class="pct">${e.pct||'?'}%</span>
+          </div>`;
+        }).join('');
+    
+    return `<div class="student-card" data-rut="${s.rut}">
+      <div class="student-card-head">
+        <div>
+          <div class="student-name">${s.name}</div>
+          <div class="student-meta">${s.carrera} · Ingreso ${s.anio_carrera} · Período INCLUYE: ${s.periodo_incluye}</div>
+        </div>
+        <span class="diag-chip diag-${dk}">${s.diagnostico}</span>
+      </div>
+      <details>
+        <summary>Ajustes razonables (${s.n_aj})</summary>
+        <div class="adjustments">${(s.ajustes || 'Sin ajustes registrados').replace(/\\n/g,'\n')}</div>
+      </details>
+      <div class="student-evals">
+        <div class="muted" style="font-size:11px;margin-bottom:6px;text-transform:uppercase;letter-spacing:0.04em;font-weight:500;">
+          ${dated.length} evaluación${dated.length !== 1 ? 'es' : ''} con fecha
+        </div>
+        ${evHtml}
+      </div>
+    </div>`;
+  }).join('');
+  
+  grid.querySelectorAll('.student-eval-item').forEach(it => {
+    it.addEventListener('click', e => {
+      e.stopPropagation();
+      const ev = allEvents.find(x => x.id == it.dataset.id);
+      if (ev) openModal(ev);
+    });
+  });
+}
+
+// ====== Modal ======
+function openModal(e) {
+  const aff = getFilteredAffected(e);
+  document.getElementById('m-title').textContent = e.eval_name;
+  document.getElementById('m-meta').textContent = `${e.asignatura}${e.parallel ? ' · '+e.parallel : ''}`;
+  
+  const studsHtml = aff.length > 0
+    ? `<div class="modal-students-list">${aff.map(s => {
+        const dk = diagKey(s.diagnostico);
+        return `<div class="modal-student">
+          <div class="modal-student-head">
+            <div>
+              <div class="modal-student-name">${s.name}</div>
+              <div class="modal-student-meta">${s.carrera} · RUT ${s.rut} · Ingreso ${s.anio_carrera}</div>
+            </div>
+            <span class="diag-chip diag-${dk}">${s.diagnostico}</span>
+          </div>
+          ${s.ajustes ? `<details style="margin-top:8px;"><summary style="font-size:11px;color:#b88a00;cursor:pointer;font-weight:500;">Ajustes razonables (${s.n_aj})</summary>
+            <div style="margin-top:6px;font-size:12px;line-height:1.5;color:#5a4200;white-space:pre-wrap;">${(s.ajustes || '').replace(/\\n/g,'\n')}</div>
+          </details>` : ''}
+        </div>`;
+      }).join('')}</div>`
+    : '<div class="no-incluye-msg">Esta evaluación no afecta a estudiantes INCLUYE (según los filtros aplicados).</div>';
+  
+  document.getElementById('m-body').innerHTML = `
+    <div class="modal-section">
+      <h4>Detalle de la evaluación</h4>
+      <div class="modal-eval-box">
+        <div class="modal-row"><span class="lbl">Fecha</span><span class="val">${e.date ? fmtDateLong(e.date) : (e.fuzzy || 'Sin fecha definida')}</span></div>
+        <div class="modal-row"><span class="lbl">Ponderación</span><span class="val">${e.pct||'?'}%</span></div>
+        <div class="modal-row"><span class="lbl">Docente</span><span class="val">${e.docente}</span></div>
+        <div class="modal-row"><span class="lbl">NRC(s)</span><span class="val">${(e.nrcs||[]).join(', ') || '—'}${e.nrc_inferred ? ' <span class="muted" style="font-size:11px;font-weight:400;">(inferido por nombre)</span>' : ''}</span></div>
+        ${e.parallel ? `<div class="modal-row"><span class="lbl">Paralelo</span><span class="val">${e.parallel}</span></div>` : ''}
+        ${e.date_text ? `<div class="modal-row"><span class="lbl">Texto fecha</span><span class="val muted">${e.date_text}</span></div>` : ''}
+      </div>
+    </div>
+    <div class="modal-section">
+      <h4>Estudiantes INCLUYE afectados (${aff.length})</h4>
+      ${studsHtml}
+    </div>
+    <div class="modal-section">
+      <h4>Texto original de la planificación</h4>
+      <div class="modal-raw">${(e.raw||'').replace(/\\n/g,'\n')}</div>
+    </div>
+  `;
+  document.getElementById('modal-bg').classList.add('show');
+}
+function closeModal() { document.getElementById('modal-bg').classList.remove('show'); }
+
+// ====== Render all ======
+function renderAll() {
+  renderKPIs();
+  if (state.view === 'calendario') renderCalendar();
+  else if (state.view === 'lista') renderList();
+  else if (state.view === 'estudiantes') renderStudents();
+}
+
+// ====== Init ======
+populateFilters();
+wireFilters();
+wireTabs();
+wireCalendarNav();
+wireModal();
+wireListSort();
+
+// Set initial calendar to first month with events (April 2026)
+state.calMonth = 4; state.calYear = 2026;
+renderAll();
+
+</script>
+</body>
+</html>
