@@ -3,501 +3,974 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Defensas PST — Impresión por Área</title>
+<title>Calendario de Defensas PST</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a202c; }
 
-  /* ── PANTALLA: selector de área ── */
-  .screen-only { }
-  .print-only  { display: none; }
+  header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%);
+    color: white; padding: 20px 32px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  header .logo { font-size: 2rem; }
+  header h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; }
 
-  .top-bar {
+  /* ── VIEW SWITCHER ── */
+  .view-switcher {
+    background: #1e3a5f; display: flex; padding: 0 32px; gap: 4px; border-bottom: 3px solid #2563a8;
+  }
+  .view-btn {
+    padding: 11px 22px; border: none; background: none; cursor: pointer;
+    font-size: 0.84rem; font-weight: 600; color: rgba(255,255,255,0.6);
+    border-bottom: 3px solid transparent; margin-bottom: -3px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .view-btn:hover { color: white; background: rgba(255,255,255,0.08); border-radius: 6px 6px 0 0; }
+  .view-btn.active { color: white; border-bottom-color: #60a5fa; }
+
+  /* ── VIEWS ── */
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── DAY TABS (inside diaria / área views) ── */
+  .nav-tabs { display: flex; background: white; border-bottom: 2px solid #e2e8f0; width: 100%; }
+  .tab-btn {
+    flex: 1; padding: 15px 10px; border: none; background: none; cursor: pointer;
+    font-size: 0.88rem; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; text-align: center; transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: #2563a8; background: #f0f6ff; }
+  .tab-btn.active { color: #2563a8; border-bottom-color: #2563a8; }
+  .day-date { font-size: 0.7rem; color: #94a3b8; font-weight: 400; display: block; margin-top: 2px; }
+  .tab-btn.active .day-date { color: #93c5fd; }
+
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+
+  .content { padding: 22px 26px; max-width: 1340px; margin: 0 auto; }
+
+  /* ── CARDS ── */
+  .day-header {
+    background: white; border-radius: 12px; padding: 15px 22px; margin-bottom: 18px;
+    border-left: 5px solid #2563a8; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .day-header h2 { font-size: 1.1rem; color: #1a3a5c; }
+  .day-header .meta { font-size: 0.78rem; color: #64748b; margin-top: 3px; }
+  .day-badge { background: #e0eaff; color: #1d4ed8; padding: 5px 14px; border-radius: 20px; font-size: 0.76rem; font-weight: 700; white-space: nowrap; }
+
+  .rooms-grid { display: grid; gap: 18px; }
+  .rooms-2 { grid-template-columns: 1fr 1fr; }
+
+  .room-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+  .rh-blue  .room-header { background: linear-gradient(135deg, #1a3a5c, #2563a8); }
+  .rh-green .room-header { background: linear-gradient(135deg, #064e3b, #059669); }
+  .room-header { padding: 12px 18px; }
+  .room-header h3 { font-size: 0.93rem; font-weight: 700; color: white; }
+  .room-header .room-area { font-size: 0.74rem; color: rgba(255,255,255,0.85); margin-top: 2px; }
+
+  .commission-box { background: #f8fafc; border-bottom: 1px solid #e2e8f0; padding: 9px 18px; font-size: 0.75rem; }
+  .commission-box .com-title { font-weight: 700; color: #374151; margin-bottom: 4px; }
+  .commission-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+  .tag { display: inline-flex; align-items: center; gap: 3px; padding: 2px 9px; border-radius: 12px; font-size: 0.68rem; font-weight: 600; }
+  .tag-guia { background: #dbeafe; color: #1d4ed8; }
+  .tag-eval { background: #dcfce7; color: #166534; }
+  .tag-mfe  { background: #fef3c7; color: #92400e; }
+
+  .pm-separator   { background: #fff7ed; border-top: 2px solid #fed7aa; border-bottom: 1px solid #e2e8f0; padding: 8px 18px; font-size: 0.72rem; font-weight: 700; color: #c2410c; }
+  .com-b-separator{ background: #f0fdf4; border-top: 2px solid #86efac; border-bottom: 1px solid #e2e8f0; padding: 8px 18px; font-size: 0.72rem; font-weight: 700; color: #166534; }
+
+  .schedule-table { width: 100%; border-collapse: collapse; }
+  .schedule-table th { background: #f1f5f9; padding: 7px 13px; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+  .schedule-table td { padding: 10px 13px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: middle; }
+  .schedule-table tr:last-child td { border-bottom: none; }
+  .schedule-table tr:hover td { background: #f8fafc; }
+  .time-cell { font-weight: 700; color: #374151; white-space: nowrap; width: 130px; }
+
+  .gn { display: inline-block; color: white; border-radius: 5px; padding: 2px 7px; font-size: 0.68rem; font-weight: 700; margin-right: 5px; }
+  .gn-blue   { background: #2563a8; }
+  .gn-green  { background: #059669; }
+  .gn-purple { background: #7c3aed; }
+  .gn-orange { background: #d97706; }
+
+  /* ══════════════════════════════════
+     VISTA GENERAL
+  ══════════════════════════════════ */
+  .overview-grid {
+    display: grid;
+    grid-template-columns: 120px repeat(4, 1fr);
+    gap: 0;
+    background: white;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.09);
+    border: 1px solid #e2e8f0;
+    margin-bottom: 24px;
+  }
+  .ov-cell {
+    padding: 11px 13px;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.78rem;
+    vertical-align: top;
+  }
+  .ov-cell:last-child { border-right: none; }
+  .ov-header {
     background: linear-gradient(135deg, #1a3a5c, #2563a8);
-    color: white; padding: 18px 32px;
-    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+    color: white; font-weight: 700; font-size: 0.8rem; text-align: center;
+    padding: 13px 10px;
   }
-  .top-bar h1 { font-size: 1.3rem; font-weight: 700; }
-  .top-bar p  { font-size: 0.8rem; opacity: 0.8; margin-top: 3px; }
-  .print-btn {
-    background: white; color: #1a3a5c; border: none; cursor: pointer;
-    font-size: 0.85rem; font-weight: 700; padding: 10px 20px;
-    border-radius: 8px; display: flex; align-items: center; gap: 7px;
-    flex-shrink: 0; transition: background 0.15s;
+  .ov-header .ov-date { font-size: 0.68rem; font-weight: 400; opacity: 0.8; display: block; margin-top: 2px; }
+  .ov-time-header {
+    background: #f1f5f9; font-weight: 700; font-size: 0.7rem;
+    text-transform: uppercase; letter-spacing: 0.05em; color: #64748b;
+    padding: 11px 13px; border-right: 1px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
   }
-  .print-btn:hover { background: #e0eaff; }
+  .ov-slot { font-weight: 700; color: #64748b; font-size: 0.72rem; white-space: nowrap; }
+  .ov-empty { color: #cbd5e1; font-size: 0.72rem; font-style: italic; text-align: center; padding: 10px 6px; }
 
-  .area-selector {
-    background: white; border-bottom: 2px solid #e2e8f0;
-    display: flex; flex-wrap: wrap; padding: 0 24px; gap: 0;
+  .ov-block {
+    border-radius: 7px; padding: 7px 9px; margin: 3px 0; font-size: 0.72rem;
+    border-left: 3px solid;
   }
-  .sel-btn {
-    padding: 13px 16px; border: none; background: none; cursor: pointer;
-    font-size: 0.83rem; font-weight: 600; color: #64748b;
-    border-bottom: 3px solid transparent; margin-bottom: -2px;
-    white-space: nowrap; transition: all 0.15s;
-  }
-  .sel-btn:hover  { color: #2563a8; background: #f0f6ff; }
-  .sel-btn.active { color: #2563a8; border-bottom-color: #2563a8; }
+  .ov-block-blue   { background: #eff6ff; border-color: #2563a8; }
+  .ov-block-green  { background: #f0fdf4; border-color: #059669; }
+  .ov-block-orange { background: #fff7ed; border-color: #d97706; }
+  .ov-block-purple { background: #f5f3ff; border-color: #7c3aed; }
+  .ov-block .ob-sala { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; opacity: 0.7; margin-bottom: 2px; }
+  .ov-block .ob-area { font-weight: 700; }
+  .ov-block .ob-prof { font-size: 0.68rem; opacity: 0.75; }
+  .ov-block .ob-time { font-size: 0.63rem; opacity: 0.65; margin-top: 2px; }
 
-  .preview-wrap { padding: 28px 32px; max-width: 820px; margin: 0 auto; }
+  .ov-section-label {
+    grid-column: 1 / -1;
+    background: #f8fafc; padding: 7px 13px;
+    font-size: 0.7rem; font-weight: 700; color: #64748b;
+    text-transform: uppercase; letter-spacing: 0.07em;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  /* summary cards */
+  .summary-cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 22px; }
+  .sum-card {
+    background: white; border-radius: 10px; padding: 16px 18px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07); border: 1px solid #e2e8f0;
+    border-top: 4px solid #2563a8;
+  }
+  .sum-card.green { border-top-color: #059669; }
+  .sum-card.orange { border-top-color: #d97706; }
+  .sum-card.purple { border-top-color: #7c3aed; }
+  .sum-card .sc-date { font-size: 0.72rem; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; }
+  .sum-card .sc-day  { font-size: 1.1rem; font-weight: 800; color: #1a3a5c; margin: 2px 0; }
+  .sum-card .sc-info { font-size: 0.75rem; color: #64748b; }
+  .sum-card .sc-areas { margin-top: 8px; display: flex; flex-wrap: wrap; gap: 4px; }
+  .area-chip { display: inline-block; font-size: 0.65rem; font-weight: 700; padding: 2px 8px; border-radius: 10px; background: #e0eaff; color: #1d4ed8; }
+  .area-chip.g { background: #dcfce7; color: #166534; }
+  .area-chip.o { background: #fef3c7; color: #92400e; }
+
+  /* ══════════════════════════════════
+     VISTA INDIVIDUAL POR ÁREA
+  ══════════════════════════════════ */
+  .area-tabs-bar { display: flex; background: white; border-bottom: 2px solid #e2e8f0; width: 100%; flex-wrap: wrap; }
+  .area-tab {
+    padding: 12px 16px; border: none; background: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; transition: all 0.15s; white-space: nowrap;
+  }
+  .area-tab:hover { color: #2563a8; background: #f0f6ff; }
+  .area-tab.active { color: #2563a8; border-bottom-color: #2563a8; }
 
   .area-panel { display: none; }
   .area-panel.active { display: block; }
 
-  /* ── LA FICHA (usada tanto en pantalla como en impresión) ── */
-  .ficha {
-    background: white;
-    border-radius: 10px;
-    overflow: hidden;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    border: 1px solid #e2e8f0;
+  .area-card {
+    background: white; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.09); border: 1px solid #e2e8f0;
+    max-width: 700px; margin: 0 auto;
   }
-
-  .ficha-header {
-    padding: 22px 28px 18px;
-    color: white;
+  .area-card-header {
+    padding: 20px 24px; color: white;
+    background: linear-gradient(135deg, #1a3a5c, #2563a8);
   }
-  .ficha-header .inst { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; margin-bottom: 4px; }
-  .ficha-header h2 { font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
-  .ficha-header .fh-meta { font-size: 0.82rem; opacity: 0.88; margin-top: 6px; }
+  .area-card-header.green  { background: linear-gradient(135deg, #064e3b, #059669); }
+  .area-card-header.purple { background: linear-gradient(135deg, #4c1d95, #7c3aed); }
+  .area-card-header.teal   { background: linear-gradient(135deg, #134e4a, #0d9488); }
+  .area-card-header.orange { background: linear-gradient(135deg, #78350f, #d97706); }
+  .area-card-header h3 { font-size: 1.15rem; font-weight: 700; }
+  .area-card-header .ac-meta { font-size: 0.8rem; opacity: 0.85; margin-top: 4px; }
+  .area-card-header .ac-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 10px; }
+  .ac-tag { display: inline-block; font-size: 0.7rem; font-weight: 600; padding: 3px 10px; border-radius: 12px; background: rgba(255,255,255,0.2); color: white; }
 
-  .bg-blue   { background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%); }
-  .bg-green  { background: linear-gradient(135deg, #064e3b 0%, #059669 100%); }
-  .bg-teal   { background: linear-gradient(135deg, #134e4a 0%, #0d9488 100%); }
-  .bg-purple { background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%); }
-  .bg-orange { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); }
-
-  .ficha-comision {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0;
-    border-bottom: 1px solid #e2e8f0;
+  .area-info-bar {
+    background: #f8fafc; border-bottom: 1px solid #e2e8f0;
+    display: flex; gap: 0;
   }
-  .fc-item {
-    padding: 11px 20px;
-    border-right: 1px solid #e2e8f0;
-    border-bottom: 1px solid #e2e8f0;
-    font-size: 0.78rem;
-  }
-  .fc-item:nth-child(even) { border-right: none; }
-  .fc-item:nth-last-child(-n+2) { border-bottom: none; }
-  .fc-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 2px; }
-  .fc-value { font-weight: 700; color: #1a202c; }
+  .aib-item { flex: 1; padding: 10px 16px; border-right: 1px solid #e2e8f0; text-align: center; }
+  .aib-item:last-child { border-right: none; }
+  .aib-val { font-size: 1.2rem; font-weight: 800; color: #2563a8; }
+  .aib-lbl { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
 
-  .ficha-table { width: 100%; border-collapse: collapse; }
-  .ficha-table thead tr { background: #f1f5f9; }
-  .ficha-table th {
-    padding: 9px 20px; text-align: left;
-    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; color: #64748b;
-    border-bottom: 2px solid #e2e8f0;
-  }
-  .ficha-table td {
-    padding: 13px 20px; border-bottom: 1px solid #f1f5f9;
-    font-size: 0.83rem; vertical-align: middle;
-  }
-  .ficha-table tr:last-child td { border-bottom: none; }
-  .ft-time { font-weight: 700; color: #374151; white-space: nowrap; width: 145px; }
-  .ft-num  { font-weight: 800; color: #2563a8; width: 55px; font-size: 0.9rem; }
-  .ft-students { color: #1a202c; }
+  .area-schedule-table { width: 100%; border-collapse: collapse; }
+  .area-schedule-table th { background: #f1f5f9; padding: 9px 16px; text-align: left; font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+  .area-schedule-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.82rem; vertical-align: middle; }
+  .area-schedule-table tr:last-child td { border-bottom: none; }
+  .area-schedule-table tr:hover td { background: #f8fafc; }
+  .ast-time { font-weight: 700; color: #374151; white-space: nowrap; width: 140px; }
+  .ast-num  { font-weight: 700; color: #2563a8; width: 50px; }
 
-  /* segunda comisión separador */
-  .com2-header {
-    background: #f8fafc; border-top: 2px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
-    padding: 9px 20px; font-size: 0.72rem; font-weight: 700; color: #64748b;
-    text-transform: uppercase; letter-spacing: 0.06em;
-  }
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 13px 26px; background: white; border-top: 1px solid #e2e8f0; font-size: 0.73rem; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
 
-  .ficha-footer {
-    background: #f8fafc; border-top: 2px solid #e2e8f0;
-    padding: 12px 20px; display: flex; justify-content: space-between;
-    font-size: 0.72rem; color: #94a3b8; align-items: center;
-  }
-  .ficha-footer strong { color: #374151; }
-
-  /* ══════════════ IMPRESIÓN ══════════════ */
-  @media print {
-    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
-    body { background: white; font-size: 11pt; }
-    .screen-only { display: none !important; }
-    .print-only  { display: block !important; }
-
-    /* cada ficha en su propia página */
-    .print-ficha { page-break-after: always; padding: 0; }
-    .print-ficha:last-child { page-break-after: avoid; }
-
-    .ficha {
-      box-shadow: none;
-      border: 1px solid #ccc;
-      border-radius: 0;
-      width: 100%;
-    }
-
-    .ficha-header { padding: 18px 22px 14px; }
-    .ficha-header h2 { font-size: 1.25rem; }
-    .ficha-header .inst { font-size: 0.65rem; }
-    .ficha-header .fh-meta { font-size: 0.76rem; }
-
-    .ficha-comision { grid-template-columns: 1fr 1fr; }
-    .fc-item { padding: 9px 18px; font-size: 0.74rem; }
-    .fc-label { font-size: 0.6rem; }
-
-    .ficha-table th { padding: 8px 18px; font-size: 0.62rem; }
-    .ficha-table td { padding: 11px 18px; font-size: 0.8rem; }
-    .ft-time { width: 135px; }
-
-    .ficha-footer { padding: 10px 18px; font-size: 0.65rem; }
-
-    .print-page-header {
-      display: flex !important;
-      justify-content: space-between;
-      align-items: flex-end;
-      margin-bottom: 14px;
-      padding-bottom: 10px;
-      border-bottom: 2px solid #1a3a5c;
-    }
-    .print-page-header .pph-title { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.07em; }
-    .print-page-header .pph-logo  { font-size: 1rem; font-weight: 800; color: #1a3a5c; }
+  @media (max-width: 900px) {
+    .rooms-2 { grid-template-columns: 1fr; }
+    .content { padding: 14px; }
+    header { padding: 16px 14px; }
+    .view-switcher { padding: 0 14px; }
+    .summary-cards { grid-template-columns: 1fr 1fr; }
+    .overview-grid { grid-template-columns: 90px repeat(4,1fr); font-size:0.7rem; }
   }
 </style>
 </head>
 <body>
 
-<!-- ── PANTALLA: barra superior + selector ── -->
-<div class="screen-only">
-  <div class="top-bar">
-    <div>
-      <h1>Defensas PST — Ficha por Área</h1>
-      <p>Selecciona un área para previsualizar · Luego imprime con Ctrl+P (o ⌘P)</p>
-    </div>
-    <button class="print-btn" onclick="window.print()">🖨 Imprimir todas las fichas</button>
-  </div>
+<header>
+  <div class="logo">🎓</div>
+  <div><h1>Calendario de Defensas PST — ECIEM</h1></div>
+</header>
 
-  <div class="area-selector">
-    <button class="sel-btn active"  onclick="showArea('a1',this)">Economía</button>
-    <button class="sel-btn" onclick="showArea('a2',this)">Emprendimiento</button>
-    <button class="sel-btn" onclick="showArea('a3',this)">Finanzas</button>
-    <button class="sel-btn" onclick="showArea('a4',this)">Gestión / RSE</button>
-    <button class="sel-btn" onclick="showArea('a5',this)">Innovación</button>
-    <button class="sel-btn" onclick="showArea('a6',this)">Marketing</button>
-    <button class="sel-btn" onclick="showArea('a7',this)">Planif. Cequea</button>
-    <button class="sel-btn" onclick="showArea('a8',this)">Planif. Terán</button>
-    <button class="sel-btn" onclick="showArea('a9',this)">Sistemas</button>
-  </div>
-
-  <div class="preview-wrap">
-    <div id="a1" class="area-panel active"></div>
-    <div id="a2" class="area-panel"></div>
-    <div id="a3" class="area-panel"></div>
-    <div id="a4" class="area-panel"></div>
-    <div id="a5" class="area-panel"></div>
-    <div id="a6" class="area-panel"></div>
-    <div id="a7" class="area-panel"></div>
-    <div id="a8" class="area-panel"></div>
-    <div id="a9" class="area-panel"></div>
-  </div>
+<div class="view-switcher">
+  <button class="view-btn active" onclick="showView('v-general',this)">📊 Vista General</button>
+  <button class="view-btn" onclick="showView('v-diaria',this)">📅 Vista Diaria</button>
+  <button class="view-btn" onclick="showView('v-area',this)">🔬 Por Área</button>
 </div>
 
-<!-- ── IMPRESIÓN: todas las fichas seguidas ── -->
-<div class="print-only" id="print-all"></div>
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║              VISTA GENERAL                          ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div id="v-general" class="view active">
+<div class="content">
+
+  <div class="summary-cards">
+    <div class="sum-card">
+      <div class="sc-date">30 Junio</div>
+      <div class="sc-day">Martes</div>
+      <div class="sc-info">AM: 2 salas · PM: 1 sala · 11 grupos</div>
+      <div class="sc-areas">
+        <span class="area-chip">Finanzas</span>
+        <span class="area-chip g">Marketing</span>
+        <span class="area-chip o">Planif. Terán</span>
+      </div>
+    </div>
+    <div class="sum-card green">
+      <div class="sc-date">01 Julio</div>
+      <div class="sc-day">Miércoles</div>
+      <div class="sc-info">AM: 2 salas · 9 grupos</div>
+      <div class="sc-areas">
+        <span class="area-chip">RSE / Gestión</span>
+        <span class="area-chip g">Emprendimiento</span>
+      </div>
+    </div>
+    <div class="sum-card orange">
+      <div class="sc-date">02 Julio</div>
+      <div class="sc-day">Jueves</div>
+      <div class="sc-info">AM: 2 salas · PM: 1 sala · 9 grupos</div>
+      <div class="sc-areas">
+        <span class="area-chip">Innovación</span>
+        <span class="area-chip g">Planif. Cequea</span>
+        <span class="area-chip o">Innov. B (PM)</span>
+      </div>
+    </div>
+    <div class="sum-card purple">
+      <div class="sc-date">08 Julio</div>
+      <div class="sc-day">Miércoles</div>
+      <div class="sc-info">AM: 2 salas · 9 grupos</div>
+      <div class="sc-areas">
+        <span class="area-chip">Economía</span>
+        <span class="area-chip g">Sistemas</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla panorámica por hora -->
+  <div class="overview-grid">
+    <!-- Header row -->
+    <div class="ov-time-header">Hora</div>
+    <div class="ov-header">Martes<span class="ov-date">30 junio</span></div>
+    <div class="ov-header">Miércoles<span class="ov-date">01 julio</span></div>
+    <div class="ov-header">Jueves<span class="ov-date">02 julio</span></div>
+    <div class="ov-header">Miércoles<span class="ov-date">08 julio</span></div>
+
+    <!-- 08:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">08:30–09:30</div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Finanzas</div><div class="ob-prof">S. Zúñiga · G10</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Marketing</div><div class="ob-prof">S. Orazi · G23</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">RSE / Gestión</div><div class="ob-prof">K. Vargas · G14</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Emprendimiento</div><div class="ob-prof">K. Soria · G5</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Innovación A</div><div class="ob-prof">T. Bas · G18</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Planif. Cequea</div><div class="ob-prof">M. Cequea · G27</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Economía</div><div class="ob-prof">F. González · G1</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Sistemas</div><div class="ob-prof">V. Duarte · G34</div></div>
+    </div>
+
+    <!-- 09:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">09:30–10:30</div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Finanzas</div><div class="ob-prof">S. Zúñiga · G11</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Marketing</div><div class="ob-prof">S. Orazi · G24</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">RSE / Gestión</div><div class="ob-prof">K. Vargas · G15</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Emprendimiento</div><div class="ob-prof">K. Soria · G6</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Innovación A</div><div class="ob-prof">T. Bas · G19</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Planif. Cequea</div><div class="ob-prof">M. Cequea · G28</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Economía</div><div class="ob-prof">F. González · G2</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Sistemas</div><div class="ob-prof">V. Duarte · G35</div></div>
+    </div>
+
+    <!-- 10:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">10:30–11:30</div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Finanzas</div><div class="ob-prof">S. Zúñiga · G12</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Marketing</div><div class="ob-prof">S. Orazi · G25</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">RSE / Gestión</div><div class="ob-prof">K. Vargas · G16</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Emprendimiento</div><div class="ob-prof">K. Soria · G7</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Innovación A</div><div class="ob-prof">T. Bas · G20</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Planif. Cequea</div><div class="ob-prof">M. Cequea · G29</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Economía</div><div class="ob-prof">F. González · G3</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Sistemas</div><div class="ob-prof">V. Duarte · G36</div></div>
+    </div>
+
+    <!-- 11:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">11:30–12:30</div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Finanzas</div><div class="ob-prof">S. Zúñiga · G13</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Marketing</div><div class="ob-prof">S. Orazi · G26</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">RSE / Gestión</div><div class="ob-prof">K. Vargas · G17</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Emprendimiento</div><div class="ob-prof">K. Soria · G8</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Innovación A</div><div class="ob-prof">T. Bas · G21</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Planif. Cequea</div><div class="ob-prof">M. Cequea · G30</div></div>
+    </div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-blue"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Economía</div><div class="ob-prof">F. González · G4</div></div>
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Sistemas</div><div class="ob-prof">V. Duarte · G37</div></div>
+    </div>
+
+    <!-- 12:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">12:30–13:30</div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-purple"><div class="ob-sala">Sala 302</div><div class="ob-area">Emprend. B</div><div class="ob-prof">K. Soria · G9</div></div>
+    </div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-green"><div class="ob-sala">Sala 302</div><div class="ob-area">Sistemas</div><div class="ob-prof">V. Duarte · G38</div></div>
+    </div>
+
+    <!-- TARDE -->
+    <div class="ov-section-label">Tarde — desde 14:30</div>
+
+    <!-- 14:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">14:30–15:30</div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-orange"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Planif. Terán</div><div class="ob-prof">O. Terán · G31</div></div>
+    </div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-orange"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Innovación B</div><div class="ob-prof">T. Bas · G22</div></div>
+    </div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+
+    <!-- 15:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;">15:30–16:30</div>
+    <div class="ov-cell">
+      <div class="ov-block ov-block-orange"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Planif. Terán</div><div class="ob-prof">O. Terán · G32</div></div>
+    </div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+    <div class="ov-cell"><div class="ov-empty">—</div></div>
+
+    <!-- 16:30 -->
+    <div class="ov-time-header" style="font-weight:400;font-size:0.72rem;color:#374151;border-bottom:none;">16:30–17:30</div>
+    <div class="ov-cell" style="border-bottom:none;">
+      <div class="ov-block ov-block-orange"><div class="ob-sala">Salón ECIEM</div><div class="ob-area">Planif. Terán</div><div class="ob-prof">O. Terán · G33</div></div>
+    </div>
+    <div class="ov-cell" style="border-bottom:none;"><div class="ov-empty">—</div></div>
+    <div class="ov-cell" style="border-bottom:none;"><div class="ov-empty">—</div></div>
+    <div class="ov-cell" style="border-bottom:none;"><div class="ov-empty">—</div></div>
+  </div>
+
+</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║              VISTA DIARIA                           ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div id="v-diaria" class="view">
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showSub('day','dd1',this)">Martes<span class="day-date">30 junio</span></button>
+  <button class="tab-btn" onclick="showSub('day','dd2',this)">Miércoles<span class="day-date">01 julio</span></button>
+  <button class="tab-btn" onclick="showSub('day','dd3',this)">Jueves<span class="day-date">02 julio</span></button>
+  <button class="tab-btn" onclick="showSub('day','dd4',this)">Miércoles<span class="day-date">08 julio</span></button>
+</div>
+<div class="content">
+
+  <!-- Martes 30 -->
+  <div id="dd1" class="sub-panel active">
+    <div class="day-header">
+      <div><h2>Martes 30 de Junio — Finanzas · Marketing · Planificación Terán</h2>
+      <div class="meta">AM: Finanzas y Marketing en paralelo (08:30–12:30) · PM: Planificación Terán (14:30–17:30)</div></div>
+      <div class="day-badge">Fecha 1 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">AM: Finanzas · PM: Planificación Terán</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión Mañana — Prof. Sergio Zúñiga</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Sergio Zúñiga</span><span class="tag tag-eval">✅ Eval 1: Pablo Rodríguez</span>
+            <span class="tag tag-eval">✅ Eval 2: Erick De La Barra</span><span class="tag tag-mfe">🔑 Min. Fe: Rodrigo Sfeir</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G10</span></td><td>Cortes, Jin, Puelles</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G11</span></td><td>Alfaro, Ordenes, Cabello</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G12</span></td><td>Fredes, Lavin, Vargas</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G13</span></td><td>Luna, Rojo, Valenzuela</td></tr>
+        </tbody></table>
+        <div class="pm-separator">Tarde — Prof. Oswaldo Terán · Planificación y Control de Gestión</div>
+        <div class="commission-box">
+          <div class="com-title">Comisión Tarde — 14:30 a 17:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Oswaldo Terán</span><span class="tag tag-eval">✅ Eval 1: Mirza Cequea</span>
+            <span class="tag tag-eval">✅ Eval 2: Vannessa Duarte</span><span class="tag tag-mfe">🔑 Min. Fe: Yanixza Alfaro</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">14:30 – 15:30</td><td><span class="gn gn-orange">G31</span></td><td>Cisternas, León, Serrano</td></tr>
+          <tr><td class="time-cell">15:30 – 16:30</td><td><span class="gn gn-orange">G32</span></td><td>Moreno, Chávez, Estévez</td></tr>
+          <tr><td class="time-cell">16:30 – 17:30</td><td><span class="gn gn-orange">G33</span></td><td>Caimanque, Contreras, Lizardi</td></tr>
+        </tbody></table>
+      </div>
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Mañana · Marketing (Prof. Sofía Orazi)</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión — 08:30 a 12:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Sofía Orazi</span><span class="tag tag-eval">✅ Eval 1: Carla Andrade</span>
+            <span class="tag tag-eval">✅ Eval 2: Karen Vargas</span><span class="tag tag-mfe">🔑 Min. Fe: Carla Andrade</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G23</span></td><td>Aracena, Escalona, Reyes</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G24</span></td><td>Collao, Castillo</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G25</span></td><td>Fajardo, Pérez, Ramírez</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G26</span></td><td>Aguirre, Toro, Videla</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Miércoles 01 -->
+  <div id="dd2" class="sub-panel">
+    <div class="day-header">
+      <div><h2>Miércoles 01 de Julio — RSE/Gestión · Emprendimiento</h2>
+      <div class="meta">2 comisiones en paralelo · RSE 08:30–12:30 · Emprendimiento 08:30–13:30</div></div>
+      <div class="day-badge">Fecha 2 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">Gestión y Estrategias / RSE (Prof. Karen Vargas)</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión — 08:30 a 12:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Karen Vargas</span><span class="tag tag-eval">✅ Eval 1: Fernando González</span>
+            <span class="tag tag-eval">✅ Eval 2: Alberto Rojas</span><span class="tag tag-mfe">🔑 Min. Fe: Alberto Rojas</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G14</span></td><td>Álvarez, Cortés, Díaz</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G15</span></td><td>Barraza, Duque</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G16</span></td><td>Galleguillos, Salas, Schuller</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G17</span></td><td>Guerrero, Huerta, Navarro</td></tr>
+        </tbody></table>
+      </div>
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Emprendimiento (Prof. Karla Soria)</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión A — 08:30 a 12:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Karla Soria</span><span class="tag tag-eval">✅ Eval 1: Tomás Bas</span>
+            <span class="tag tag-eval">✅ Eval 2: Sofía Orazi</span><span class="tag tag-mfe">🔑 Min. Fe: Yanixza Alfaro</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G5</span></td><td>Cárdenas, Núñez, Pérez</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G6</span></td><td>Alvarado, Sánchez</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G7</span></td><td>Mauad, Moya</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G8</span></td><td>Cortés, Herrera</td></tr>
+        </tbody></table>
+        <div class="com-b-separator">Comisión B — Prof. Karla Soria</div>
+        <div class="commission-box">
+          <div class="com-title">Comisión B — 12:30 a 13:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Karla Soria</span><span class="tag tag-eval">✅ Eval 1: Mirza Cequea</span>
+            <span class="tag tag-eval">✅ Eval 2: Carla Andrade</span><span class="tag tag-mfe">🔑 Min. Fe: Yanixza Alfaro</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">12:30 – 13:30</td><td><span class="gn gn-purple">G9</span></td><td>Hidalgo, Monsalve, Ramírez</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jueves 02 -->
+  <div id="dd3" class="sub-panel">
+    <div class="day-header">
+      <div><h2>Jueves 02 de Julio — Innovación · Planificación Cequea</h2>
+      <div class="meta">AM: 2 comisiones en paralelo (08:30–12:30) · PM: Innovación B (14:30–15:30)</div></div>
+      <div class="day-badge">Fecha 3 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">AM: Innovación A · PM: Innovación B</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión Mañana — Prof. Tomás Bas</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Tomás Bas</span><span class="tag tag-eval">✅ Eval 1: Karla Soria</span>
+            <span class="tag tag-eval">✅ Eval 2: Rodrigo Sfeir</span><span class="tag tag-mfe">🔑 Min. Fe: Rodrigo Sfeir</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G18</span></td><td>Areyuna, Guerrero</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G19</span></td><td>Contreras, Torres</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G20</span></td><td>Araya, Galleguillos</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G21</span></td><td>Merini, Sainz, Tapia</td></tr>
+        </tbody></table>
+        <div class="pm-separator">Tarde — Innovación B · Prof. Tomás Bas</div>
+        <div class="commission-box">
+          <div class="com-title">Comisión Tarde — 14:30 a 15:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Tomás Bas</span><span class="tag tag-eval">✅ Eval 1: Vannessa Duarte</span>
+            <span class="tag tag-eval">✅ Eval 2: Oswaldo Terán</span><span class="tag tag-mfe">🔑 Min. Fe: Rodrigo Sfeir</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">14:30 – 15:30</td><td><span class="gn gn-orange">G22</span></td><td>López, Palma</td></tr>
+        </tbody></table>
+      </div>
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Planificación y Control de Gestión (Prof. Mirza Cequea)</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión — 08:30 a 12:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Mirza Cequea</span><span class="tag tag-eval">✅ Eval 1: Oswaldo Terán</span>
+            <span class="tag tag-eval">✅ Eval 2: Sergio Zúñiga</span><span class="tag tag-mfe">🔑 Min. Fe: Yanixza Alfaro</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G27</span></td><td>Delgado, González, Vega</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G28</span></td><td>Díaz, Zambra, Zárate</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G29</span></td><td>Carvajal, Lujan, Paredes</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G30</span></td><td>Bugueño, Hurtado, Miranda</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Miércoles 08 -->
+  <div id="dd4" class="sub-panel">
+    <div class="day-header">
+      <div><h2>Miércoles 08 de Julio — Economía · Sistemas de Información</h2>
+      <div class="meta">2 comisiones en paralelo · Economía 08:30–12:30 · Sistemas 08:30–13:30</div></div>
+      <div class="day-badge">Fecha 4 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">Economía (Prof. Fernando González)</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión — 08:30 a 12:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Fernando González</span><span class="tag tag-eval">✅ Eval 1: Andrés Vallone</span>
+            <span class="tag tag-eval">✅ Eval 2: Mauricio Gallardo</span><span class="tag tag-mfe">🔑 Min. Fe: Rodrigo Sfeir</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G1</span></td><td>Ardiles, Pastén, Rojas</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G2</span></td><td>Saavedra, Vega, Jofré</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G3</span></td><td>Rojas, Lisboa, Olivares</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G4</span></td><td>Ángel, Araya, Casanga</td></tr>
+        </tbody></table>
+      </div>
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Sistemas de Información (Prof. Vannessa Duarte)</div></div>
+        <div class="commission-box">
+          <div class="com-title">Comisión — 08:30 a 13:30</div>
+          <div class="commission-tags">
+            <span class="tag tag-guia">👨‍🏫 Guía: Vannessa Duarte</span><span class="tag tag-eval">✅ Eval 1: Boris Bugueño</span>
+            <span class="tag tag-eval">✅ Eval 2: Natalia Araya</span><span class="tag tag-mfe">🔑 Min. Fe: Natalia Araya</span>
+          </div>
+        </div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G34</span></td><td>Galleguillos, Rodríguez, Talamilla</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G35</span></td><td>Albasini, Gallardo, Quinceno</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G36</span></td><td>Alcaman, Calfupan</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G37</span></td><td>Martínez, Zambra</td></tr>
+          <tr><td class="time-cell">12:30 – 13:30</td><td><span class="gn gn-green">G38</span></td><td>Bascuñan, Camus, Monterrey</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║              VISTA POR ÁREA                         ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div id="v-area" class="view">
+<div class="area-tabs-bar">
+  <button class="area-tab active" onclick="showArea('a1',this)">Economía</button>
+  <button class="area-tab" onclick="showArea('a2',this)">Emprendimiento</button>
+  <button class="area-tab" onclick="showArea('a3',this)">Finanzas</button>
+  <button class="area-tab" onclick="showArea('a4',this)">Gestión / RSE</button>
+  <button class="area-tab" onclick="showArea('a5',this)">Innovación</button>
+  <button class="area-tab" onclick="showArea('a6',this)">Marketing</button>
+  <button class="area-tab" onclick="showArea('a7',this)">Planif. Cequea</button>
+  <button class="area-tab" onclick="showArea('a8',this)">Planif. Terán</button>
+  <button class="area-tab" onclick="showArea('a9',this)">Sistemas</button>
+</div>
+<div class="content">
+
+  <!-- Economía -->
+  <div id="a1" class="area-panel active">
+    <div class="area-card">
+      <div class="area-card-header">
+        <h3>Economía</h3>
+        <div class="ac-meta">Miércoles 08 de Julio · Salón de Conferencias ECIEM · 08:30 – 12:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Fernando González</span>
+          <span class="ac-tag">✅ Eval 1: Andrés Vallone</span>
+          <span class="ac-tag">✅ Eval 2: Mauricio Gallardo</span>
+          <span class="ac-tag">🔑 Min. Fe: Rodrigo Sfeir</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">4 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 08</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G1</td><td>Ardiles, Pastén, Rojas</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G2</td><td>Saavedra, Vega, Jofré</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G3</td><td>Rojas, Lisboa, Olivares</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G4</td><td>Ángel, Araya, Casanga</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Emprendimiento -->
+  <div id="a2" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header green">
+        <h3>Emprendimiento</h3>
+        <div class="ac-meta">Miércoles 01 de Julio · Sala 302 · 08:30 – 13:30 · Dos comisiones</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Karla Soria</span>
+          <span class="ac-tag">🔑 Min. Fe: Yanixza Alfaro</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">5</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">5 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 01</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <div class="commission-box"><div class="com-title">Comisión A</div>
+        <div class="commission-tags">
+          <span class="tag tag-guia">👨‍🏫 Guía: Karla Soria</span><span class="tag tag-eval">✅ Eval 1: Tomás Bas</span>
+          <span class="tag tag-eval">✅ Eval 2: Sofía Orazi</span><span class="tag tag-mfe">🔑 Min. Fe: Yanixza Alfaro</span>
+        </div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G5</td><td>Cárdenas, Núñez, Pérez</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G6</td><td>Alvarado, Sánchez</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G7</td><td>Mauad, Moya</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G8</td><td>Cortés, Herrera</td></tr>
+      </tbody></table>
+      <div class="commission-box" style="border-top:2px solid #86efac;"><div class="com-title">Comisión B</div>
+        <div class="commission-tags">
+          <span class="tag tag-guia">👨‍🏫 Guía: Karla Soria</span><span class="tag tag-eval">✅ Eval 1: Mirza Cequea</span>
+          <span class="tag tag-eval">✅ Eval 2: Carla Andrade</span><span class="tag tag-mfe">🔑 Min. Fe: Yanixza Alfaro</span>
+        </div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">12:30 – 13:30</td><td class="ast-num">G9</td><td>Hidalgo, Monsalve, Ramírez</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Finanzas -->
+  <div id="a3" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header teal">
+        <h3>Finanzas y Evaluación de Proyectos</h3>
+        <div class="ac-meta">Martes 30 de Junio · Salón de Conferencias ECIEM · 08:30 – 12:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Sergio Zúñiga</span>
+          <span class="ac-tag">✅ Eval 1: Pablo Rodríguez</span>
+          <span class="ac-tag">✅ Eval 2: Erick De La Barra</span>
+          <span class="ac-tag">🔑 Min. Fe: Rodrigo Sfeir</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">4 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mar 30</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G10</td><td>Cortes, Jin, Puelles</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G11</td><td>Alfaro, Ordenes, Cabello</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G12</td><td>Fredes, Lavin, Vargas</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G13</td><td>Luna, Rojo, Valenzuela</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Gestión / RSE -->
+  <div id="a4" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header purple">
+        <h3>Gestión y Estrategias / RSE</h3>
+        <div class="ac-meta">Miércoles 01 de Julio · Salón de Conferencias ECIEM · 08:30 – 12:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Karen Vargas</span>
+          <span class="ac-tag">✅ Eval 1: Fernando González</span>
+          <span class="ac-tag">✅ Eval 2: Alberto Rojas</span>
+          <span class="ac-tag">🔑 Min. Fe: Alberto Rojas</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">4 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 01</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G14</td><td>Álvarez, Cortés, Díaz</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G15</td><td>Barraza, Duque</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G16</td><td>Galleguillos, Salas, Schuller</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G17</td><td>Guerrero, Huerta, Navarro</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Innovación -->
+  <div id="a5" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header orange">
+        <h3>Innovación</h3>
+        <div class="ac-meta">Jueves 02 de Julio · Salón de Conferencias ECIEM · AM y PM · Dos comisiones</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Tomás Bas</span>
+          <span class="ac-tag">🔑 Min. Fe: Rodrigo Sfeir</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">5</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">5 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Jue 02</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <div class="commission-box"><div class="com-title">Comisión A — Mañana</div>
+        <div class="commission-tags">
+          <span class="tag tag-guia">👨‍🏫 Guía: Tomás Bas</span><span class="tag tag-eval">✅ Eval 1: Karla Soria</span>
+          <span class="tag tag-eval">✅ Eval 2: Rodrigo Sfeir</span><span class="tag tag-mfe">🔑 Min. Fe: Rodrigo Sfeir</span>
+        </div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G18</td><td>Areyuna, Guerrero</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G19</td><td>Contreras, Torres</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G20</td><td>Araya, Galleguillos</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G21</td><td>Merini, Sainz, Tapia</td></tr>
+      </tbody></table>
+      <div class="commission-box" style="border-top:2px solid #fed7aa;"><div class="com-title">Comisión B — Tarde</div>
+        <div class="commission-tags">
+          <span class="tag tag-guia">👨‍🏫 Guía: Tomás Bas</span><span class="tag tag-eval">✅ Eval 1: Vannessa Duarte</span>
+          <span class="tag tag-eval">✅ Eval 2: Oswaldo Terán</span><span class="tag tag-mfe">🔑 Min. Fe: Rodrigo Sfeir</span>
+        </div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">14:30 – 15:30</td><td class="ast-num">G22</td><td>López, Palma</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Marketing -->
+  <div id="a6" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header green">
+        <h3>Marketing</h3>
+        <div class="ac-meta">Martes 30 de Junio · Sala 302 · 08:30 – 12:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Sofía Orazi</span>
+          <span class="ac-tag">✅ Eval 1: Carla Andrade</span>
+          <span class="ac-tag">✅ Eval 2: Karen Vargas</span>
+          <span class="ac-tag">🔑 Min. Fe: Carla Andrade</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">4 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mar 30</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G23</td><td>Aracena, Escalona, Reyes</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G24</td><td>Collao, Castillo</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G25</td><td>Fajardo, Pérez, Ramírez</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G26</td><td>Aguirre, Toro, Videla</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Planif. Cequea -->
+  <div id="a7" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header teal">
+        <h3>Planificación y Control de Gestión — Prof. Mirza Cequea</h3>
+        <div class="ac-meta">Jueves 02 de Julio · Sala 302 · 08:30 – 12:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Mirza Cequea</span>
+          <span class="ac-tag">✅ Eval 1: Oswaldo Terán</span>
+          <span class="ac-tag">✅ Eval 2: Sergio Zúñiga</span>
+          <span class="ac-tag">🔑 Min. Fe: Yanixza Alfaro</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">4 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Jue 02</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G27</td><td>Delgado, González, Vega</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G28</td><td>Díaz, Zambra, Zárate</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G29</td><td>Carvajal, Lujan, Paredes</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G30</td><td>Bugueño, Hurtado, Miranda</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Planif. Terán -->
+  <div id="a8" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header orange">
+        <h3>Planificación y Control de Gestión — Prof. Oswaldo Terán</h3>
+        <div class="ac-meta">Martes 30 de Junio · Salón de Conferencias ECIEM · 14:30 – 17:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Oswaldo Terán</span>
+          <span class="ac-tag">✅ Eval 1: Mirza Cequea</span>
+          <span class="ac-tag">✅ Eval 2: Vannessa Duarte</span>
+          <span class="ac-tag">🔑 Min. Fe: Yanixza Alfaro</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">3</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">3 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mar 30</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">14:30 – 15:30</td><td class="ast-num">G31</td><td>Cisternas, León, Serrano</td></tr>
+        <tr><td class="ast-time">15:30 – 16:30</td><td class="ast-num">G32</td><td>Moreno, Chávez, Estévez</td></tr>
+        <tr><td class="ast-time">16:30 – 17:30</td><td class="ast-num">G33</td><td>Caimanque, Contreras, Lizardi</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Sistemas -->
+  <div id="a9" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header green">
+        <h3>Sistemas de Información</h3>
+        <div class="ac-meta">Miércoles 08 de Julio · Sala 302 · 08:30 – 13:30</div>
+        <div class="ac-tags">
+          <span class="ac-tag">👨‍🏫 Guía: Vannessa Duarte</span>
+          <span class="ac-tag">✅ Eval 1: Boris Bugueño</span>
+          <span class="ac-tag">✅ Eval 2: Natalia Araya</span>
+          <span class="ac-tag">🔑 Min. Fe: Natalia Araya</span>
+        </div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">5</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">5 hrs</div><div class="aib-lbl">Duración</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 08</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G34</td><td>Galleguillos, Rodríguez, Talamilla</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G35</td><td>Albasini, Gallardo, Quinceno</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G36</td><td>Alcaman, Calfupan</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G37</td><td>Martínez, Zambra</td></tr>
+        <tr><td class="ast-time">12:30 – 13:30</td><td class="ast-num">G38</td><td>Bascuñan, Camus, Monterrey</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+</div>
+</div>
+
+<div class="legend">
+  <span style="font-weight:700;color:#374151;margin-right:4px;">Leyenda:</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#2563a8"></span>Salón ECIEM</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#059669"></span>Sala 302</span>
+  <span class="legend-item"><span class="tag tag-guia" style="font-size:0.67rem;">👨‍🏫 Guía</span></span>
+  <span class="legend-item"><span class="tag tag-eval" style="font-size:0.67rem;">✅ Evaluador</span></span>
+  <span class="legend-item"><span class="tag tag-mfe" style="font-size:0.67rem;">🔑 Min. de Fe</span></span>
+</div>
 
 <script>
-// ── Datos de áreas ──
-const areas = [
-  {
-    id: 'a1',
-    nombre: 'Economía',
-    fecha: 'Miércoles 08 de Julio de 2025',
-    sala: 'Salón de Conferencias ECIEM',
-    horario: '08:30 – 12:30',
-    color: 'bg-blue',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Fernando González',
-        eval1: 'Andrés Vallone',
-        eval2: 'Mauricio Gallardo',
-        mfe: 'Rodrigo Sfeir',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G1',  est: 'Ardiles, Pastén, Rojas' },
-          { hora: '09:30 – 10:30', num: 'G2',  est: 'Saavedra, Vega, Jofré' },
-          { hora: '10:30 – 11:30', num: 'G3',  est: 'Rojas, Lisboa, Olivares' },
-          { hora: '11:30 – 12:30', num: 'G4',  est: 'Ángel, Araya, Casanga' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a2',
-    nombre: 'Emprendimiento',
-    fecha: 'Miércoles 01 de Julio de 2025',
-    sala: 'Sala 302',
-    horario: '08:30 – 13:30',
-    color: 'bg-green',
-    comisiones: [
-      {
-        titulo: 'Comisión A',
-        guia: 'Karla Soria',
-        eval1: 'Tomás Bas',
-        eval2: 'Sofía Orazi',
-        mfe: 'Yanixza Alfaro',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G5',  est: 'Cárdenas, Núñez, Pérez' },
-          { hora: '09:30 – 10:30', num: 'G6',  est: 'Alvarado, Sánchez' },
-          { hora: '10:30 – 11:30', num: 'G7',  est: 'Mauad, Moya' },
-          { hora: '11:30 – 12:30', num: 'G8',  est: 'Cortés, Herrera' },
-        ]
-      },
-      {
-        titulo: 'Comisión B',
-        guia: 'Karla Soria',
-        eval1: 'Mirza Cequea',
-        eval2: 'Carla Andrade',
-        mfe: 'Yanixza Alfaro',
-        grupos: [
-          { hora: '12:30 – 13:30', num: 'G9',  est: 'Hidalgo, Monsalve, Ramírez' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a3',
-    nombre: 'Finanzas y Evaluación de Proyectos',
-    fecha: 'Martes 30 de Junio de 2025',
-    sala: 'Salón de Conferencias ECIEM',
-    horario: '08:30 – 12:30',
-    color: 'bg-teal',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Sergio Zúñiga',
-        eval1: 'Pablo Rodríguez',
-        eval2: 'Erick De La Barra',
-        mfe: 'Rodrigo Sfeir',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G10', est: 'Cortes, Jin, Puelles' },
-          { hora: '09:30 – 10:30', num: 'G11', est: 'Alfaro, Ordenes, Cabello' },
-          { hora: '10:30 – 11:30', num: 'G12', est: 'Fredes, Lavin, Vargas' },
-          { hora: '11:30 – 12:30', num: 'G13', est: 'Luna, Rojo, Valenzuela' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a4',
-    nombre: 'Gestión y Estrategias / RSE',
-    fecha: 'Miércoles 01 de Julio de 2025',
-    sala: 'Salón de Conferencias ECIEM',
-    horario: '08:30 – 12:30',
-    color: 'bg-purple',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Karen Vargas',
-        eval1: 'Fernando González',
-        eval2: 'Alberto Rojas',
-        mfe: 'Alberto Rojas',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G14', est: 'Álvarez, Cortés, Díaz' },
-          { hora: '09:30 – 10:30', num: 'G15', est: 'Barraza, Duque' },
-          { hora: '10:30 – 11:30', num: 'G16', est: 'Galleguillos, Salas, Schuller' },
-          { hora: '11:30 – 12:30', num: 'G17', est: 'Guerrero, Huerta, Navarro' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a5',
-    nombre: 'Innovación',
-    fecha: 'Jueves 02 de Julio de 2025',
-    sala: 'Salón de Conferencias ECIEM',
-    horario: '08:30 – 12:30 · Tarde: 14:30 – 15:30',
-    color: 'bg-orange',
-    comisiones: [
-      {
-        titulo: 'Comisión A — Mañana',
-        guia: 'Tomás Bas',
-        eval1: 'Karla Soria',
-        eval2: 'Rodrigo Sfeir',
-        mfe: 'Rodrigo Sfeir',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G18', est: 'Areyuna, Guerrero' },
-          { hora: '09:30 – 10:30', num: 'G19', est: 'Contreras, Torres' },
-          { hora: '10:30 – 11:30', num: 'G20', est: 'Araya, Galleguillos' },
-          { hora: '11:30 – 12:30', num: 'G21', est: 'Merini, Sainz, Tapia' },
-        ]
-      },
-      {
-        titulo: 'Comisión B — Tarde',
-        guia: 'Tomás Bas',
-        eval1: 'Vannessa Duarte',
-        eval2: 'Oswaldo Terán',
-        mfe: 'Rodrigo Sfeir',
-        grupos: [
-          { hora: '14:30 – 15:30', num: 'G22', est: 'López, Palma' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a6',
-    nombre: 'Marketing',
-    fecha: 'Martes 30 de Junio de 2025',
-    sala: 'Sala 302',
-    horario: '08:30 – 12:30',
-    color: 'bg-green',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Sofía Orazi',
-        eval1: 'Carla Andrade',
-        eval2: 'Karen Vargas',
-        mfe: 'Carla Andrade',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G23', est: 'Aracena, Escalona, Reyes' },
-          { hora: '09:30 – 10:30', num: 'G24', est: 'Collao, Castillo' },
-          { hora: '10:30 – 11:30', num: 'G25', est: 'Fajardo, Pérez, Ramírez' },
-          { hora: '11:30 – 12:30', num: 'G26', est: 'Aguirre, Toro, Videla' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a7',
-    nombre: 'Planificación y Control de Gestión — Prof. Mirza Cequea',
-    fecha: 'Jueves 02 de Julio de 2025',
-    sala: 'Sala 302',
-    horario: '08:30 – 12:30',
-    color: 'bg-teal',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Mirza Cequea',
-        eval1: 'Oswaldo Terán',
-        eval2: 'Sergio Zúñiga',
-        mfe: 'Yanixza Alfaro',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G27', est: 'Delgado, González, Vega' },
-          { hora: '09:30 – 10:30', num: 'G28', est: 'Díaz, Zambra, Zárate' },
-          { hora: '10:30 – 11:30', num: 'G29', est: 'Carvajal, Lujan, Paredes' },
-          { hora: '11:30 – 12:30', num: 'G30', est: 'Bugueño, Hurtado, Miranda' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a8',
-    nombre: 'Planificación y Control de Gestión — Prof. Oswaldo Terán',
-    fecha: 'Martes 30 de Junio de 2025',
-    sala: 'Salón de Conferencias ECIEM',
-    horario: '14:30 – 17:30',
-    color: 'bg-orange',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Oswaldo Terán',
-        eval1: 'Mirza Cequea',
-        eval2: 'Vannessa Duarte',
-        mfe: 'Yanixza Alfaro',
-        grupos: [
-          { hora: '14:30 – 15:30', num: 'G31', est: 'Cisternas, León, Serrano' },
-          { hora: '15:30 – 16:30', num: 'G32', est: 'Moreno, Chávez, Estévez' },
-          { hora: '16:30 – 17:30', num: 'G33', est: 'Caimanque, Contreras, Lizardi' },
-        ]
-      }
-    ]
-  },
-  {
-    id: 'a9',
-    nombre: 'Sistemas de Información',
-    fecha: 'Miércoles 08 de Julio de 2025',
-    sala: 'Sala 302',
-    horario: '08:30 – 13:30',
-    color: 'bg-green',
-    comisiones: [
-      {
-        titulo: null,
-        guia: 'Vannessa Duarte',
-        eval1: 'Boris Bugueño',
-        eval2: 'Natalia Araya',
-        mfe: 'Natalia Araya',
-        grupos: [
-          { hora: '08:30 – 09:30', num: 'G34', est: 'Galleguillos, Rodríguez, Talamilla' },
-          { hora: '09:30 – 10:30', num: 'G35', est: 'Albasini, Gallardo, Quinceno' },
-          { hora: '10:30 – 11:30', num: 'G36', est: 'Alcaman, Calfupan' },
-          { hora: '11:30 – 12:30', num: 'G37', est: 'Martínez, Zambra' },
-          { hora: '12:30 – 13:30', num: 'G38', est: 'Bascuñan, Camus, Monterrey' },
-        ]
-      }
-    ]
-  },
-];
-
-function buildFicha(a) {
-  let comHtml = '';
-  a.comisiones.forEach((com, idx) => {
-    if (a.comisiones.length > 1 && idx > 0) {
-      comHtml += `<div class="com2-header">${com.titulo || 'Comisión ' + (idx+1)}</div>`;
-    }
-    comHtml += `
-      <div class="ficha-comision">
-        <div class="fc-item"><div class="fc-label">Profesor Guía</div><div class="fc-value">${com.guia}</div></div>
-        <div class="fc-item"><div class="fc-label">Evaluador 1</div><div class="fc-value">${com.eval1}</div></div>
-        <div class="fc-item"><div class="fc-label">Evaluador 2</div><div class="fc-value">${com.eval2}</div></div>
-        <div class="fc-item"><div class="fc-label">Ministro de Fe</div><div class="fc-value">${com.mfe}</div></div>
-      </div>
-      ${com.titulo && idx === 0 && a.comisiones.length > 1
-        ? `<div class="com2-header" style="margin-top:0;border-top:none;">${com.titulo}</div>` : ''}
-      <table class="ficha-table">
-        <thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead>
-        <tbody>
-          ${com.grupos.map(g => `
-            <tr>
-              <td class="ft-time">${g.hora}</td>
-              <td class="ft-num">${g.num}</td>
-              <td class="ft-students">${g.est}</td>
-            </tr>`).join('')}
-        </tbody>
-      </table>`;
-  });
-
-  return `
-    <div class="ficha">
-      <div class="ficha-header ${a.color}">
-        <div class="inst">ECIEM — Universidad Católica del Norte · Ingeniería Comercial</div>
-        <h2>${a.nombre}</h2>
-        <div class="fh-meta">📅 ${a.fecha} &nbsp;·&nbsp; 🏫 ${a.sala} &nbsp;·&nbsp; 🕗 ${a.horario}</div>
-      </div>
-      ${comHtml}
-      <div class="ficha-footer">
-        <span>Defensa de Práctica Semestral de Titulación (PST) — Semestre 202610</span>
-        <span><strong>${a.comisiones.reduce((s,c) => s + c.grupos.length, 0)} grupos</strong></span>
-      </div>
-    </div>`;
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
 }
-
-// Poblar previews
-areas.forEach(a => {
-  document.getElementById(a.id).innerHTML = buildFicha(a);
-});
-
-// Poblar sección de impresión (todas las fichas)
-const printDiv = document.getElementById('print-all');
-areas.forEach(a => {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'print-ficha';
-  wrapper.innerHTML = `
-    <div class="print-page-header" style="display:none;">
-      <span class="pph-logo">ECIEM — Ingeniería Comercial</span>
-      <span class="pph-title">Defensas PST · Semestre 202610</span>
-    </div>
-    ${buildFicha(a)}`;
-  printDiv.appendChild(wrapper);
-});
-
+function showSub(group, id, btn) {
+  document.querySelectorAll('#v-diaria .sub-panel').forEach(p => p.classList.remove('active'));
+  btn.closest('.nav-tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
 function showArea(id, btn) {
   document.querySelectorAll('.area-panel').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.area-tab').forEach(b => b.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   btn.classList.add('active');
 }
