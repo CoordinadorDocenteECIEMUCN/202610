@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Defensas PST — Impresión por Área</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a202c; }
+
+  /* ── PANTALLA: selector de área ── */
+  .screen-only { }
+  .print-only  { display: none; }
+
+  .top-bar {
+    background: linear-gradient(135deg, #1a3a5c, #2563a8);
+    color: white; padding: 18px 32px;
+    display: flex; align-items: center; justify-content: space-between; gap: 20px;
+  }
+  .top-bar h1 { font-size: 1.3rem; font-weight: 700; }
+  .top-bar p  { font-size: 0.8rem; opacity: 0.8; margin-top: 3px; }
+  .print-btn {
+    background: white; color: #1a3a5c; border: none; cursor: pointer;
+    font-size: 0.85rem; font-weight: 700; padding: 10px 20px;
+    border-radius: 8px; display: flex; align-items: center; gap: 7px;
+    flex-shrink: 0; transition: background 0.15s;
+  }
+  .print-btn:hover { background: #e0eaff; }
+
+  .area-selector {
+    background: white; border-bottom: 2px solid #e2e8f0;
+    display: flex; flex-wrap: wrap; padding: 0 24px; gap: 0;
+  }
+  .sel-btn {
+    padding: 13px 16px; border: none; background: none; cursor: pointer;
+    font-size: 0.83rem; font-weight: 600; color: #64748b;
+    border-bottom: 3px solid transparent; margin-bottom: -2px;
+    white-space: nowrap; transition: all 0.15s;
+  }
+  .sel-btn:hover  { color: #2563a8; background: #f0f6ff; }
+  .sel-btn.active { color: #2563a8; border-bottom-color: #2563a8; }
+
+  .preview-wrap { padding: 28px 32px; max-width: 820px; margin: 0 auto; }
+
+  .area-panel { display: none; }
+  .area-panel.active { display: block; }
+
+  /* ── LA FICHA (usada tanto en pantalla como en impresión) ── */
+  .ficha {
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    border: 1px solid #e2e8f0;
+  }
+
+  .ficha-header {
+    padding: 22px 28px 18px;
+    color: white;
+  }
+  .ficha-header .inst { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; opacity: 0.8; margin-bottom: 4px; }
+  .ficha-header h2 { font-size: 1.4rem; font-weight: 800; line-height: 1.2; }
+  .ficha-header .fh-meta { font-size: 0.82rem; opacity: 0.88; margin-top: 6px; }
+
+  .bg-blue   { background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%); }
+  .bg-green  { background: linear-gradient(135deg, #064e3b 0%, #059669 100%); }
+  .bg-teal   { background: linear-gradient(135deg, #134e4a 0%, #0d9488 100%); }
+  .bg-purple { background: linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%); }
+  .bg-orange { background: linear-gradient(135deg, #78350f 0%, #d97706 100%); }
+
+  .ficha-comision {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+  .fc-item {
+    padding: 11px 20px;
+    border-right: 1px solid #e2e8f0;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.78rem;
+  }
+  .fc-item:nth-child(even) { border-right: none; }
+  .fc-item:nth-last-child(-n+2) { border-bottom: none; }
+  .fc-label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #94a3b8; margin-bottom: 2px; }
+  .fc-value { font-weight: 700; color: #1a202c; }
+
+  .ficha-table { width: 100%; border-collapse: collapse; }
+  .ficha-table thead tr { background: #f1f5f9; }
+  .ficha-table th {
+    padding: 9px 20px; text-align: left;
+    font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.07em; color: #64748b;
+    border-bottom: 2px solid #e2e8f0;
+  }
+  .ficha-table td {
+    padding: 13px 20px; border-bottom: 1px solid #f1f5f9;
+    font-size: 0.83rem; vertical-align: middle;
+  }
+  .ficha-table tr:last-child td { border-bottom: none; }
+  .ft-time { font-weight: 700; color: #374151; white-space: nowrap; width: 145px; }
+  .ft-num  { font-weight: 800; color: #2563a8; width: 55px; font-size: 0.9rem; }
+  .ft-students { color: #1a202c; }
+
+  /* segunda comisión separador */
+  .com2-header {
+    background: #f8fafc; border-top: 2px solid #e2e8f0; border-bottom: 1px solid #e2e8f0;
+    padding: 9px 20px; font-size: 0.72rem; font-weight: 700; color: #64748b;
+    text-transform: uppercase; letter-spacing: 0.06em;
+  }
+
+  .ficha-footer {
+    background: #f8fafc; border-top: 2px solid #e2e8f0;
+    padding: 12px 20px; display: flex; justify-content: space-between;
+    font-size: 0.72rem; color: #94a3b8; align-items: center;
+  }
+  .ficha-footer strong { color: #374151; }
+
+  /* ══════════════ IMPRESIÓN ══════════════ */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    body { background: white; font-size: 11pt; }
+    .screen-only { display: none !important; }
+    .print-only  { display: block !important; }
+
+    /* cada ficha en su propia página */
+    .print-ficha { page-break-after: always; padding: 0; }
+    .print-ficha:last-child { page-break-after: avoid; }
+
+    .ficha {
+      box-shadow: none;
+      border: 1px solid #ccc;
+      border-radius: 0;
+      width: 100%;
+    }
+
+    .ficha-header { padding: 18px 22px 14px; }
+    .ficha-header h2 { font-size: 1.25rem; }
+    .ficha-header .inst { font-size: 0.65rem; }
+    .ficha-header .fh-meta { font-size: 0.76rem; }
+
+    .ficha-comision { grid-template-columns: 1fr 1fr; }
+    .fc-item { padding: 9px 18px; font-size: 0.74rem; }
+    .fc-label { font-size: 0.6rem; }
+
+    .ficha-table th { padding: 8px 18px; font-size: 0.62rem; }
+    .ficha-table td { padding: 11px 18px; font-size: 0.8rem; }
+    .ft-time { width: 135px; }
+
+    .ficha-footer { padding: 10px 18px; font-size: 0.65rem; }
+
+    .print-page-header {
+      display: flex !important;
+      justify-content: space-between;
+      align-items: flex-end;
+      margin-bottom: 14px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid #1a3a5c;
+    }
+    .print-page-header .pph-title { font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.07em; }
+    .print-page-header .pph-logo  { font-size: 1rem; font-weight: 800; color: #1a3a5c; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── PANTALLA: barra superior + selector ── -->
+<div class="screen-only">
+  <div class="top-bar">
+    <div>
+      <h1>Defensas PST — Ficha por Área</h1>
+      <p>Selecciona un área para previsualizar · Luego imprime con Ctrl+P (o ⌘P)</p>
+    </div>
+    <button class="print-btn" onclick="window.print()">🖨 Imprimir todas las fichas</button>
+  </div>
+
+  <div class="area-selector">
+    <button class="sel-btn active"  onclick="showArea('a1',this)">Economía</button>
+    <button class="sel-btn" onclick="showArea('a2',this)">Emprendimiento</button>
+    <button class="sel-btn" onclick="showArea('a3',this)">Finanzas</button>
+    <button class="sel-btn" onclick="showArea('a4',this)">Gestión / RSE</button>
+    <button class="sel-btn" onclick="showArea('a5',this)">Innovación</button>
+    <button class="sel-btn" onclick="showArea('a6',this)">Marketing</button>
+    <button class="sel-btn" onclick="showArea('a7',this)">Planif. Cequea</button>
+    <button class="sel-btn" onclick="showArea('a8',this)">Planif. Terán</button>
+    <button class="sel-btn" onclick="showArea('a9',this)">Sistemas</button>
+  </div>
+
+  <div class="preview-wrap">
+    <div id="a1" class="area-panel active"></div>
+    <div id="a2" class="area-panel"></div>
+    <div id="a3" class="area-panel"></div>
+    <div id="a4" class="area-panel"></div>
+    <div id="a5" class="area-panel"></div>
+    <div id="a6" class="area-panel"></div>
+    <div id="a7" class="area-panel"></div>
+    <div id="a8" class="area-panel"></div>
+    <div id="a9" class="area-panel"></div>
+  </div>
+</div>
+
+<!-- ── IMPRESIÓN: todas las fichas seguidas ── -->
+<div class="print-only" id="print-all"></div>
+
+<script>
+// ── Datos de áreas ──
+const areas = [
+  {
+    id: 'a1',
+    nombre: 'Economía',
+    fecha: 'Miércoles 08 de Julio de 2025',
+    sala: 'Salón de Conferencias ECIEM',
+    horario: '08:30 – 12:30',
+    color: 'bg-blue',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Fernando González',
+        eval1: 'Andrés Vallone',
+        eval2: 'Mauricio Gallardo',
+        mfe: 'Rodrigo Sfeir',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G1',  est: 'Ardiles, Pastén, Rojas' },
+          { hora: '09:30 – 10:30', num: 'G2',  est: 'Saavedra, Vega, Jofré' },
+          { hora: '10:30 – 11:30', num: 'G3',  est: 'Rojas, Lisboa, Olivares' },
+          { hora: '11:30 – 12:30', num: 'G4',  est: 'Ángel, Araya, Casanga' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a2',
+    nombre: 'Emprendimiento',
+    fecha: 'Miércoles 01 de Julio de 2025',
+    sala: 'Sala 302',
+    horario: '08:30 – 13:30',
+    color: 'bg-green',
+    comisiones: [
+      {
+        titulo: 'Comisión A',
+        guia: 'Karla Soria',
+        eval1: 'Tomás Bas',
+        eval2: 'Sofía Orazi',
+        mfe: 'Yanixza Alfaro',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G5',  est: 'Cárdenas, Núñez, Pérez' },
+          { hora: '09:30 – 10:30', num: 'G6',  est: 'Alvarado, Sánchez' },
+          { hora: '10:30 – 11:30', num: 'G7',  est: 'Mauad, Moya' },
+          { hora: '11:30 – 12:30', num: 'G8',  est: 'Cortés, Herrera' },
+        ]
+      },
+      {
+        titulo: 'Comisión B',
+        guia: 'Karla Soria',
+        eval1: 'Mirza Cequea',
+        eval2: 'Carla Andrade',
+        mfe: 'Yanixza Alfaro',
+        grupos: [
+          { hora: '12:30 – 13:30', num: 'G9',  est: 'Hidalgo, Monsalve, Ramírez' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a3',
+    nombre: 'Finanzas y Evaluación de Proyectos',
+    fecha: 'Martes 30 de Junio de 2025',
+    sala: 'Salón de Conferencias ECIEM',
+    horario: '08:30 – 12:30',
+    color: 'bg-teal',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Sergio Zúñiga',
+        eval1: 'Pablo Rodríguez',
+        eval2: 'Erick De La Barra',
+        mfe: 'Rodrigo Sfeir',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G10', est: 'Cortes, Jin, Puelles' },
+          { hora: '09:30 – 10:30', num: 'G11', est: 'Alfaro, Ordenes, Cabello' },
+          { hora: '10:30 – 11:30', num: 'G12', est: 'Fredes, Lavin, Vargas' },
+          { hora: '11:30 – 12:30', num: 'G13', est: 'Luna, Rojo, Valenzuela' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a4',
+    nombre: 'Gestión y Estrategias / RSE',
+    fecha: 'Miércoles 01 de Julio de 2025',
+    sala: 'Salón de Conferencias ECIEM',
+    horario: '08:30 – 12:30',
+    color: 'bg-purple',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Karen Vargas',
+        eval1: 'Fernando González',
+        eval2: 'Alberto Rojas',
+        mfe: 'Alberto Rojas',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G14', est: 'Álvarez, Cortés, Díaz' },
+          { hora: '09:30 – 10:30', num: 'G15', est: 'Barraza, Duque' },
+          { hora: '10:30 – 11:30', num: 'G16', est: 'Galleguillos, Salas, Schuller' },
+          { hora: '11:30 – 12:30', num: 'G17', est: 'Guerrero, Huerta, Navarro' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a5',
+    nombre: 'Innovación',
+    fecha: 'Jueves 02 de Julio de 2025',
+    sala: 'Salón de Conferencias ECIEM',
+    horario: '08:30 – 12:30 · Tarde: 14:30 – 15:30',
+    color: 'bg-orange',
+    comisiones: [
+      {
+        titulo: 'Comisión A — Mañana',
+        guia: 'Tomás Bas',
+        eval1: 'Karla Soria',
+        eval2: 'Rodrigo Sfeir',
+        mfe: 'Rodrigo Sfeir',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G18', est: 'Areyuna, Guerrero' },
+          { hora: '09:30 – 10:30', num: 'G19', est: 'Contreras, Torres' },
+          { hora: '10:30 – 11:30', num: 'G20', est: 'Araya, Galleguillos' },
+          { hora: '11:30 – 12:30', num: 'G21', est: 'Merini, Sainz, Tapia' },
+        ]
+      },
+      {
+        titulo: 'Comisión B — Tarde',
+        guia: 'Tomás Bas',
+        eval1: 'Vannessa Duarte',
+        eval2: 'Oswaldo Terán',
+        mfe: 'Rodrigo Sfeir',
+        grupos: [
+          { hora: '14:30 – 15:30', num: 'G22', est: 'López, Palma' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a6',
+    nombre: 'Marketing',
+    fecha: 'Martes 30 de Junio de 2025',
+    sala: 'Sala 302',
+    horario: '08:30 – 12:30',
+    color: 'bg-green',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Sofía Orazi',
+        eval1: 'Carla Andrade',
+        eval2: 'Karen Vargas',
+        mfe: 'Carla Andrade',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G23', est: 'Aracena, Escalona, Reyes' },
+          { hora: '09:30 – 10:30', num: 'G24', est: 'Collao, Castillo' },
+          { hora: '10:30 – 11:30', num: 'G25', est: 'Fajardo, Pérez, Ramírez' },
+          { hora: '11:30 – 12:30', num: 'G26', est: 'Aguirre, Toro, Videla' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a7',
+    nombre: 'Planificación y Control de Gestión — Prof. Mirza Cequea',
+    fecha: 'Jueves 02 de Julio de 2025',
+    sala: 'Sala 302',
+    horario: '08:30 – 12:30',
+    color: 'bg-teal',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Mirza Cequea',
+        eval1: 'Oswaldo Terán',
+        eval2: 'Sergio Zúñiga',
+        mfe: 'Yanixza Alfaro',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G27', est: 'Delgado, González, Vega' },
+          { hora: '09:30 – 10:30', num: 'G28', est: 'Díaz, Zambra, Zárate' },
+          { hora: '10:30 – 11:30', num: 'G29', est: 'Carvajal, Lujan, Paredes' },
+          { hora: '11:30 – 12:30', num: 'G30', est: 'Bugueño, Hurtado, Miranda' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a8',
+    nombre: 'Planificación y Control de Gestión — Prof. Oswaldo Terán',
+    fecha: 'Martes 30 de Junio de 2025',
+    sala: 'Salón de Conferencias ECIEM',
+    horario: '14:30 – 17:30',
+    color: 'bg-orange',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Oswaldo Terán',
+        eval1: 'Mirza Cequea',
+        eval2: 'Vannessa Duarte',
+        mfe: 'Yanixza Alfaro',
+        grupos: [
+          { hora: '14:30 – 15:30', num: 'G31', est: 'Cisternas, León, Serrano' },
+          { hora: '15:30 – 16:30', num: 'G32', est: 'Moreno, Chávez, Estévez' },
+          { hora: '16:30 – 17:30', num: 'G33', est: 'Caimanque, Contreras, Lizardi' },
+        ]
+      }
+    ]
+  },
+  {
+    id: 'a9',
+    nombre: 'Sistemas de Información',
+    fecha: 'Miércoles 08 de Julio de 2025',
+    sala: 'Sala 302',
+    horario: '08:30 – 13:30',
+    color: 'bg-green',
+    comisiones: [
+      {
+        titulo: null,
+        guia: 'Vannessa Duarte',
+        eval1: 'Boris Bugueño',
+        eval2: 'Natalia Araya',
+        mfe: 'Natalia Araya',
+        grupos: [
+          { hora: '08:30 – 09:30', num: 'G34', est: 'Galleguillos, Rodríguez, Talamilla' },
+          { hora: '09:30 – 10:30', num: 'G35', est: 'Albasini, Gallardo, Quinceno' },
+          { hora: '10:30 – 11:30', num: 'G36', est: 'Alcaman, Calfupan' },
+          { hora: '11:30 – 12:30', num: 'G37', est: 'Martínez, Zambra' },
+          { hora: '12:30 – 13:30', num: 'G38', est: 'Bascuñan, Camus, Monterrey' },
+        ]
+      }
+    ]
+  },
+];
+
+function buildFicha(a) {
+  let comHtml = '';
+  a.comisiones.forEach((com, idx) => {
+    if (a.comisiones.length > 1 && idx > 0) {
+      comHtml += `<div class="com2-header">${com.titulo || 'Comisión ' + (idx+1)}</div>`;
+    }
+    comHtml += `
+      <div class="ficha-comision">
+        <div class="fc-item"><div class="fc-label">Profesor Guía</div><div class="fc-value">${com.guia}</div></div>
+        <div class="fc-item"><div class="fc-label">Evaluador 1</div><div class="fc-value">${com.eval1}</div></div>
+        <div class="fc-item"><div class="fc-label">Evaluador 2</div><div class="fc-value">${com.eval2}</div></div>
+        <div class="fc-item"><div class="fc-label">Ministro de Fe</div><div class="fc-value">${com.mfe}</div></div>
+      </div>
+      ${com.titulo && idx === 0 && a.comisiones.length > 1
+        ? `<div class="com2-header" style="margin-top:0;border-top:none;">${com.titulo}</div>` : ''}
+      <table class="ficha-table">
+        <thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead>
+        <tbody>
+          ${com.grupos.map(g => `
+            <tr>
+              <td class="ft-time">${g.hora}</td>
+              <td class="ft-num">${g.num}</td>
+              <td class="ft-students">${g.est}</td>
+            </tr>`).join('')}
+        </tbody>
+      </table>`;
+  });
+
+  return `
+    <div class="ficha">
+      <div class="ficha-header ${a.color}">
+        <div class="inst">ECIEM — Universidad Católica del Norte · Ingeniería Comercial</div>
+        <h2>${a.nombre}</h2>
+        <div class="fh-meta">📅 ${a.fecha} &nbsp;·&nbsp; 🏫 ${a.sala} &nbsp;·&nbsp; 🕗 ${a.horario}</div>
+      </div>
+      ${comHtml}
+      <div class="ficha-footer">
+        <span>Defensa de Práctica Semestral de Titulación (PST) — Semestre 202610</span>
+        <span><strong>${a.comisiones.reduce((s,c) => s + c.grupos.length, 0)} grupos</strong></span>
+      </div>
+    </div>`;
+}
+
+// Poblar previews
+areas.forEach(a => {
+  document.getElementById(a.id).innerHTML = buildFicha(a);
+});
+
+// Poblar sección de impresión (todas las fichas)
+const printDiv = document.getElementById('print-all');
+areas.forEach(a => {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'print-ficha';
+  wrapper.innerHTML = `
+    <div class="print-page-header" style="display:none;">
+      <span class="pph-logo">ECIEM — Ingeniería Comercial</span>
+      <span class="pph-title">Defensas PST · Semestre 202610</span>
+    </div>
+    ${buildFicha(a)}`;
+  printDiv.appendChild(wrapper);
+});
+
+function showArea(id, btn) {
+  document.querySelectorAll('.area-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.sel-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
