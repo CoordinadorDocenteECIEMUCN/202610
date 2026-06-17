@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panel Informe Final PST 202610</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow:wght@500;600;700;800&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+ --azul:#092f57; --azul2:#0f6b84; --celeste:#e8f4f8; --dorado:#e7ad21; --fondo:#f4f7fb; --texto:#172033; --muted:#65748b; --linea:#d8e1ee; --card:#fff; --shadow:0 20px 50px rgba(9,47,87,.13); --soft:0 8px 24px rgba(15,23,42,.07);
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at top left,#e8f4f8 0,#f7f9fc 38%,#fff 100%);color:var(--texto);font-family:Inter,system-ui,sans-serif}
+header{background:linear-gradient(135deg,#082847,#0f6b84);color:#fff;padding:30px 34px 26px;box-shadow:0 12px 32px rgba(0,0,0,.22)}
+.header-inner{max-width:1480px;margin:auto;display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:end}
+.brand{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.logo{width:46px;height:46px;border-radius:16px;background:rgba(255,255,255,.14);display:grid;place-items:center;border:1px solid rgba(255,255,255,.24);font-weight:900;font-family:Barlow;font-size:13px;text-align:center;line-height:1.1}
+h1{font-family:Barlow,sans-serif;font-size:clamp(28px,3.5vw,50px);line-height:.95;margin:0;font-weight:800;letter-spacing:-.035em}
+.subtitle{max-width:850px;color:#d6edf5;margin:12px 0 0;font-size:15px;line-height:1.5}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.kpi{background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:18px;padding:13px 12px;backdrop-filter:blur(10px)}
+.kpi strong{display:block;font-family:Barlow;font-size:30px;line-height:1;font-weight:800} .kpi span{font-size:11.5px;color:#d6edf5}
+main{max-width:1480px;margin:auto;padding:24px 26px 50px}
+.control-panel{background:rgba(255,255,255,.9);border:1px solid var(--linea);border-radius:26px;box-shadow:var(--shadow);padding:18px;display:grid;grid-template-columns:1.1fr .8fr .65fr .55fr;gap:12px;position:sticky;top:12px;z-index:10;backdrop-filter:blur(14px)}
+.field label{display:block;font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:#475569;margin:0 0 7px 4px}
+input,select{width:100%;border:1px solid var(--linea);background:#fff;border-radius:15px;padding:13px 14px;font-size:14px;color:var(--texto);outline:none}
+input:focus,select:focus{border-color:var(--azul2);box-shadow:0 0 0 3px rgba(15,107,132,.12)}
+button,.btn{border:0;border-radius:15px;padding:13px 15px;font-weight:800;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;gap:8px;cursor:pointer;font-size:14px;white-space:nowrap}
+.btn-pdf{background:var(--azul);color:white} .btn-eval{background:var(--dorado);color:#221900} .btn-ghost{background:#f1f5f9;color:#22324a}
+.person-summary{margin:20px 0;display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px}
+.summary-card{background:#fff;border:1px solid var(--linea);border-radius:24px;padding:18px;box-shadow:var(--soft)}
+.summary-card .label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--muted)}
+.summary-card .value{font-family:Barlow;font-size:34px;font-weight:800;color:var(--azul);line-height:1;margin-top:5px}
+.summary-card .note{color:var(--muted);font-size:13px;margin-top:4px}
+.layout{display:grid;grid-template-columns:460px 1fr;gap:20px;align-items:start}
+.panel-list{background:#fff;border:1px solid var(--linea);border-radius:26px;box-shadow:var(--soft);overflow:hidden}
+.panel-list-head{padding:18px 19px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;align-items:center;gap:10px}
+.panel-list-head h2{font-family:Barlow;margin:0;font-size:24px;letter-spacing:-.02em} .count-pill{background:#edf7fa;color:#0d566d;border-radius:999px;padding:7px 10px;font-weight:900;font-size:12px}
+.tabs{display:flex;gap:8px;padding:12px 14px;border-bottom:1px solid var(--linea);background:#f8fafc}
+.tab{flex:1;background:#fff;border:1px solid var(--linea);color:#334155;padding:10px;border-radius:12px;font-size:13px;font-weight:700;cursor:pointer}
+.tab.active{background:var(--azul);color:#fff;border-color:var(--azul)}
+.cards{max-height:calc(100vh - 360px);overflow:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.card{border:1px solid var(--linea);background:#fff;border-radius:20px;padding:15px;box-shadow:0 5px 16px rgba(15,23,42,.04);transition:.16s ease;cursor:pointer}
+.card:hover{transform:translateY(-1px);box-shadow:var(--soft)} .card.active{border-color:var(--azul2);box-shadow:0 0 0 4px rgba(15,107,132,.12),var(--soft)}
+.card-top{display:flex;justify-content:space-between;gap:10px;margin-bottom:9px;align-items:flex-start}
+.badges{display:flex;gap:6px;flex-wrap:wrap} .badge{font-size:10.5px;text-transform:uppercase;letter-spacing:.045em;font-weight:900;border-radius:999px;padding:6px 8px;background:#eff6ff;color:#155e75} .badge.guia{background:#e8f4f8;color:#0f5368} .badge.inf{background:#fff4d8;color:#805300}
+.card h3{font-family:Barlow;margin:0 0 8px;font-size:18px;line-height:1.1;letter-spacing:-.01em}
+.meta{font-size:12.8px;color:var(--muted);line-height:1.45}
+.people{display:grid;gap:6px;margin-top:10px;font-size:12.5px}
+.people div{background:#f8fafc;border:1px solid #edf2f7;border-radius:12px;padding:8px}
+.viewer{background:#fff;border:1px solid var(--linea);border-radius:28px;box-shadow:var(--shadow);overflow:hidden;position:sticky;top:118px}
+.viewer-head{padding:20px 22px;border-bottom:1px solid var(--linea)}
+.viewer-eyebrow{font-size:12px;font-weight:900;letter-spacing:.05em;text-transform:uppercase;color:var(--azul2);margin-bottom:8px}
+.viewer-title{font-family:Barlow;font-size:27px;font-weight:800;line-height:1.05;margin:0 0 12px;letter-spacing:-.025em}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;margin:14px 0}
+.info{border:1px solid #edf2f7;background:#f8fafc;border-radius:14px;padding:10px 11px;font-size:12.5px;color:#334155}
+.info b{display:block;color:#0f2742;font-size:11px;text-transform:uppercase;letter-spacing:.04em;margin-bottom:3px}
+.actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+iframe{width:100%;height:620px;border:0;background:#f8fafc}
+.empty{padding:60px 24px;text-align:center;color:var(--muted)} .empty h3{font-family:Barlow;font-size:28px;margin:0 0 8px;color:#1f2937}
+.inf-badge{background:#e8f4f8;color:#0d4660;border:1px solid #bee3f0;border-radius:999px;padding:4px 10px;font-size:11px;font-weight:800;display:inline-block;margin-top:6px}
+@media(max-width:1100px){.header-inner,.control-panel,.layout,.person-summary{grid-template-columns:1fr}.kpis{grid-template-columns:repeat(2,1fr)}.cards{max-height:none}.viewer{position:relative;top:auto}iframe{height:500px}}
+@media print{header,.control-panel,.tabs,.actions,iframe{display:none}main{padding:0}.layout,.person-summary{display:block}.card,.summary-card,.viewer{box-shadow:none;break-inside:avoid}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <div>
+      <div class="brand"><div class="logo">IF<br>PST</div><div><strong>Informe Final — Preparación de Seminario de Titulación</strong><br><span style="color:#d6edf5;font-size:13px">Periodo 202610 · ECIEM · UCN Coquimbo</span></div></div>
+      <h1>Panel centralizado de informes y evaluación</h1>
+      <p class="subtitle">Consulta académica por rol: identifica rápidamente los proyectos asociados a cada profesor como guía o como evaluador, revisa el PDF del informe final y abre la rúbrica de evaluación.</p>
+    </div>
+    <div class="kpis">
+      <div class="kpi"><strong id="kTrabajos">0</strong><span>trabajos cargados</span></div>
+      <div class="kpi"><strong id="kGuias">0</strong><span>profesores guía</span></div>
+      <div class="kpi"><strong id="kInf">0</strong><span>evaluadores</span></div>
+      <div class="kpi"><strong id="kVisibles">0</strong><span>resultados visibles</span></div>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="control-panel">
+    <div class="field"><label>Académico</label><select id="profesor"><option value="">Todos los académicos</option></select></div>
+    <div class="field"><label>Visualizar rol</label><select id="rol"><option value="todos">Como guía y evaluador</option><option value="guia">Solo como profesor guía</option><option value="informante">Solo como evaluador</option></select></div>
+    <div class="field"><label>Área</label><select id="area"><option value="">Todas las áreas</option></select></div>
+    <div class="field"><label>Búsqueda</label><input id="q" placeholder="Título, integrantes, carrera..." /></div>
+  </section>
+
+  <section class="person-summary">
+    <div class="summary-card"><div class="label">Académico seleccionado</div><div class="value" id="sNombre" style="font-size:26px">Todos</div><div class="note" id="sNota">Vista general de todos los registros.</div></div>
+    <div class="summary-card"><div class="label">Como profesor guía</div><div class="value" id="sGuia">0</div><div class="note">Trabajos donde lidera el área de titulación.</div></div>
+    <div class="summary-card"><div class="label">Como evaluador</div><div class="value" id="sInf">0</div><div class="note">Trabajos asignados para revisión y rúbrica.</div></div>
+  </section>
+
+  <section class="layout">
+    <aside class="panel-list">
+      <div class="panel-list-head"><h2>Proyectos</h2><span class="count-pill" id="countText">0 visibles</span></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="todos">Todos</button>
+        <button class="tab" data-tab="guia">Guía</button>
+        <button class="tab" data-tab="informante">Evaluador</button>
+      </div>
+      <div id="cards" class="cards"></div>
+    </aside>
+    <section class="viewer" id="viewer">
+      <div class="empty"><h3>Selecciona un proyecto</h3><p>Al elegir una tarjeta se mostrará aquí la ficha completa, los botones de acceso al PDF y la rúbrica de evaluación.</p></div>
+    </section>
+  </section>
+</main>
+<script>
+const DATA = [{"id": 1, "area": "Economía", "carrera": "Ingeniería Comercial", "titulo": "BRECHA ENTRE LOS INGRESOS TRIBUTARIOS PROYECTADOS Y EFECTIVAMENTE RECAUDADOS EN CHILE: MAGNITUD, SIGNO Y COMPORTAMIENTO DURANTE EL PERÍODO 2022-2024", "integrantes": "Casanga, Araya, Ánjel", "profesorGuia": "Fernando González", "informante1": "Andrés Vallone", "informante2": "Mauricio Gallardo Altamirano", "pdf": "https://drive.google.com/open?id=1SN6CQDAhKhg3QHG8qWmrOsFotN3mZcZE", "pdfPreview": "https://drive.google.com/file/d/1SN6CQDAhKhg3QHG8qWmrOsFotN3mZcZE/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 2, "area": "Economía", "carrera": "Ingeniería Comercial", "titulo": "Determinantes del endeudamiento de los hogares chilenos: evidencia empírica a partir de la Encuesta Financiera de Hogares 2024", "integrantes": "Ardiles, Pastén, Rojas", "profesorGuia": "Fernando González", "informante1": "Andrés Vallone", "informante2": "Mauricio Gallardo Altamirano", "pdf": "https://drive.google.com/open?id=1aRxIADHttKN7T8yE-XXZT9KqjJ_wUCtW", "pdfPreview": "https://drive.google.com/file/d/1aRxIADHttKN7T8yE-XXZT9KqjJ_wUCtW/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 3, "area": "Economía", "carrera": "Ingeniería Comercial", "titulo": "Política Fiscal, Crecimiento Económico y Mercado Laboral en Chile: Un Análisis de Cointegración para el Período 1990–2023", "integrantes": "Rojas, Lisboa, Olivares", "profesorGuia": "Fernando González", "informante1": "Andrés Vallone", "informante2": "Mauricio Gallardo Altamirano", "pdf": "https://drive.google.com/open?id=1oBnSks2vQ3pOcABoODzIYrilk95Plzav", "pdfPreview": "https://drive.google.com/file/d/1oBnSks2vQ3pOcABoODzIYrilk95Plzav/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 4, "area": "Economía", "carrera": "Ingeniería Comercial", "titulo": "Evaluación del impacto del FOGAES en el acceso al financiamiento hipotecario en Chile", "integrantes": "Jofré, Saavedra, Vega", "profesorGuia": "Fernando González", "informante1": "Andrés Vallone", "informante2": "Mauricio Gallardo Altamirano", "pdf": "https://drive.google.com/open?id=11yKBt2I-8F1AxZiweJf13tKUrzicWYKC", "pdfPreview": "https://drive.google.com/file/d/11yKBt2I-8F1AxZiweJf13tKUrzicWYKC/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 5, "area": "Emprendimiento", "carrera": "Ingeniería Comercial", "titulo": "Factores Determinantes del Éxito en Emprendimientos establecidos liderados por mujeres: Un Análisis Multidimensional en la Conurbación La Serena-Coquimbo", "integrantes": "Hidalgo, Monsalve, Ramírez", "profesorGuia": "Karla Soria", "informante1": "Mirza Cequea", "informante2": "Carla Andrade", "pdf": "https://drive.google.com/open?id=1PyrkJIRLpnQDJWt0ssjYeQMyKXkVzmbX", "pdfPreview": "https://drive.google.com/file/d/1PyrkJIRLpnQDJWt0ssjYeQMyKXkVzmbX/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 6, "area": "Emprendimiento", "carrera": "Ingeniería Comercial", "titulo": "Análisis del ecosistema emprendedor para potenciar un modelo de hub de innovación para el desarrollo de emprendimientos científico-tecnológicos en la Región de Coquimbo", "integrantes": "Mauad, Moya", "profesorGuia": "Karla Soria", "informante1": "Tomás Bas", "informante2": "Sofía Orazi", "pdf": "https://drive.google.com/open?id=1N24xZwH8XQyZAi0qCPu8pj9KrcTgXYYy", "pdfPreview": "https://drive.google.com/file/d/1N24xZwH8XQyZAi0qCPu8pj9KrcTgXYYy/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 7, "area": "Emprendimiento", "carrera": "Ingeniería Comercial", "titulo": "Identificar la factibilidad económica, técnica y legal de implementar un emprendimiento basado en sistemas de rastreo vehicular en la conurbación de Coquimbo y La Serena", "integrantes": "Alvarado, Sánchez", "profesorGuia": "Karla Soria", "informante1": "Tomás Bas", "informante2": "Sofía Orazi", "pdf": "https://drive.google.com/open?id=1j-Gj5D8S7eR6q_5YzNOiTMpxctInjmqY", "pdfPreview": "https://drive.google.com/file/d/1j-Gj5D8S7eR6q_5YzNOiTMpxctInjmqY/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 8, "area": "Emprendimiento", "carrera": "Ingeniería Comercial", "titulo": "Propuestas económicas, sociales y tecnológicas para mejorar la competitividad y permanencia de emprendimientos liderados por personas con discapacidad visual o motriz en la Región de Coquimbo", "integrantes": "Cárdenas, Núñez, Pérez", "profesorGuia": "Karla Soria", "informante1": "Tomás Bas", "informante2": "Sofía Orazi", "pdf": "https://drive.google.com/open?id=1jr0E11RzHtKPDfc_pc6nrRaGnLCxpda7", "pdfPreview": "https://drive.google.com/file/d/1jr0E11RzHtKPDfc_pc6nrRaGnLCxpda7/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 9, "area": "Emprendimiento", "carrera": "Ingeniería Comercial", "titulo": "Análisis de la adopción de inteligencia artificial en empresas emergentes y tradicionales: un estudio en la Región de Coquimbo", "integrantes": "Cortés, Herrera", "profesorGuia": "Karla Soria", "informante1": "Tomás Bas", "informante2": "Sofía Orazi", "pdf": "https://drive.google.com/open?id=1i74Zcjj9sCafvn-o6kOO_m-lJsZgi2Pi", "pdfPreview": "https://drive.google.com/file/d/1i74Zcjj9sCafvn-o6kOO_m-lJsZgi2Pi/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 10, "area": "Finanzas y Evaluación de Proyectos", "carrera": "Ingeniería Comercial", "titulo": "Barrio industrial", "integrantes": "Cortes, Jin, Puelles", "profesorGuia": "Sergio Zúñiga", "informante1": "Pablo Rodríguez", "informante2": "Erick De La Barra", "pdf": "https://drive.google.com/open?id=1tbHEudQ5j8fUEoCgDkqZnLB72Nd5Q-Vm", "pdfPreview": "https://drive.google.com/file/d/1tbHEudQ5j8fUEoCgDkqZnLB72Nd5Q-Vm/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 11, "area": "Finanzas y Evaluación de Proyectos", "carrera": "Ingeniería Comercial", "titulo": "Puerto Coquimbo", "integrantes": "Fredes, Vargas, Lavin", "profesorGuia": "Sergio Zúñiga", "informante1": "Pablo Rodríguez", "informante2": "Erick De La Barra", "pdf": "https://drive.google.com/open?id=1iAtJoYh2NnrYEmHn5a7eosenqZYOPxen", "pdfPreview": "https://drive.google.com/file/d/1iAtJoYh2NnrYEmHn5a7eosenqZYOPxen/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 12, "area": "Finanzas y Evaluación de Proyectos", "carrera": "Ingeniería Comercial", "titulo": "ROPA SUSTENTABLE", "integrantes": "Alfaro, Ordenes, Cabello", "profesorGuia": "Sergio Zúñiga", "informante1": "Pablo Rodríguez", "informante2": "Erick De La Barra", "pdf": "https://drive.google.com/open?id=1s6ugAxYTi-PCc3vth2y-yauucWIW6GqS", "pdfPreview": "https://drive.google.com/file/d/1s6ugAxYTi-PCc3vth2y-yauucWIW6GqS/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 13, "area": "Finanzas y Evaluación de Proyectos", "carrera": "Ingeniería Comercial", "titulo": "Servicios solares fotovoltaicos", "integrantes": "Luna, Rojo, Valenzuela", "profesorGuia": "Sergio Zúñiga", "informante1": "Pablo Rodríguez", "informante2": "Erick De La Barra", "pdf": "https://drive.google.com/open?id=1o4pVYPpFKblOfQSTiTdAhl1OJzbYfYlO", "pdfPreview": "https://drive.google.com/file/d/1o4pVYPpFKblOfQSTiTdAhl1OJzbYfYlO/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 14, "area": "Gestión y Estrategias (RSE)", "carrera": "Ingeniería Comercial", "titulo": "Influencia de la adopción de prácticas ESG en la sostenibilidad de los emprendimientos agroalimentarios: evidencia desde la macrozona norte de Chile", "integrantes": "Galleguillos, Salas, Schuller", "profesorGuia": "Karen Vargas", "informante1": "Fernando González", "informante2": "Alberto Rojas", "pdf": "https://drive.google.com/open?id=1L1mSNCzLsXRkcrUJ-RhliVreSNuhJxhv", "pdfPreview": "https://drive.google.com/file/d/1L1mSNCzLsXRkcrUJ-RhliVreSNuhJxhv/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 15, "area": "Gestión y Estrategias (RSE)", "carrera": "Ingeniería Comercial", "titulo": "Centro Médico San Lucas FAMED", "integrantes": "Guerrero, Huerta, Navarro", "profesorGuia": "Karen Vargas", "informante1": "Fernando González", "informante2": "Alberto Rojas", "pdf": "https://drive.google.com/open?id=1cA19Qr7ZskR29PYfUL0q2GHiWt8m1s0B", "pdfPreview": "https://drive.google.com/file/d/1cA19Qr7ZskR29PYfUL0q2GHiWt8m1s0B/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 16, "area": "Gestión y Estrategias (RSE)", "carrera": "Ingeniería Comercial", "titulo": "GoIntegreat", "integrantes": "Álvarez, Cortés, Díaz", "profesorGuia": "Karen Vargas", "informante1": "Fernando González", "informante2": "Alberto Rojas", "pdf": "https://drive.google.com/open?id=1y2lOZANVHxsCtecITijOL-oipP-InF1f", "pdfPreview": "https://drive.google.com/file/d/1y2lOZANVHxsCtecITijOL-oipP-InF1f/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 17, "area": "Gestión y Estrategias (RSE)", "carrera": "Ingeniería Comercial", "titulo": "Greenwashing", "integrantes": "Barraza, Duque", "profesorGuia": "Karen Vargas", "informante1": "Fernando González", "informante2": "Alberto Rojas", "pdf": "https://drive.google.com/open?id=1wjhH3lBfGkLZlj0IDRg1fn5MXfFt02y1", "pdfPreview": "https://drive.google.com/file/d/1wjhH3lBfGkLZlj0IDRg1fn5MXfFt02y1/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 18, "area": "Innovación", "carrera": "Ingeniería Comercial", "titulo": "Propuesta preliminar de factibilidad comercial y operativa para la gestión de excedentes alimentarios en establecimientos de servicios de alimentos de La Serena, Chile", "integrantes": "Contreras, Torres", "profesorGuia": "Tomás Bas", "informante1": "Karla Soria", "informante2": "Rodrigo Sfeir", "pdf": "https://drive.google.com/open?id=16C8kdHR35q2xTxk8ImBY-f7wIhxMAm8-", "pdfPreview": "https://drive.google.com/file/d/16C8kdHR35q2xTxk8ImBY-f7wIhxMAm8-/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 19, "area": "Innovación", "carrera": "Ingeniería Comercial", "titulo": "Analizar conceptualmente la propuesta de factibilidad comercial de un dispositivo domiciliario de tamizaje urinario no invasivo para biomarcadores nutricionales y metabólicos en el contexto chileno", "integrantes": "Meriño, Sainz, Tapia", "profesorGuia": "Tomás Bas", "informante1": "Karla Soria", "informante2": "Rodrigo Sfeir", "pdf": "https://drive.google.com/open?id=1RtLjnJzDMRoZs_9ZtgGzaTrGi1iqhnDo", "pdfPreview": "https://drive.google.com/file/d/1RtLjnJzDMRoZs_9ZtgGzaTrGi1iqhnDo/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 20, "area": "Innovación", "carrera": "Ingeniería Comercial", "titulo": "Efectos de la multitarea (multitask) digital sobre el rendimiento, la productividad y el bienestar: una revisión para el diseño de una propuesta de intervención en contextos educativos y organizacionales", "integrantes": "Palma, López", "profesorGuia": "Tomás Bas", "informante1": "Vannessa Duarte", "informante2": "Oswaldo Terán", "pdf": "https://drive.google.com/open?id=1y1r9s_ZVgD8dCP6Xjc4np9AU2Bhh6wGD", "pdfPreview": "https://drive.google.com/file/d/1y1r9s_ZVgD8dCP6Xjc4np9AU2Bhh6wGD/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 21, "area": "Innovación", "carrera": "Ingeniería Comercial", "titulo": "Analizar la viabilidad conceptual y la aceptación de un dispositivo wearable orientado a la seguridad personal femenina, considerando la percepción de las usuarias, los atributos de valor esperados y las posibilidades de implementación en el contexto chileno", "integrantes": "Areyuna, Guerrero", "profesorGuia": "Tomás Bas", "informante1": "Karla Soria", "informante2": "Rodrigo Sfeir", "pdf": "https://drive.google.com/open?id=1Jt2pM3IOlecFr_w15Cz6X5skVy0SIG3-", "pdfPreview": "https://drive.google.com/file/d/1Jt2pM3IOlecFr_w15Cz6X5skVy0SIG3-/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 22, "area": "Innovación", "carrera": "Ingeniería Comercial", "titulo": "Evaluación de la viabilidad económica y potencial de rentabilidad en la valorización de residuos de langostinos y jibia bajo un enfoque de innovación y economía circular en la industria pesquera", "integrantes": "Araya, Galleguillos", "profesorGuia": "Tomás Bas", "informante1": "Karla Soria", "informante2": "Rodrigo Sfeir", "pdf": "https://drive.google.com/open?id=1HbfrJ-kt4gNWTR6us8e-DSZ5nd5leFLl", "pdfPreview": "https://drive.google.com/file/d/1HbfrJ-kt4gNWTR6us8e-DSZ5nd5leFLl/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 23, "area": "Marketing", "carrera": "Ingeniería Comercial", "titulo": "FACTORES QUE INFLUYEN EN LA ADOPCIÓN DE SERVICIOS DE RECICLAJE DOMICILIARIO POR PARTE DE LOS HOGARES DE LA REGIÓN DE COQUIMBO", "integrantes": "Fajardo, Perez, Ramirez", "profesorGuia": "Sofía Orazi", "informante1": "Carla Andrade", "informante2": "Karen Vargas", "pdf": "https://drive.google.com/open?id=1Xs89S6e5pOnc1j6HdRiSyyigPc1cpQ7Z", "pdfPreview": "https://drive.google.com/file/d/1Xs89S6e5pOnc1j6HdRiSyyigPc1cpQ7Z/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 24, "area": "Marketing", "carrera": "Ingeniería Comercial", "titulo": "Factores que influyen en la intención de elección de la Región de Coquimbo como locación de rodaje por parte de productoras audiovisuales chilenas", "integrantes": "Castillo, Collao", "profesorGuia": "Sofía Orazi", "informante1": "Carla Andrade", "informante2": "Karen Vargas", "pdf": "https://drive.google.com/open?id=1865zPPGUFc59IHLWhiqns2OO_CO4u7TA", "pdfPreview": "https://drive.google.com/file/d/1865zPPGUFc59IHLWhiqns2OO_CO4u7TA/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 25, "area": "Marketing", "carrera": "Ingeniería Comercial", "titulo": "Análisis integral del impacto del Electronic Word of Mouth (eWOM) en la intención de reserva hotelera: Un estudio multidimensional en la Región de Coquimbo", "integrantes": "Aguirre, Toro, Videla", "profesorGuia": "Sofía Orazi", "informante1": "Carla Andrade", "informante2": "Karen Vargas", "pdf": "https://drive.google.com/open?id=1qDIqpiw-amjZCaIL8BuJ6WINQGXLFr6a", "pdfPreview": "https://drive.google.com/file/d/1qDIqpiw-amjZCaIL8BuJ6WINQGXLFr6a/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 26, "area": "Marketing", "carrera": "Ingeniería Comercial", "titulo": "Ética en el Marketing Financiero", "integrantes": "Aracena, Escalona, Reyes", "profesorGuia": "Sofía Orazi", "informante1": "Carla Andrade", "informante2": "Karen Vargas", "pdf": "https://drive.google.com/open?id=1u55rhmYZdYldCtay3BMITsb8sPCFQJjY", "pdfPreview": "https://drive.google.com/file/d/1u55rhmYZdYldCtay3BMITsb8sPCFQJjY/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 27, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "DISEÑO DE PLAN DE CONTROL DE GESTIÓN PARA TRANSPORTES CALLEGARI", "integrantes": "Carmona, Chávez, Estevez", "profesorGuia": "Oswaldo Terán", "informante1": "Mirza Cequea", "informante2": "Vannessa Duarte", "pdf": "https://drive.google.com/open?id=1czerPPX8u3HKq31GZ9xRRN5Mzo1BJCbz", "pdfPreview": "https://drive.google.com/file/d/1czerPPX8u3HKq31GZ9xRRN5Mzo1BJCbz/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 28, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "El capital humano como factor clave para los procesos de transformación digital en organizaciones a nivel mundial: Una revisión sistemática del período 2015-2025", "integrantes": "González, Delgado, Vega", "profesorGuia": "Mirza Cequea", "informante1": "Oswaldo Terán", "informante2": "Sergio Zúñiga", "pdf": "https://drive.google.com/open?id=1JANqgJtC9CXhYnNfwKeZ0g63AiVZagFB", "pdfPreview": "https://drive.google.com/file/d/1JANqgJtC9CXhYnNfwKeZ0g63AiVZagFB/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 29, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Estrategias frente al estrés hídrico en la minería: prácticas globales y su implementación en el norte de Chile mediante una revisión sistemática durante el período 2010-2025", "integrantes": "Bugueño, Hurtado, Miranda", "profesorGuia": "Mirza Cequea", "informante1": "Oswaldo Terán", "informante2": "Sergio Zúñiga", "pdf": "https://drive.google.com/open?id=1u8iaZfuocZDnWugw_3UuqK2-Zn7axaw_", "pdfPreview": "https://drive.google.com/file/d/1u8iaZfuocZDnWugw_3UuqK2-Zn7axaw_/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 30, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "FACTORES CRÍTICOS DE ÉXITO EN LA IMPLEMENTACIÓN DE SISTEMAS ERP EN GRANDES EMPRESAS DE EUROPA Y LATINOAMÉRICA: REVISIÓN SISTEMÁTICA DE LA LITERATURA (2018–2026)", "integrantes": "Díaz, Zambra, Zarate", "profesorGuia": "Mirza Cequea", "informante1": "Oswaldo Terán", "informante2": "Sergio Zúñiga", "pdf": "https://drive.google.com/open?id=1ntWZ3JixyGvEz-osi0YKPI-UQWGPm7OT", "pdfPreview": "https://drive.google.com/file/d/1ntWZ3JixyGvEz-osi0YKPI-UQWGPm7OT/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 31, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Estereotipos de género y percepción del liderazgo en equipos de trabajo organizacionales: un estudio cualitativo en 2026", "integrantes": "Carvajal, Lujan, Paredes", "profesorGuia": "Mirza Cequea", "informante1": "Oswaldo Terán", "informante2": "Sergio Zúñiga", "pdf": "https://drive.google.com/open?id=1eoV3E2t8OpB7OiY5ew5ZUUcNIzoi1FIc", "pdfPreview": "https://drive.google.com/file/d/1eoV3E2t8OpB7OiY5ew5ZUUcNIzoi1FIc/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 32, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "DISEÑO DE UN PLAN DE CONTROL DE GESTIÓN PARA FARMACIAS DR. AMIGO", "integrantes": "Caimanque, Contreras, Lizardi", "profesorGuia": "Oswaldo Terán", "informante1": "Mirza Cequea", "informante2": "Vannessa Duarte", "pdf": "https://drive.google.com/open?id=1vq0KjDXwyAuhQtiLlZPeylCcJJnrflTk", "pdfPreview": "https://drive.google.com/file/d/1vq0KjDXwyAuhQtiLlZPeylCcJJnrflTk/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 33, "area": "Planificación y Control de Gestión", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Propuesta de mejora del sistema de control de gestión de Recon Drilling Chile SPA", "integrantes": "Cisternas, Leon, Serrano", "profesorGuia": "Oswaldo Terán", "informante1": "Mirza Cequea", "informante2": "Vannessa Duarte", "pdf": "https://drive.google.com/open?id=1PqhFAJU-HqVLGmIThuJSxLuhi-8dHHlA", "pdfPreview": "https://drive.google.com/file/d/1PqhFAJU-HqVLGmIThuJSxLuhi-8dHHlA/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 34, "area": "Sistemas de Información", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "MODELO DE INTEGRACIÓN DE DATOS DE BUSINESS INTELLIGENCE PARA LA GESTIÓN OPERATIVA Y LA TOMA DE DECISIONES EN LA EMPRESA MAAS ECOLOGÍA", "integrantes": "Albasini, Gallardo, Quinceno", "profesorGuia": "Vannessa Duarte", "informante1": "Boris Bugueño", "informante2": "Natalia Araya", "pdf": "https://drive.google.com/open?id=1eZSquGOCpAMev_AYlTIRSEmZUD5fiqFv", "pdfPreview": "https://drive.google.com/file/d/1eZSquGOCpAMev_AYlTIRSEmZUD5fiqFv/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 35, "area": "Sistemas de Información", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Evaluación de la incidencia de los estilos de vida en las manifestaciones del climaterio: Bases para un modelo de recomendaciones", "integrantes": "Martínez, Zambra", "profesorGuia": "Vannessa Duarte", "informante1": "Boris Bugueño", "informante2": "Natalia Araya", "pdf": "https://drive.google.com/open?id=198cyo0zClxYxnms0PW0rqXBMz9Opz5I6", "pdfPreview": "https://drive.google.com/file/d/198cyo0zClxYxnms0PW0rqXBMz9Opz5I6/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 36, "area": "Sistemas de Información", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Modelo Basado en Reglas de Asociación y Lenguaje Natural Para la Evaluación de la Pertinencia Curricular en Carreras de Ingeniería: Un Análisis de Brechas en el Sector Minero", "integrantes": "Bascuñan, Monterrey, Camus", "profesorGuia": "Vannessa Duarte", "informante1": "Boris Bugueño", "informante2": "Natalia Araya", "pdf": "https://drive.google.com/open?id=15hADkV9VjB7UBwsMy_FbUP2rgsIdvpoa", "pdfPreview": "https://drive.google.com/file/d/15hADkV9VjB7UBwsMy_FbUP2rgsIdvpoa/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 37, "area": "Sistemas de Información", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Modelo de integración de datos de Business Intelligence para la unificación de las áreas de costos, taller y operaciones: Caso Transportes Callegari", "integrantes": "Alcamán, Calfupan", "profesorGuia": "Vannessa Duarte", "informante1": "Boris Bugueño", "informante2": "Natalia Araya", "pdf": "https://drive.google.com/open?id=1pGZVOOyU7-VjHKXjb1uUzO4U91Hd7q12", "pdfPreview": "https://drive.google.com/file/d/1pGZVOOyU7-VjHKXjb1uUzO4U91Hd7q12/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}, {"id": 38, "area": "Sistemas de Información", "carrera": "Ingeniería en Información y Control de Gestión", "titulo": "Modelo de Inteligencia de Negocios para la unificación de la trazabilidad operativa-financiera en FyC Chile", "integrantes": "Galleguillos, Rodríguez, Talamilla", "profesorGuia": "Vannessa Duarte", "informante1": "Boris Bugueño", "informante2": "Natalia Araya", "pdf": "https://drive.google.com/open?id=1R14rW7reizwEmDpD9Cu4mwMzRXrclTZd", "pdfPreview": "https://drive.google.com/file/d/1R14rW7reizwEmDpD9Cu4mwMzRXrclTZd/preview", "evaluacion": "https://forms.gle/61GMtjnfbevMT1qR7"}];
+
+// Build sorted unique academics list
+const allNames = new Set();
+DATA.forEach(d => { allNames.add(d.profesorGuia); allNames.add(d.informante1); allNames.add(d.informante2); });
+const ACADEMICOS = [...allNames].sort((a,b) => a.localeCompare(b, 'es'));
+const AREAS = [...new Set(DATA.map(d=>d.area))].sort((a,b) => a.localeCompare(b, 'es'));
+
+let selectedId = null; let tab = 'todos';
+const $ = id => document.getElementById(id);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+
+function roleFor(d, name){
+  if(!name) return ['general'];
+  const roles=[]; if(d.profesorGuia===name) roles.push('guia'); if(d.informante1===name || d.informante2===name) roles.push('informante'); return roles;
+}
+function fillSelects(){
+  ACADEMICOS.forEach(n=>{ let o=document.createElement('option'); o.value=n; o.textContent=n; $('profesor').appendChild(o); });
+  AREAS.forEach(n=>{ let o=document.createElement('option'); o.value=n; o.textContent=n; $('area').appendChild(o); });
+  $('kTrabajos').textContent=DATA.length;
+  $('kGuias').textContent=new Set(DATA.map(d=>d.profesorGuia)).size;
+  $('kInf').textContent=new Set(DATA.flatMap(d=>[d.informante1,d.informante2]).filter(Boolean)).size;
+}
+function filtered(){
+  const name=$('profesor').value, rol=$('rol').value, area=$('area').value, q=$('q').value.toLowerCase().trim();
+  return DATA.filter(d=>{
+    const roles=roleFor(d,name);
+    if(name && roles.length===0) return false;
+    if(rol==='guia' && !roles.includes('guia')) return false;
+    if(rol==='informante' && !roles.includes('informante')) return false;
+    if(tab==='guia' && name && !roles.includes('guia')) return false;
+    if(tab==='informante' && name && !roles.includes('informante')) return false;
+    if(area && d.area!==area) return false;
+    if(q){ const hay=[d.titulo,d.integrantes,d.carrera,d.area,d.profesorGuia,d.informante1,d.informante2].join(' ').toLowerCase(); if(!hay.includes(q)) return false; }
+    return true;
+  });
+}
+function updateSummary(list){
+  const name=$('profesor').value;
+  const guia = name ? DATA.filter(d=>d.profesorGuia===name).length : new Set(DATA.map(d=>d.profesorGuia)).size;
+  const inf = name ? DATA.filter(d=>d.informante1===name || d.informante2===name).length : DATA.reduce((a,d)=>a+(d.informante1?1:0)+(d.informante2?1:0),0);
+  $('sNombre').textContent = name || 'Todos';
+  $('sNota').textContent = name ? 'Responsabilidades filtradas para este académico.' : 'Vista general de todos los registros.';
+  $('sGuia').textContent = guia;
+  $('sInf').textContent = inf;
+  $('kVisibles').textContent = list.length;
+  $('countText').textContent = `${list.length} visibles`;
+}
+function renderCards(){
+  const list=filtered(); updateSummary(list);
+  const name=$('profesor').value;
+  const box=$('cards'); box.innerHTML='';
+  if(!list.length){ box.innerHTML='<div class="empty"><h3>Sin resultados</h3><p>Ajusta el académico, rol, área o búsqueda.</p></div>'; return; }
+  list.forEach(d=>{
+    const roles=roleFor(d,name);
+    const roleBadges = name ? roles.map(r=>`<span class="badge ${r==='guia'?'guia':'inf'}">${r==='guia'?'Guía':'Evaluador'}</span>`).join('') : `<span class="badge guia">Guía: ${esc(d.profesorGuia)}</span>`;
+    const card=document.createElement('article'); card.className='card'+(d.id===selectedId?' active':''); card.onclick=()=>{ selectedId=d.id; renderViewer(d); renderCards(); };
+    card.innerHTML=`<div class="card-top"><div class="badges">${roleBadges}</div><span class="badge">#${d.id}</span></div><h3>${esc(d.titulo)}</h3><div class="meta"><b>${esc(d.area)}</b><br>${esc(d.carrera)}</div><div class="people"><div><b>Integrantes:</b> ${esc(d.integrantes)}</div><div><b>Evaluadores:</b> ${esc(d.informante1)} · ${esc(d.informante2)}</div></div>`;
+    box.appendChild(card);
+  });
+  if(selectedId && !list.some(d=>d.id===selectedId)){ selectedId=null; renderEmpty(); }
+}
+function renderEmpty(){ $('viewer').innerHTML='<div class="empty"><h3>Selecciona un proyecto</h3><p>Al elegir una tarjeta se mostrará aquí la ficha completa, los botones de acceso al PDF y la rúbrica de evaluación.</p></div>'; }
+function renderViewer(d){
+  $('viewer').innerHTML=`<div class="viewer-head">
+    <div class="viewer-eyebrow">Informe Final · Proyecto #${d.id}</div>
+    <h2 class="viewer-title">${esc(d.titulo)}</h2>
+    <div class="info-grid">
+      <div class="info"><b>Área</b>${esc(d.area)}</div>
+      <div class="info"><b>Carrera</b>${esc(d.carrera)}</div>
+      <div class="info"><b>Profesor guía</b>${esc(d.profesorGuia)}</div>
+      <div class="info"><b>Evaluadores</b>${esc(d.informante1)} · ${esc(d.informante2)}</div>
+      <div class="info" style="grid-column:1/-1"><b>Integrantes</b>${esc(d.integrantes)}</div>
+    </div>
+    <div class="actions">
+      <a class="btn btn-pdf" href="${esc(d.pdf)}" target="_blank" rel="noopener">📄 Abrir PDF</a>
+      <a class="btn btn-eval" href="${esc(d.evaluacion)}" target="_blank" rel="noopener">📋 Evaluar con rúbrica</a>
+      <button class="btn btn-ghost" onclick="window.print()">🖨 Imprimir</button>
+    </div>
+  </div>
+  <iframe src="${esc(d.pdfPreview)}" title="Vista previa Informe Final"></iframe>`;
+}
+function setTab(t){ tab=t; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===t)); if(t!=='todos') $('rol').value=t; renderCards(); }
+document.querySelectorAll('.tab').forEach(b=>b.addEventListener('click',()=>setTab(b.dataset.tab)));
+['profesor','rol','area','q'].forEach(id=>$(id).addEventListener('input',()=>{
+  if(id==='rol'){ tab=$(id).value==='todos'?'todos':$(id).value; document.querySelectorAll('.tab').forEach(b=>b.classList.toggle('active',b.dataset.tab===tab)); }
+  renderCards();
+}));
+fillSelects(); renderCards();
+</script>
+</body>
+</html>
