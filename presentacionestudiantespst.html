@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calendario Defensas PST — Estudiantes</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #f0f4f8; color: #1a202c; }
+
+  header {
+    background: linear-gradient(135deg, #1a3a5c 0%, #2563a8 100%);
+    color: white; padding: 20px 32px;
+    display: flex; align-items: center; gap: 20px;
+  }
+  header .logo { font-size: 2rem; }
+  header h1 { font-size: 1.4rem; font-weight: 700; line-height: 1.2; }
+  header p  { font-size: 0.8rem; opacity: 0.8; margin-top: 3px; }
+
+  /* ── VIEW SWITCHER ── */
+  .view-switcher {
+    background: #1e3a5f; display: flex; padding: 0 32px; gap: 4px; border-bottom: 3px solid #2563a8;
+  }
+  .view-btn {
+    padding: 11px 22px; border: none; background: none; cursor: pointer;
+    font-size: 0.84rem; font-weight: 600; color: rgba(255,255,255,0.6);
+    border-bottom: 3px solid transparent; margin-bottom: -3px;
+    transition: all 0.15s; white-space: nowrap;
+  }
+  .view-btn:hover { color: white; background: rgba(255,255,255,0.08); border-radius: 6px 6px 0 0; }
+  .view-btn.active { color: white; border-bottom-color: #60a5fa; }
+
+  .view { display: none; }
+  .view.active { display: block; }
+
+  /* ── DAY TABS ── */
+  .nav-tabs { display: flex; background: white; border-bottom: 2px solid #e2e8f0; width: 100%; }
+  .tab-btn {
+    flex: 1; padding: 15px 10px; border: none; background: none; cursor: pointer;
+    font-size: 0.88rem; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; text-align: center; transition: all 0.15s; white-space: nowrap;
+  }
+  .tab-btn:hover { color: #2563a8; background: #f0f6ff; }
+  .tab-btn.active { color: #2563a8; border-bottom-color: #2563a8; }
+  .day-date { font-size: 0.7rem; color: #94a3b8; font-weight: 400; display: block; margin-top: 2px; }
+  .tab-btn.active .day-date { color: #93c5fd; }
+
+  .sub-panel { display: none; }
+  .sub-panel.active { display: block; }
+
+  .content { padding: 22px 26px; max-width: 1340px; margin: 0 auto; }
+
+  /* ── DAY HEADER ── */
+  .day-header {
+    background: white; border-radius: 12px; padding: 15px 22px; margin-bottom: 18px;
+    border-left: 5px solid #2563a8; display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+  }
+  .day-header h2 { font-size: 1.1rem; color: #1a3a5c; }
+  .day-header .meta { font-size: 0.78rem; color: #64748b; margin-top: 3px; }
+  .day-badge { background: #e0eaff; color: #1d4ed8; padding: 5px 14px; border-radius: 20px; font-size: 0.76rem; font-weight: 700; white-space: nowrap; }
+
+  /* ── ROOMS ── */
+  .rooms-grid { display: grid; gap: 18px; }
+  .rooms-2 { grid-template-columns: 1fr 1fr; }
+
+  .room-card { background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
+  .rh-blue  .room-header { background: linear-gradient(135deg, #1a3a5c, #2563a8); }
+  .rh-green .room-header { background: linear-gradient(135deg, #064e3b, #059669); }
+  .room-header { padding: 12px 18px; }
+  .room-header h3 { font-size: 0.93rem; font-weight: 700; color: white; }
+  .room-header .room-area { font-size: 0.74rem; color: rgba(255,255,255,0.85); margin-top: 2px; }
+
+  /* guía box — solo profesor guía visible */
+  .guia-box {
+    background: #eff6ff; border-bottom: 1px solid #bfdbfe;
+    padding: 9px 18px; font-size: 0.78rem;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .guia-box .guia-label { font-weight: 700; color: #1d4ed8; }
+  .guia-box .guia-name  { color: #1e3a5c; font-weight: 600; }
+
+  .pm-separator    { background: #fff7ed; border-top: 2px solid #fed7aa; border-bottom: 1px solid #e2e8f0; padding: 8px 18px; font-size: 0.72rem; font-weight: 700; color: #c2410c; }
+  .com-b-separator { background: #f0fdf4; border-top: 2px solid #86efac; border-bottom: 1px solid #e2e8f0; padding: 8px 18px; font-size: 0.72rem; font-weight: 700; color: #166534; }
+
+  .schedule-table { width: 100%; border-collapse: collapse; }
+  .schedule-table th { background: #f1f5f9; padding: 7px 13px; text-align: left; font-size: 0.68rem; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+  .schedule-table td { padding: 10px 13px; border-bottom: 1px solid #f1f5f9; font-size: 0.8rem; vertical-align: middle; }
+  .schedule-table tr:last-child td { border-bottom: none; }
+  .schedule-table tr:hover td { background: #f8fafc; }
+  .time-cell { font-weight: 700; color: #374151; white-space: nowrap; width: 130px; }
+
+  .gn { display: inline-block; color: white; border-radius: 5px; padding: 2px 7px; font-size: 0.68rem; font-weight: 700; margin-right: 5px; }
+  .gn-blue   { background: #2563a8; }
+  .gn-green  { background: #059669; }
+  .gn-purple { background: #7c3aed; }
+  .gn-orange { background: #d97706; }
+
+  /* ── ÁREA TABS ── */
+  .area-tabs-bar { display: flex; background: white; border-bottom: 2px solid #e2e8f0; width: 100%; flex-wrap: wrap; }
+  .area-tab {
+    padding: 12px 16px; border: none; background: none; cursor: pointer;
+    font-size: 0.82rem; font-weight: 600; color: #64748b; border-bottom: 3px solid transparent;
+    margin-bottom: -2px; transition: all 0.15s; white-space: nowrap;
+  }
+  .area-tab:hover { color: #2563a8; background: #f0f6ff; }
+  .area-tab.active { color: #2563a8; border-bottom-color: #2563a8; }
+
+  .area-panel { display: none; }
+  .area-panel.active { display: block; }
+
+  /* ── FICHA DE ÁREA ── */
+  .area-card {
+    background: white; border-radius: 12px; overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0,0,0,0.09); border: 1px solid #e2e8f0;
+    max-width: 680px; margin: 0 auto;
+  }
+  .area-card-header { padding: 20px 24px; color: white; }
+  .area-card-header.blue   { background: linear-gradient(135deg, #1a3a5c, #2563a8); }
+  .area-card-header.green  { background: linear-gradient(135deg, #064e3b, #059669); }
+  .area-card-header.teal   { background: linear-gradient(135deg, #134e4a, #0d9488); }
+  .area-card-header.purple { background: linear-gradient(135deg, #4c1d95, #7c3aed); }
+  .area-card-header.orange { background: linear-gradient(135deg, #78350f, #d97706); }
+  .area-card-header h3 { font-size: 1.15rem; font-weight: 700; }
+  .area-card-header .ac-meta { font-size: 0.8rem; opacity: 0.85; margin-top: 4px; }
+  .area-card-header .ac-guia {
+    margin-top: 10px; display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.2); border-radius: 20px; padding: 4px 14px;
+    font-size: 0.78rem; font-weight: 600;
+  }
+
+  .area-info-bar { background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; }
+  .aib-item { flex: 1; padding: 10px 16px; border-right: 1px solid #e2e8f0; text-align: center; }
+  .aib-item:last-child { border-right: none; }
+  .aib-val { font-size: 1.2rem; font-weight: 800; color: #2563a8; }
+  .aib-lbl { font-size: 0.65rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .area-schedule-table { width: 100%; border-collapse: collapse; }
+  .area-schedule-table th { background: #f1f5f9; padding: 9px 16px; text-align: left; font-size: 0.69rem; text-transform: uppercase; letter-spacing: 0.06em; color: #64748b; border-bottom: 1px solid #e2e8f0; }
+  .area-schedule-table td { padding: 12px 16px; border-bottom: 1px solid #f1f5f9; font-size: 0.82rem; vertical-align: middle; }
+  .area-schedule-table tr:last-child td { border-bottom: none; }
+  .area-schedule-table tr:hover td { background: #f8fafc; }
+  .ast-time { font-weight: 700; color: #374151; white-space: nowrap; width: 140px; }
+  .ast-num  { font-weight: 700; color: #2563a8; width: 50px; }
+
+  .com2-separator { background: #f8fafc; border-top: 2px solid #e2e8f0; border-bottom: 1px solid #e2e8f0; padding: 8px 16px; font-size: 0.72rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.06em; }
+
+  .legend { display: flex; gap: 14px; flex-wrap: wrap; padding: 13px 26px; background: white; border-top: 1px solid #e2e8f0; font-size: 0.73rem; }
+  .legend-item { display: flex; align-items: center; gap: 5px; }
+  .legend-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; }
+
+  @media (max-width: 860px) {
+    .rooms-2 { grid-template-columns: 1fr; }
+    .content { padding: 14px; }
+    header { padding: 16px 14px; }
+    .view-switcher { padding: 0 14px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🎓</div>
+  <div>
+    <h1>Calendario de Defensas PST — ECIEM</h1>
+    <p>Ingeniería Comercial · Semestre 202610 · Consulta tu fecha y hora de defensa</p>
+  </div>
+</header>
+
+<div class="view-switcher">
+  <button class="view-btn active" onclick="showView('v-diaria',this)">📅 Por Fecha</button>
+  <button class="view-btn" onclick="showView('v-area',this)">🔬 Por Área</button>
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║              VISTA POR FECHA                        ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div id="v-diaria" class="view active">
+<div class="nav-tabs">
+  <button class="tab-btn active" onclick="showSub('dd1',this)">Martes<span class="day-date">30 junio</span></button>
+  <button class="tab-btn" onclick="showSub('dd2',this)">Miércoles<span class="day-date">01 julio</span></button>
+  <button class="tab-btn" onclick="showSub('dd3',this)">Jueves<span class="day-date">02 julio</span></button>
+  <button class="tab-btn" onclick="showSub('dd4',this)">Miércoles<span class="day-date">08 julio</span></button>
+</div>
+<div class="content">
+
+  <!-- Martes 30 -->
+  <div id="dd1" class="sub-panel active">
+    <div class="day-header">
+      <div><h2>Martes 30 de Junio — Finanzas · Marketing · Planificación Terán</h2>
+      <div class="meta">AM: Finanzas y Marketing en paralelo (08:30–12:30) · PM: Planificación Terán (14:30–17:30)</div></div>
+      <div class="day-badge">Fecha 1 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">AM: Finanzas · PM: Planificación Terán</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía (mañana):</span><span class="guia-name">Sergio Zúñiga</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G10</span></td><td>Cortes, Jin, Puelles</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G11</span></td><td>Alfaro, Ordenes, Cabello</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G12</span></td><td>Fredes, Lavin, Vargas</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G13</span></td><td>Luna, Rojo, Valenzuela</td></tr>
+        </tbody></table>
+        <div class="pm-separator">Tarde — Planificación y Control de Gestión</div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía (tarde):</span><span class="guia-name">Oswaldo Terán</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">14:30 – 15:30</td><td><span class="gn gn-orange">G31</span></td><td>Cisternas, León, Serrano</td></tr>
+          <tr><td class="time-cell">15:30 – 16:30</td><td><span class="gn gn-orange">G32</span></td><td>Moreno, Chávez, Estévez</td></tr>
+          <tr><td class="time-cell">16:30 – 17:30</td><td><span class="gn gn-orange">G33</span></td><td>Caimanque, Contreras, Lizardi</td></tr>
+        </tbody></table>
+      </div>
+
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Mañana · Marketing</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Sofía Orazi</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G23</span></td><td>Aracena, Escalona, Reyes</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G24</span></td><td>Collao, Castillo</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G25</span></td><td>Fajardo, Pérez, Ramírez</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G26</span></td><td>Aguirre, Toro, Videla</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Miércoles 01 -->
+  <div id="dd2" class="sub-panel">
+    <div class="day-header">
+      <div><h2>Miércoles 01 de Julio — RSE/Gestión · Emprendimiento</h2>
+      <div class="meta">2 áreas en paralelo · RSE 08:30–12:30 · Emprendimiento 08:30–13:30</div></div>
+      <div class="day-badge">Fecha 2 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">Gestión y Estrategias / RSE</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Karen Vargas</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G14</span></td><td>Álvarez, Cortés, Díaz</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G15</span></td><td>Barraza, Duque</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G16</span></td><td>Galleguillos, Salas, Schuller</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G17</span></td><td>Guerrero, Huerta, Navarro</td></tr>
+        </tbody></table>
+      </div>
+
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Emprendimiento</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Karla Soria</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G5</span></td><td>Cárdenas, Núñez, Pérez</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G6</span></td><td>Alvarado, Sánchez</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G7</span></td><td>Mauad, Moya</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G8</span></td><td>Cortés, Herrera</td></tr>
+        </tbody></table>
+        <div class="com-b-separator">Continuación — Emprendimiento</div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Karla Soria</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">12:30 – 13:30</td><td><span class="gn gn-purple">G9</span></td><td>Hidalgo, Monsalve, Ramírez</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Jueves 02 -->
+  <div id="dd3" class="sub-panel">
+    <div class="day-header">
+      <div><h2>Jueves 02 de Julio — Innovación · Planificación Cequea</h2>
+      <div class="meta">AM: 2 áreas en paralelo (08:30–12:30) · PM: Innovación (14:30–15:30)</div></div>
+      <div class="day-badge">Fecha 3 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">AM: Innovación A · PM: Innovación B</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía (mañana):</span><span class="guia-name">Tomás Bas</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G19</span></td><td>Contreras, Torres</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G18</span></td><td>Areyuna, Guerrero</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G20</span></td><td>Araya, Galleguillos</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G21</span></td><td>Merini, Sainz, Tapia</td></tr>
+        </tbody></table>
+        <div class="pm-separator">Tarde — Innovación</div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía (tarde):</span><span class="guia-name">Tomás Bas</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">14:30 – 15:30</td><td><span class="gn gn-orange">G22</span></td><td>López, Palma</td></tr>
+        </tbody></table>
+      </div>
+
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Planificación y Control de Gestión</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Mirza Cequea</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G27</span></td><td>Delgado, González, Vega</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G28</span></td><td>Díaz, Zambra, Zárate</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G29</span></td><td>Carvajal, Lujan, Paredes</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G30</span></td><td>Bugueño, Hurtado, Miranda</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Miércoles 08 -->
+  <div id="dd4" class="sub-panel">
+    <div class="day-header">
+      <div><h2>Miércoles 08 de Julio — Economía · Sistemas de Información</h2>
+      <div class="meta">2 áreas en paralelo · Economía 08:30–12:30 · Sistemas 08:30–13:30</div></div>
+      <div class="day-badge">Fecha 4 de 4</div>
+    </div>
+    <div class="rooms-grid rooms-2">
+
+      <div class="room-card rh-blue">
+        <div class="room-header"><h3>🏛 Salón de Conferencias ECIEM</h3><div class="room-area">Economía</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Fernando González</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-blue">G1</span></td><td>Ardiles, Pastén, Rojas</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-blue">G2</span></td><td>Saavedra, Vega, Jofré</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-blue">G3</span></td><td>Rojas, Lisboa, Olivares</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-blue">G4</span></td><td>Ángel, Araya, Casanga</td></tr>
+        </tbody></table>
+      </div>
+
+      <div class="room-card rh-green">
+        <div class="room-header"><h3>🏫 Sala 302</h3><div class="room-area">Sistemas de Información</div></div>
+        <div class="guia-box"><span class="guia-label">👨‍🏫 Profesor Guía:</span><span class="guia-name">Vannessa Duarte</span></div>
+        <table class="schedule-table"><thead><tr><th>Hora</th><th>Grupo</th><th>Estudiantes</th></tr></thead><tbody>
+          <tr><td class="time-cell">08:30 – 09:30</td><td><span class="gn gn-green">G34</span></td><td>Galleguillos, Rodríguez, Talamilla</td></tr>
+          <tr><td class="time-cell">09:30 – 10:30</td><td><span class="gn gn-green">G35</span></td><td>Albasini, Gallardo, Quinceno</td></tr>
+          <tr><td class="time-cell">10:30 – 11:30</td><td><span class="gn gn-green">G36</span></td><td>Alcaman, Calfupan</td></tr>
+          <tr><td class="time-cell">11:30 – 12:30</td><td><span class="gn gn-green">G37</span></td><td>Martínez, Zambra</td></tr>
+          <tr><td class="time-cell">12:30 – 13:30</td><td><span class="gn gn-green">G38</span></td><td>Bascuñan, Camus, Monterrey</td></tr>
+        </tbody></table>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</div>
+
+<!-- ╔══════════════════════════════════════════════════════╗
+     ║              VISTA POR ÁREA                         ║
+     ╚══════════════════════════════════════════════════════╝ -->
+<div id="v-area" class="view">
+<div class="area-tabs-bar">
+  <button class="area-tab active" onclick="showArea('a1',this)">Economía</button>
+  <button class="area-tab" onclick="showArea('a2',this)">Emprendimiento</button>
+  <button class="area-tab" onclick="showArea('a3',this)">Finanzas</button>
+  <button class="area-tab" onclick="showArea('a4',this)">Gestión / RSE</button>
+  <button class="area-tab" onclick="showArea('a5',this)">Innovación</button>
+  <button class="area-tab" onclick="showArea('a6',this)">Marketing</button>
+  <button class="area-tab" onclick="showArea('a7',this)">Planif. Cequea</button>
+  <button class="area-tab" onclick="showArea('a8',this)">Planif. Terán</button>
+  <button class="area-tab" onclick="showArea('a9',this)">Sistemas</button>
+</div>
+<div class="content">
+
+  <!-- Economía -->
+  <div id="a1" class="area-panel active">
+    <div class="area-card">
+      <div class="area-card-header blue">
+        <h3>Economía</h3>
+        <div class="ac-meta">📅 Miércoles 08 de Julio &nbsp;·&nbsp; 🏛 Salón de Conferencias ECIEM &nbsp;·&nbsp; 🕗 08:30 – 12:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Fernando González</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 08</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G1</td><td>Ardiles, Pastén, Rojas</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G2</td><td>Saavedra, Vega, Jofré</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G3</td><td>Rojas, Lisboa, Olivares</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G4</td><td>Ángel, Araya, Casanga</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Emprendimiento -->
+  <div id="a2" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header green">
+        <h3>Emprendimiento</h3>
+        <div class="ac-meta">📅 Miércoles 01 de Julio &nbsp;·&nbsp; 🏫 Sala 302 &nbsp;·&nbsp; 🕗 08:30 – 13:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Karla Soria</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">5</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 01</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G5</td><td>Cárdenas, Núñez, Pérez</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G6</td><td>Alvarado, Sánchez</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G7</td><td>Mauad, Moya</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G8</td><td>Cortés, Herrera</td></tr>
+        <tr><td class="ast-time">12:30 – 13:30</td><td class="ast-num">G9</td><td>Hidalgo, Monsalve, Ramírez</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Finanzas -->
+  <div id="a3" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header teal">
+        <h3>Finanzas y Evaluación de Proyectos</h3>
+        <div class="ac-meta">📅 Martes 30 de Junio &nbsp;·&nbsp; 🏛 Salón de Conferencias ECIEM &nbsp;·&nbsp; 🕗 08:30 – 12:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Sergio Zúñiga</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mar 30</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G10</td><td>Cortes, Jin, Puelles</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G11</td><td>Alfaro, Ordenes, Cabello</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G12</td><td>Fredes, Lavin, Vargas</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G13</td><td>Luna, Rojo, Valenzuela</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Gestión / RSE -->
+  <div id="a4" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header purple">
+        <h3>Gestión y Estrategias / RSE</h3>
+        <div class="ac-meta">📅 Miércoles 01 de Julio &nbsp;·&nbsp; 🏛 Salón de Conferencias ECIEM &nbsp;·&nbsp; 🕗 08:30 – 12:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Karen Vargas</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 01</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G14</td><td>Álvarez, Cortés, Díaz</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G15</td><td>Barraza, Duque</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G16</td><td>Galleguillos, Salas, Schuller</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G17</td><td>Guerrero, Huerta, Navarro</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Innovación -->
+  <div id="a5" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header orange">
+        <h3>Innovación</h3>
+        <div class="ac-meta">📅 Jueves 02 de Julio &nbsp;·&nbsp; 🏛 Salón de Conferencias ECIEM &nbsp;·&nbsp; 🕗 08:30 – 12:30 · Tarde: 14:30 – 15:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Tomás Bas</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">5</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Jue 02</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G19</td><td>Contreras, Torres</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G18</td><td>Areyuna, Guerrero</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G20</td><td>Araya, Galleguillos</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G21</td><td>Merini, Sainz, Tapia</td></tr>
+        <tr><td class="ast-time">14:30 – 15:30</td><td class="ast-num">G22</td><td>López, Palma</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Marketing -->
+  <div id="a6" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header green">
+        <h3>Marketing</h3>
+        <div class="ac-meta">📅 Martes 30 de Junio &nbsp;·&nbsp; 🏫 Sala 302 &nbsp;·&nbsp; 🕗 08:30 – 12:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Sofía Orazi</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mar 30</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G23</td><td>Aracena, Escalona, Reyes</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G24</td><td>Collao, Castillo</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G25</td><td>Fajardo, Pérez, Ramírez</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G26</td><td>Aguirre, Toro, Videla</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Planif. Cequea -->
+  <div id="a7" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header teal">
+        <h3>Planificación y Control de Gestión</h3>
+        <div class="ac-meta">📅 Jueves 02 de Julio &nbsp;·&nbsp; 🏫 Sala 302 &nbsp;·&nbsp; 🕗 08:30 – 12:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Mirza Cequea</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">4</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Jue 02</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G27</td><td>Delgado, González, Vega</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G28</td><td>Díaz, Zambra, Zárate</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G29</td><td>Carvajal, Lujan, Paredes</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G30</td><td>Bugueño, Hurtado, Miranda</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Planif. Terán -->
+  <div id="a8" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header orange">
+        <h3>Planificación y Control de Gestión</h3>
+        <div class="ac-meta">📅 Martes 30 de Junio &nbsp;·&nbsp; 🏛 Salón de Conferencias ECIEM &nbsp;·&nbsp; 🕗 14:30 – 17:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Oswaldo Terán</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">3</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mar 30</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Salón ECIEM</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">14:30 – 15:30</td><td class="ast-num">G31</td><td>Cisternas, León, Serrano</td></tr>
+        <tr><td class="ast-time">15:30 – 16:30</td><td class="ast-num">G32</td><td>Moreno, Chávez, Estévez</td></tr>
+        <tr><td class="ast-time">16:30 – 17:30</td><td class="ast-num">G33</td><td>Caimanque, Contreras, Lizardi</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+  <!-- Sistemas -->
+  <div id="a9" class="area-panel">
+    <div class="area-card">
+      <div class="area-card-header green">
+        <h3>Sistemas de Información</h3>
+        <div class="ac-meta">📅 Miércoles 08 de Julio &nbsp;·&nbsp; 🏫 Sala 302 &nbsp;·&nbsp; 🕗 08:30 – 13:30</div>
+        <div class="ac-guia">👨‍🏫 Profesor Guía: Vannessa Duarte</div>
+      </div>
+      <div class="area-info-bar">
+        <div class="aib-item"><div class="aib-val">5</div><div class="aib-lbl">Grupos</div></div>
+        <div class="aib-item"><div class="aib-val">Mié 08</div><div class="aib-lbl">Fecha</div></div>
+        <div class="aib-item"><div class="aib-val">Sala 302</div><div class="aib-lbl">Sala</div></div>
+      </div>
+      <table class="area-schedule-table"><thead><tr><th>Hora</th><th>#</th><th>Estudiantes</th></tr></thead><tbody>
+        <tr><td class="ast-time">08:30 – 09:30</td><td class="ast-num">G34</td><td>Galleguillos, Rodríguez, Talamilla</td></tr>
+        <tr><td class="ast-time">09:30 – 10:30</td><td class="ast-num">G35</td><td>Albasini, Gallardo, Quinceno</td></tr>
+        <tr><td class="ast-time">10:30 – 11:30</td><td class="ast-num">G36</td><td>Alcaman, Calfupan</td></tr>
+        <tr><td class="ast-time">11:30 – 12:30</td><td class="ast-num">G37</td><td>Martínez, Zambra</td></tr>
+        <tr><td class="ast-time">12:30 – 13:30</td><td class="ast-num">G38</td><td>Bascuñan, Camus, Monterrey</td></tr>
+      </tbody></table>
+    </div>
+  </div>
+
+</div><!-- /content -->
+</div>
+
+<div class="legend">
+  <span style="font-weight:700;color:#374151;margin-right:4px;">Leyenda:</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#2563a8"></span>Salón de Conferencias ECIEM</span>
+  <span class="legend-item"><span class="legend-dot" style="background:#059669"></span>Sala 302</span>
+  <span style="margin-left:auto;color:#94a3b8;font-size:0.71rem;">Ingeniería Comercial · PST Semestre 202610</span>
+</div>
+
+<script>
+function showView(id, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function showSub(id, btn) {
+  document.querySelectorAll('#v-diaria .sub-panel').forEach(p => p.classList.remove('active'));
+  btn.closest('.nav-tabs').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+function showArea(id, btn) {
+  document.querySelectorAll('.area-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.area-tab').forEach(b => b.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
